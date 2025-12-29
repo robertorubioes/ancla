@@ -11,7 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Register middleware aliases
+        $middleware->alias([
+            'tenant' => \App\Http\Middleware\IdentifyTenant::class,
+            'identify.tenant' => \App\Http\Middleware\IdentifyTenant::class,
+            'permission' => \App\Http\Middleware\EnsureUserHasPermission::class,
+            'validate-session-tenant' => \App\Http\Middleware\ValidateSessionTenant::class,
+            'rate.limit.public' => \App\Http\Middleware\RateLimitPublicApi::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

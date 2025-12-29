@@ -1,0 +1,36 @@
+# Archivos que Roo Code debe ignorar para ahorrar tokens
+# Estos archivos son gigantes y consumen contexto inútilmente
+
+# Dependencias y Locks (Los mayores consumidores de tokens)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+composer.lock
+vendor/
+node_modules/
+
+# Build y Dist
+public/build/
+public/hot/
+dist/
+build/
+
+# Logs y Cache
+storage/logs/
+storage/framework/
+.phpunit.cache/
+.php_cs.cache
+
+# Archivos binarios o irrelevantes
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+*.pdf
+*.zip
+*.tar.gz
+
+# Documentación extensa (opcional, descomentar si no quieres que lea docs)
+# docs/

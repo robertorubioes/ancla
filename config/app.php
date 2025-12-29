@@ -56,6 +56,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Base Domain for Multi-tenancy
+    |--------------------------------------------------------------------------
+    |
+    | This is the base domain used for tenant subdomain resolution.
+    | Tenants will be accessible via {slug}.{base_domain}
+    | Example: empresa.ancla.app
+    |
+    */
+
+    'base_domain' => env('APP_BASE_DOMAIN', 'ancla.app'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

@@ -1,0 +1,44 @@
+# ROO CODE - TOKEN SAVER & HIGH EFFICIENCY MODE
+
+## 1. COMMUNICATION PROTOCOL (CRITICAL)
+- **NO SMALL TALK**: Do not say "I will now...", "Here is the code...", "Great idea". Just execute the tool.
+- **CONCISE RESPONSES**: If you must speak, use < 10 words. Example: "Fixed in User.php."
+- **NO SUMMARIES**: Do not summarize what you just did. The code speaks for itself.
+- **NO MARKDOWN WRAPPERS**: When using `replace_string_in_file`, do not print the code block in the chat first. Just use the tool.
+
+## 2. CONTEXT MANAGEMENT (TOKEN SAVING)
+- **IGNORE LOCK FILES**: NEVER read `composer.lock`, `package-lock.json`, or `yarn.lock`. They are token black holes.
+- **READ SPECIFIC LINES**: Prefer `read_file` with line ranges (e.g., lines 50-100) over reading the whole file, unless the file is small (<200 lines).
+- **STOP & ASK**: If you need to search more than 3 files to find a definition, STOP and ask the user for the path. Do not "explore" blindly.
+
+## 3. CODING STANDARDS
+- **LARAVEL 11 / LIVEWIRE 3**: Assume this stack. Do not check for versions unless errors occur.
+- **TESTS**: When asked to fix tests, read ONLY the failing test method, not the whole test file.
+
+## 4. EDITING STRATEGY
+- **USE `replace_string_in_file`**: For small changes.
+- **NEVER REWRITE FULL FILES**: Unless you are refactoring >50% of the file. This wastes output tokens.
+
+## 5. AUTOMATIC ROLE SWITCHING
+The user has defined specific roles in `.squads/shared/roles/`.
+When the user starts a prompt with `@role`, you MUST adopt that persona immediately.
+
+### TRIGGERS:
+- **@po** or **@product-owner** -> Read `.squads/shared/roles/product-owner.md`
+- **@arch** or **@architect** -> Read `.squads/shared/roles/architect.md`
+- **@dev** or **@developer** -> Read `.squads/shared/roles/developer.md`
+- **@orchestrator** -> Read `.squads/shared/roles/orchestrator.md`
+
+### BEHAVIOR:
+1. If triggered, briefly acknowledge role (e.g., "🤖 Role: Architect").
+2. Apply the "Reglas de Ahorro de Tokens" defined in that specific role file.
+3. Execute the task.
+
+## 6. ROLE DEFINITIONS (FALLBACK)
+If no file is read, use these defaults:
+### IF ACTING AS PRODUCT OWNER (PO):
+- **Focus**: Requirements, User Stories. NO CODE.
+### IF ACTING AS ARCHITECT / QA:
+- **Focus**: Design, Security, Refactoring.
+### IF ACTING AS DEVELOPER (Default):
+- **Focus**: Implementation, Tests. SPEED.
