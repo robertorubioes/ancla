@@ -1,19 +1,19 @@
 #!/bin/bash
 #------------------------------------------------------------------------------
-# ANCLA - Local Development Server Start Script
+# Firmalum - Local Development Server Start Script
 #------------------------------------------------------------------------------
 # Usage: ./bin/start-local.sh
 #
-# This script starts the local development server on ancla.local:8000
+# This script starts the local development server on firmalum.local:8000
 #
 # Prerequisites:
-#   1. Add to /etc/hosts: 127.0.0.1 ancla.local
-#      Run: echo "127.0.0.1 ancla.local" | sudo tee -a /etc/hosts
+#   1. Add to /etc/hosts: 127.0.0.1 firmalum.local
+#      Run: echo "127.0.0.1 firmalum.local" | sudo tee -a /etc/hosts
 #
 #   2. Ensure PHP 8.2+ is installed with required extensions
 #
 # Access:
-#   App: http://ancla.local:8000
+#   App: http://firmalum.local:8000
 #------------------------------------------------------------------------------
 
 set -e
@@ -24,9 +24,9 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_DIR"
 
 # Check if hosts entry exists
-if ! grep -q "ancla.local" /etc/hosts 2>/dev/null; then
-    echo "⚠️  WARNING: ancla.local not found in /etc/hosts"
-    echo "   Run: echo '127.0.0.1 ancla.local' | sudo tee -a /etc/hosts"
+if ! grep -q "firmalum.local" /etc/hosts 2>/dev/null; then
+    echo "⚠️  WARNING: firmalum.local not found in /etc/hosts"
+    echo "   Run: echo '127.0.0.1 firmalum.local' | sudo tee -a /etc/hosts"
     echo ""
 fi
 
@@ -53,12 +53,12 @@ php artisan view:clear
 
 # Start the server
 echo ""
-echo "🚀 Starting ANCLA development server..."
+echo "🚀 Starting Firmalum development server..."
 echo ""
 echo "   ┌─────────────────────────────────────────────┐"
-echo "   │  App URL: http://ancla.local:8000           │"
-echo "   │  Verify:  http://ancla.local:8000/verify    │"
-echo "   │  API:     http://ancla.local:8000/api/v1/   │"
+echo "   │  App URL: http://firmalum.local:8000           │"
+echo "   │  Verify:  http://firmalum.local:8000/verify    │"
+echo "   │  API:     http://firmalum.local:8000/api/v1/   │"
 echo "   └─────────────────────────────────────────────┘"
 echo ""
 echo "   Press Ctrl+C to stop the server"

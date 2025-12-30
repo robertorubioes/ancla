@@ -3,7 +3,7 @@
         {{ __('Sign in to your account') }}
     </h2>
 
-    <form wire:submit="login">
+    <form wire:submit.prevent="login" method="POST">
         <!-- Email Address -->
         <div>
             <label for="email" class="block font-medium text-sm text-gray-700">

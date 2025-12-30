@@ -72,7 +72,7 @@
                     <tr>
                         <td style="background-color: #f9fafb; padding: 30px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
                             <p style="margin: 0 0 10px; color: #6b7280; font-size: 13px;">
-                                This is an automated message from <strong>ANCLA</strong>
+                                This is an automated message from <strong>Firmalum</strong>
                             </p>
                             <p style="margin: 0; color: #9ca3af; font-size: 12px;">
                                 Secure Digital Signature Platform

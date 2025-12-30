@@ -424,7 +424,7 @@ class SigningNotificationTest extends TestCase
         $mailable = new SigningRequestMail($process, $signer);
         $rendered = $mailable->render();
 
-        $this->assertStringContainsString('ANCLA', $rendered);
+        $this->assertStringContainsString('Firmalum', $rendered);
         $this->assertStringContainsString('Firma Digital', $rendered);
     }
 

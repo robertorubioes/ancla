@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Dossier de Evidencias - ANCLA</title>
+    <title>Dossier de Evidencias - Firmalum</title>
     <style>
         * {
             margin: 0;
@@ -235,7 +235,7 @@
     {{-- PAGE 1: COVER --}}
     <div class="page">
         <div class="header">
-            <div class="logo">⚓ ANCLA</div>
+            <div class="logo">⚓ Firmalum</div>
             <div class="title">Dossier de Evidencias</div>
             <div class="subtitle">
                 @switch($dossier_type ?? 'full_evidence')
@@ -313,7 +313,7 @@
 
         <div class="legal-notice">
             <strong>Aviso Legal:</strong> Este documento constituye un registro probatorio generado automáticamente 
-            por el sistema ANCLA. Las evidencias contenidas cumplen con los requisitos del Reglamento eIDAS 
+            por el sistema Firmalum. Las evidencias contenidas cumplen con los requisitos del Reglamento eIDAS 
             (UE) 910/2014 para firmas electrónicas. La integridad del documento puede verificarse mediante 
             el código de verificación indicado.
         </div>
@@ -552,7 +552,7 @@
         <div class="section">
             <div class="section-title">Certificación</div>
             <p style="margin-bottom: 20px;">
-                Este dossier ha sido generado automáticamente por el sistema ANCLA y está firmado 
+                Este dossier ha sido generado automáticamente por el sistema Firmalum y está firmado 
                 digitalmente por la plataforma.
             </p>
 
@@ -603,7 +603,7 @@
     </div>
 
     <div class="footer">
-        Generado por ANCLA - Sistema de Firma Electrónica | {{ $generated_at->format('d/m/Y H:i') }} | Página <span class="pagenum"></span>
+        Generado por Firmalum - Sistema de Firma Electrónica | {{ $generated_at->format('d/m/Y H:i') }} | Página <span class="pagenum"></span>
     </div>
 </body>
 </html>

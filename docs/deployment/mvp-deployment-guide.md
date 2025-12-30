@@ -1,8 +1,8 @@
-# ANCLA MVP Deployment Guide
+# Firmalum MVP Deployment Guide
 
 ## Overview
 
-This guide provides a complete deployment strategy for ANCLA, optimized for **MVP speed** with the ability to scale and iterate quickly.
+This guide provides a complete deployment strategy for Firmalum, optimized for **MVP speed** with the ability to scale and iterate quickly.
 
 ---
 
@@ -109,7 +109,7 @@ This guide provides a complete deployment strategy for ANCLA, optimized for **MV
 ```
                     ┌─────────────────────────────────────┐
                     │           USERS                      │
-                    │    *.ancla.app / custom domains      │
+                    │    *.firmalum.com / custom domains      │
                     └─────────────────┬───────────────────┘
                                       │
                                       ▼
@@ -240,14 +240,14 @@ Option B: Redis on server (fine for MVP)
 
 1. Create Space:
    - **Region**: Frankfurt
-   - **Name**: ancla-storage
+   - **Name**: firmalum-storage
 
 2. Create access keys and configure in `.env`
 
 ### Step 5: Configure Site in Forge
 
 1. Add new site:
-   - **Domain**: ancla.app
+   - **Domain**: firmalum.com
    - **Project Type**: General PHP / Laravel
    - **Web Directory**: /public
 
@@ -256,7 +256,7 @@ Option B: Redis on server (fine for MVP)
 3. Configure deployment script:
 
 ```bash
-cd /home/forge/ancla.app
+cd /home/forge/firmalum.com
 git pull origin $FORGE_SITE_BRANCH
 
 $FORGE_COMPOSER install --no-dev --no-interaction --prefer-dist --optimize-autoloader
@@ -282,9 +282,9 @@ See [environment-variables.md](./environment-variables.md) for complete list.
 In Forge → Server → Daemons:
 
 ```
-Command: php /home/forge/ancla.app/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+Command: php /home/forge/firmalum.com/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
 User: forge
-Directory: /home/forge/ancla.app
+Directory: /home/forge/firmalum.com
 ```
 
 ### Step 8: Configure SSL
@@ -298,7 +298,7 @@ Directory: /home/forge/ancla.app
 In Forge → Server → Scheduler:
 
 ```
-Command: php /home/forge/ancla.app/artisan schedule:run
+Command: php /home/forge/firmalum.com/artisan schedule:run
 Frequency: Every Minute
 User: forge
 ```
@@ -330,7 +330,7 @@ Developer Push → GitHub Actions → Tests Pass → Forge Webhook → Server De
 
 **Quick Rollback (< 5 min):**
 1. SSH into server: `ssh forge@your-server`
-2. `cd /home/forge/ancla.app`
+2. `cd /home/forge/firmalum.com`
 3. `git log --oneline -5` (find last good commit)
 4. `git checkout <commit-hash>`
 5. `php artisan migrate:rollback --step=1` (if needed)
@@ -440,7 +440,7 @@ Route::get('/health', function () {
 | DO Spaces (100GB) | $5 |
 | Postmark (10K emails) | $10 |
 | Sentry (free tier) | $0 |
-| Domain (ancla.app) | ~$2 |
+| Domain (firmalum.com) | ~$2 |
 | **TOTAL** | **~€60-70/month** |
 
 ### Growth Phase (Month 6-12)
@@ -500,13 +500,13 @@ Route::get('/health', function () {
 
 ```bash
 # Manual deploy
-forge deploy ancla.app
+forge deploy firmalum.com
 
 # SSH into server
-forge ssh ancla.app
+forge ssh firmalum.com
 
 # View logs
-tail -f /home/forge/ancla.app/storage/logs/laravel.log
+tail -f /home/forge/firmalum.com/storage/logs/laravel.log
 ```
 
 ### Maintenance
@@ -556,4 +556,4 @@ php artisan config:show
 
 **Document Version**: 1.0
 **Last Updated**: 2025-12-28
-**Author**: ANCLA Architecture Team
+**Author**: Firmalum Architecture Team

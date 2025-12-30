@@ -1,12 +1,12 @@
-# Product Backlog - ANCLA
+# Product Backlog - Firmalum
 
 ## Visión del Producto
 
-**ANCLA** es una plataforma SaaS de firma electrónica avanzada conforme al Reglamento eIDAS, diseñada para operar como **marca blanca (multi-tenant)**. Su diferencial competitivo es la **generación, conservación y exportación de evidencias legales incontestables**, capaces de defenderse ante cualquier auditoría o procedimiento judicial.
+**Firmalum** es una plataforma SaaS de firma electrónica avanzada conforme al Reglamento eIDAS, diseñada para operar como **marca blanca (multi-tenant)**. Su diferencial competitivo es la **generación, conservación y exportación de evidencias legales incontestables**, capaces de defenderse ante cualquier auditoría o procedimiento judicial.
 
 ### Propuesta de Valor
 - **Para empresas** que necesitan enviar documentos a firmar de forma legal y segura
-- **ANCLA proporciona** una plataforma de firma electrónica avanzada con trazabilidad completa
+- **Firmalum proporciona** una plataforma de firma electrónica avanzada con trazabilidad completa
 - **Que se diferencia** por su sistema de evidencias legales blindado, conforme a eIDAS
 - **Permitiendo** operar bajo marca propia (white-label) con total personalización
 
@@ -114,7 +114,7 @@
 | E6-001 | Como **administrador de tenant**, quiero personalizar el logo y colores de la plataforma, para reflejar mi marca | Media | - Upload de logo<br>- Selector de color primario/secundario<br>- Preview en tiempo real | Beta |
 | E6-002 | Como **administrador de tenant**, quiero usar mi propio dominio, para que los firmantes vean mi marca | Media | - Configuración de dominio personalizado<br>- Gestión automática de SSL<br>- DNS verification | Alpha |
 | E6-003 | Como **administrador de tenant**, quiero personalizar los emails que envía la plataforma, para mantener coherencia de marca | Media | - Nombre del remitente personalizable<br>- Dominio de envío personalizado (DKIM/SPF)<br>- Plantillas con branding | Beta |
-| E6-004 | Como **administrador de tenant**, quiero ocultar referencias a ANCLA, para una experiencia 100% white-label | Baja | - Opción de ocultar "Powered by ANCLA"<br>- Términos y condiciones propios<br>- Solo disponible en planes premium | Beta |
+| E6-004 | Como **administrador de tenant**, quiero ocultar referencias a Firmalum, para una experiencia 100% white-label | Baja | - Opción de ocultar "Powered by Firmalum"<br>- Términos y condiciones propios<br>- Solo disponible en planes premium | Beta |
 
 ---
 
@@ -160,7 +160,7 @@
 | E6-001 | Personalizar logo y colores | Media | Pendiente | E6 | Beta |
 | E6-002 | Dominio personalizado | Media | Pendiente | E6 | Alpha |
 | E6-003 | Personalizar emails | Media | Pendiente | E6 | Beta |
-| E6-004 | Ocultar referencias a ANCLA | Baja | Pendiente | E6 | Beta |
+| E6-004 | Ocultar referencias a Firmalum | Baja | Pendiente | E6 | Beta |
 
 ---
 
@@ -230,4 +230,4 @@ Para que las firmas electrónicas sean **avanzadas** según eIDAS, deben cumplir
 ---
 
 *Última actualización: 2025-12-28*
-*Product Owner: ANCLA Team*
+*Product Owner: Firmalum Team*

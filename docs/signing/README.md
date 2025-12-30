@@ -47,7 +47,7 @@ Para producción, obtener certificado de una CA confiable:
 openssl req -new -newkey rsa:4096 -nodes \
   -keyout storage/certificates/ancla-prod.key \
   -out storage/certificates/ancla-prod.csr \
-  -subj "/C=ES/ST=Madrid/L=Madrid/O=ANCLA Technologies/CN=ANCLA Signature Service"
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Technologies/CN=Firmalum Signature Service"
 
 # Enviar CSR a la CA y guardar certificado recibido
 # Configurar en .env
@@ -158,7 +158,7 @@ $info = $certificateService->getCertificateInfo();
 /*
 Array [
     'certificate' => [
-        'subject' => 'CN=ANCLA, O=ANCLA Development, ...',
+        'subject' => 'CN=Firmalum, O=Firmalum Development, ...',
         'issuer' => '...',
         'valid_from' => '2025-12-30',
         'valid_to' => '2035-12-27',
@@ -233,17 +233,17 @@ Según GDPR, solo se embeben hashes y datos no personales:
 
 ```php
 [
-    'ANCLA_Version' => '1.0',
-    'ANCLA_Evidence_ID' => 'uuid-evidence-package',
-    'ANCLA_Process_ID' => 123,
-    'ANCLA_Signer_ID' => 456,
-    'ANCLA_Verify_Code' => 'ABC1-DEF2-GH34',
-    'ANCLA_Verify_URL' => 'https://ancla.es/verify/xxx',
-    'ANCLA_IP_Hash' => 'sha256(ip)',  // Hash, no IP real
-    'ANCLA_Location' => 'Madrid, Spain',  // Solo ciudad/país
-    'ANCLA_Device_FP' => 'sha256(fingerprint)',
-    'ANCLA_Consent_ID' => 'uuid',
-    'ANCLA_Audit_Chain' => 'sha256(audit-trail)',
+    'Firmalum_Version' => '1.0',
+    'Firmalum_Evidence_ID' => 'uuid-evidence-package',
+    'Firmalum_Process_ID' => 123,
+    'Firmalum_Signer_ID' => 456,
+    'Firmalum_Verify_Code' => 'ABC1-DEF2-GH34',
+    'Firmalum_Verify_URL' => 'https://ancla.es/verify/xxx',
+    'Firmalum_IP_Hash' => 'sha256(ip)',  // Hash, no IP real
+    'Firmalum_Location' => 'Madrid, Spain',  // Solo ciudad/país
+    'Firmalum_Device_FP' => 'sha256(fingerprint)',
+    'Firmalum_Consent_ID' => 'uuid',
+    'Firmalum_Audit_Chain' => 'sha256(audit-trail)',
 ]
 ```
 
@@ -338,7 +338,7 @@ ls -la storage/certificates/
 openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -keyout storage/certificates/ancla-dev.key \
   -out storage/certificates/ancla-dev.crt \
-  -subj "/C=ES/ST=Madrid/L=Madrid/O=ANCLA Dev/CN=ancla.local"
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Dev/CN=ancla.local"
 ```
 
 ### Error: "Failed to read private key"

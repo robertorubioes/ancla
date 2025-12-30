@@ -76,7 +76,7 @@ return [
             'certificate_label' => 'Certificado',
             'tsa_label' => 'Sello de Tiempo',
             'verify_label' => 'Verificar en',
-            'reason_default' => 'Firmado electrónicamente con ANCLA',
+            'reason_default' => 'Firmado electrónicamente con Firmalum',
         ],
     ],
 
@@ -224,10 +224,10 @@ return [
     |
     */
     'locations' => [
-        'default' => 'ANCLA Platform',
-        'web' => 'ANCLA Web Application',
-        'mobile' => 'ANCLA Mobile App',
-        'api' => 'ANCLA API',
+        'default' => 'Firmalum Platform',
+        'web' => 'Firmalum Web Application',
+        'mobile' => 'Firmalum Mobile App',
+        'api' => 'Firmalum API',
     ],
 
     /*

@@ -5,7 +5,7 @@ namespace App\Actions\Fortify;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * Password validation rules for ANCLA platform.
+ * Password validation rules for Firmalum platform.
  *
  * Implements strong password requirements for security compliance.
  */

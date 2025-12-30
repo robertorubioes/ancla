@@ -98,6 +98,9 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini && \
     echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache.ini && \
     echo "opcache.fast_shutdown=1" >> /usr/local/etc/php/conf.d/opcache.ini
 
+# Mark directory as safe for git
+RUN git config --global --add safe.directory /var/www/html
+
 # Copy application
 COPY --chown=www:www . /var/www/html
 

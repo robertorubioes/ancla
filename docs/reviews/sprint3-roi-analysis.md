@@ -265,7 +265,7 @@ ROI = POSITIVO +++
 
 ### MVP Mínimo Comercializable = Firma Electrónica End-to-End
 
-Para poder **vender ANCLA** necesitamos:
+Para poder **vender Firmalum** necesitamos:
 
 #### ✅ COMPLETADO (Sprints 1-3)
 
@@ -330,7 +330,7 @@ Para poder **vender ANCLA** necesitamos:
 | E6-001 | Personalizar logo y colores | ⚪ MEDIA | 6+ |
 | E6-002 | Dominio personalizado | ⚪ MEDIA | 6+ |
 | E6-003 | Personalizar emails | ⚪ BAJA | 6+ |
-| E6-004 | Ocultar referencias a ANCLA | ⚪ BAJA | 6+ |
+| E6-004 | Ocultar referencias a Firmalum | ⚪ BAJA | 6+ |
 
 **Total opcional: 11 tareas** ⚪
 

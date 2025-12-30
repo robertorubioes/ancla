@@ -302,7 +302,7 @@ return [
 openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -keyout storage/certificates/ancla-dev.key \
   -out storage/certificates/ancla-dev.crt \
-  -subj "/C=ES/ST=Madrid/L=Madrid/O=ANCLA Dev/CN=ancla.local" \
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Dev/CN=ancla.local" \
   -addext "keyUsage=digitalSignature" \
   -addext "extendedKeyUsage=emailProtection"
 
@@ -330,7 +330,7 @@ openssl pkcs12 -export \
 
 **Especificaciones**:
 ```
-Subject: CN=ANCLA Signature Service, O=ANCLA Technologies, C=ES
+Subject: CN=Firmalum Signature Service, O=Firmalum Technologies, C=ES
 Key Type: RSA 4096 bits
 Validity: 2 años (renovación manual)
 Extended Key Usage: Email Protection, Code Signing
@@ -387,7 +387,7 @@ PKCS#7 Structure:
 │     Signature: <encrypted digest>                  │
 │     UnauthenticatedAttributes:                     │
 │       - TSA Token (RFC 3161) ← PAdES-B-LT          │
-│       - ANCLA Metadata (custom OID)                │
+│       - Firmalum Metadata (custom OID)                │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -403,7 +403,7 @@ PDF Structure:
 /SubFilter /ETSI.CAdES.detached  ← PAdES compliance
 /M (D:20250129123045+01'00')
 /Reason (Firmado electrónicamente)
-/Location (ANCLA Platform)
+/Location (Firmalum Platform)
 /ContactInfo (soporte@ancla.es)
 ```
 
@@ -458,7 +458,7 @@ PDF Structure:
 │                      juan.perez@example.com        │
 │                                                    │
 │                      📅 29/12/2025 10:30:15 UTC   │
-│                      🔒 Certificado: ANCLA         │
+│                      🔒 Certificado: Firmalum         │
 │                      ⏱ TSA: FirmaProfesional      │
 │                                                    │
 │  [QR CODE]           Verificar: ABCD-EFGH-IJKL    │
@@ -535,18 +535,18 @@ class PdfSignatureService
 
 ```php
 PDF /Sig Dictionary Extensions:
-/ANCLA_Version        (1.0)
-/ANCLA_Evidence_ID    (uuid-of-evidence-package)
-/ANCLA_Process_ID     (uuid-of-signing-process)
-/ANCLA_Signer_ID      (uuid-of-signer)
-/ANCLA_Verify_Code    (ABC1-DEF2-GH34)
-/ANCLA_Verify_URL     (https://ancla.es/verify/ABC1-DEF2-GH34)
-/ANCLA_Verify_QR      (base64-encoded-qr-image)
-/ANCLA_IP_Hash        (sha256-hashed-ip)
-/ANCLA_Location       (Madrid, Spain)
-/ANCLA_Device_FP      (sha256-device-fingerprint)
-/ANCLA_Consent_ID     (uuid-of-consent-record)
-/ANCLA_Audit_Chain    (sha256-hash-of-audit-trail)
+/Firmalum_Version        (1.0)
+/Firmalum_Evidence_ID    (uuid-of-evidence-package)
+/Firmalum_Process_ID     (uuid-of-signing-process)
+/Firmalum_Signer_ID      (uuid-of-signer)
+/Firmalum_Verify_Code    (ABC1-DEF2-GH34)
+/Firmalum_Verify_URL     (https://ancla.es/verify/ABC1-DEF2-GH34)
+/Firmalum_Verify_QR      (base64-encoded-qr-image)
+/Firmalum_IP_Hash        (sha256-hashed-ip)
+/Firmalum_Location       (Madrid, Spain)
+/Firmalum_Device_FP      (sha256-device-fingerprint)
+/Firmalum_Consent_ID     (uuid-of-consent-record)
+/Firmalum_Audit_Chain    (sha256-hash-of-audit-trail)
 ```
 
 **Ventajas**:
@@ -835,7 +835,7 @@ CREATE TABLE signed_documents (
     signature_appearance    JSON NULL,                      -- Layout config
     
     -- Embedded metadata
-    embedded_metadata       JSON NOT NULL,                  -- ANCLA custom fields
+    embedded_metadata       JSON NOT NULL,                  -- Firmalum custom fields
     verification_code_id    BIGINT UNSIGNED NULL,           -- FK a verification_codes
     qr_code_embedded        BOOLEAN DEFAULT TRUE,
     
@@ -948,7 +948,7 @@ class PdfSignatureService
                 ->setContentHash($originalHash)
                 ->setSigningTime(now())
                 ->setReason('Firmado electrónicamente')
-                ->setLocation('ANCLA Platform')
+                ->setLocation('Firmalum Platform')
                 ->build();
 
             // 4. Obtener TSA timestamp si PAdES-B-LT
@@ -1128,17 +1128,17 @@ class PdfSignatureService
     private function prepareEmbeddedMetadata(Signer $signer, array $metadata): array
     {
         return [
-            'ANCLA_Version' => '1.0',
-            'ANCLA_Evidence_ID' => $metadata['evidence_package_uuid'] ?? null,
-            'ANCLA_Process_ID' => $signer->signing_process_id,
-            'ANCLA_Signer_ID' => $signer->id,
-            'ANCLA_Verify_Code' => $metadata['verification_code'] ?? null,
-            'ANCLA_Verify_URL' => $metadata['verification_url'] ?? null,
-            'ANCLA_IP_Hash' => $metadata['ip_hash'] ?? null,
-            'ANCLA_Location' => $metadata['location'] ?? null,
-            'ANCLA_Device_FP' => $metadata['device_fingerprint_hash'] ?? null,
-            'ANCLA_Consent_ID' => $metadata['consent_id'] ?? null,
-            'ANCLA_Audit_Chain' => $metadata['audit_chain_hash'] ?? null,
+            'Firmalum_Version' => '1.0',
+            'Firmalum_Evidence_ID' => $metadata['evidence_package_uuid'] ?? null,
+            'Firmalum_Process_ID' => $signer->signing_process_id,
+            'Firmalum_Signer_ID' => $signer->id,
+            'Firmalum_Verify_Code' => $metadata['verification_code'] ?? null,
+            'Firmalum_Verify_URL' => $metadata['verification_url'] ?? null,
+            'Firmalum_IP_Hash' => $metadata['ip_hash'] ?? null,
+            'Firmalum_Location' => $metadata['location'] ?? null,
+            'Firmalum_Device_FP' => $metadata['device_fingerprint_hash'] ?? null,
+            'Firmalum_Consent_ID' => $metadata['consent_id'] ?? null,
+            'Firmalum_Audit_Chain' => $metadata['audit_chain_hash'] ?? null,
         ];
     }
 }
@@ -1989,12 +1989,12 @@ RateLimiter::for('signature', function (Request $request) {
 
 ```php
 // ❌ NO embeber datos personales en PDF
-'ANCLA_Signer_Email' => 'juan@example.com'  // ❌ RGPD violation
+'Firmalum_Signer_Email' => 'juan@example.com'  // ❌ RGPD violation
 
 // ✅ SÍ embeber hashes
-'ANCLA_IP_Hash' => sha256($ipAddress)        // ✅ Privacy-preserving
-'ANCLA_Device_FP' => sha256($fingerprint)    // ✅ No identificable
-'ANCLA_Signer_ID' => $uuid                   // ✅ UUID (no personal data)
+'Firmalum_IP_Hash' => sha256($ipAddress)        // ✅ Privacy-preserving
+'Firmalum_Device_FP' => sha256($fingerprint)    // ✅ No identificable
+'Firmalum_Signer_ID' => $uuid                   // ✅ UUID (no personal data)
 
 // Datos completos solo en BD con control de acceso
 ```

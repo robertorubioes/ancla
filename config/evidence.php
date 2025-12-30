@@ -3,7 +3,7 @@
 /**
  * Evidence System Configuration
  *
- * Configuration for ANCLA's legal evidence system including:
+ * Configuration for Firmalum's legal evidence system including:
  * - TSA (Time Stamping Authority) providers
  * - Hashing algorithms
  * - Audit trail settings
@@ -24,7 +24,7 @@ return [
     | Time Stamping Authority (TSA) Configuration
     |--------------------------------------------------------------------------
     |
-    | Settings for RFC 3161 compliant timestamp providers. ANCLA uses qualified
+    | Settings for RFC 3161 compliant timestamp providers. Firmalum uses qualified
     | timestamps to provide legal proof of when events occurred (eIDAS compliant).
     |
     */
@@ -367,7 +367,7 @@ return [
         // Include tenant logo
         'include_tenant_logo' => true,
 
-        // Include ANCLA logo
+        // Include Firmalum logo
         'include_ancla_logo' => true,
 
         // Default dossier type

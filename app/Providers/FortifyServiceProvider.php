@@ -50,15 +50,20 @@ class FortifyServiceProvider extends ServiceProvider
             $tenant = app()->bound('tenant') ? app('tenant') : null;
 
             // Find user by email within tenant context
-            $user = User::withoutGlobalScopes()
-                ->where('email', $request->email)
-                ->where('tenant_id', $tenant?->id)
-                ->first();
+            $query = User::withoutGlobalScopes()
+                ->where('email', $request->email);
+
+            // Only filter by tenant if one is bound
+            if ($tenant) {
+                $query->where('tenant_id', $tenant->id);
+            }
+
+            $user = $query->first();
 
             // Verify password
             if ($user && Hash::check($request->password, $user->password)) {
                 // Store tenant_id in session for validation
-                session(['tenant_id' => $tenant?->id]);
+                session(['tenant_id' => $user->tenant_id]);
 
                 return $user;
             }

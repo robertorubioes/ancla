@@ -58,6 +58,15 @@ class SigningProcess extends Model
         'deadline_at',
         'completed_at',
         'metadata',
+        'final_document_path',
+        'final_document_name',
+        'final_document_hash',
+        'final_document_size',
+        'final_document_generated_at',
+        'final_document_pages',
+        'cancelled_by',
+        'cancellation_reason',
+        'cancelled_at',
     ];
 
     /**
@@ -69,6 +78,10 @@ class SigningProcess extends Model
         'deadline_at' => 'datetime',
         'completed_at' => 'datetime',
         'metadata' => 'array',
+        'final_document_size' => 'integer',
+        'final_document_generated_at' => 'datetime',
+        'final_document_pages' => 'integer',
+        'cancelled_at' => 'datetime',
     ];
 
     /**
@@ -385,6 +398,79 @@ class SigningProcess extends Model
     }
 
     /**
+     * Cancel the signing process with reason and notifications.
+     *
+     * @param  int  $userId  User ID who is cancelling
+     * @param  string  $reason  Reason for cancellation
+     */
+    public function cancel(int $userId, string $reason): bool
+    {
+        // Validate process can be cancelled
+        if ($this->isCompleted() || $this->isCancelled()) {
+            return false;
+        }
+
+        // Update process
+        $result = $this->update([
+            'status' => self::STATUS_CANCELLED,
+            'cancelled_by' => $userId,
+            'cancellation_reason' => $reason,
+            'cancelled_at' => now(),
+        ]);
+
+        if ($result) {
+            // Invalidate all pending signer tokens
+            $this->signers()
+                ->whereIn('status', [Signer::STATUS_PENDING, Signer::STATUS_SENT, Signer::STATUS_VIEWED])
+                ->update(['status' => 'cancelled']);
+
+            // Send cancellation notifications (async)
+            $this->sendCancellationNotifications();
+
+            // Log audit trail
+            if (method_exists($this, 'logAuditEvent')) {
+                $this->logAuditEvent('signing_process.cancelled', [
+                    'cancelled_by' => $userId,
+                    'reason' => $reason,
+                ]);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Send cancellation notifications to pending signers.
+     */
+    private function sendCancellationNotifications(): void
+    {
+        $pendingSigners = $this->signers()
+            ->where('status', 'cancelled')
+            ->get();
+
+        foreach ($pendingSigners as $signer) {
+            try {
+                \App\Jobs\SendCancellationNotificationJob::dispatch($this, $signer)
+                    ->onQueue('notifications');
+            } catch (\Exception $e) {
+                Log::error('Failed to queue cancellation notification', [
+                    'process_id' => $this->id,
+                    'signer_id' => $signer->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Get the user who cancelled the process.
+     */
+    public function cancelledBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    /**
      * Get the next signer in sequential order.
      */
     public function getNextSigner(): ?Signer
@@ -414,6 +500,57 @@ class SigningProcess extends Model
         $service = app(SigningNotificationService::class);
 
         return $service->sendNotifications($this);
+    }
+
+    /**
+     * Check if final document has been generated.
+     */
+    public function hasFinalDocument(): bool
+    {
+        return $this->final_document_path !== null;
+    }
+
+    /**
+     * Get the full path to the final document.
+     */
+    public function getFinalDocumentPath(): ?string
+    {
+        if (! $this->hasFinalDocument()) {
+            return null;
+        }
+
+        return storage_path('app/'.$this->final_document_path);
+    }
+
+    /**
+     * Generate final document (consolidates all signed documents).
+     *
+     * This method is automatically called when the process is marked as completed.
+     *
+     *
+     * @throws \App\Services\Document\FinalDocumentException
+     */
+    public function generateFinalDocument(): \App\Services\Document\FinalDocumentResult
+    {
+        $service = app(\App\Services\Document\FinalDocumentService::class);
+
+        return $service->generateFinalDocument($this);
+    }
+
+    /**
+     * Send copies of signed document to all signers.
+     *
+     * This method is automatically called after final document generation.
+     *
+     * @return \App\Services\Notification\CompletionNotificationResult Result of the notification operation
+     *
+     * @throws \App\Services\Notification\CompletionNotificationException
+     */
+    public function sendCopies(): \App\Services\Notification\CompletionNotificationResult
+    {
+        $service = app(\App\Services\Notification\CompletionNotificationService::class);
+
+        return $service->sendCopies($this);
     }
 
     /**

@@ -1,8 +1,8 @@
-# ANCLA Environment Variables
+# Firmalum Environment Variables
 
 ## Complete Reference
 
-This document lists all environment variables required for ANCLA deployment.
+This document lists all environment variables required for Firmalum deployment.
 
 ---
 
@@ -27,12 +27,12 @@ This document lists all environment variables required for ANCLA deployment.
 
 ```env
 # Application Settings
-APP_NAME="ANCLA"
+APP_NAME="Firmalum"
 APP_ENV=production
 APP_KEY=base64:xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 APP_DEBUG=false
 APP_TIMEZONE=UTC
-APP_URL=https://ancla.app
+APP_URL=https://firmalum.com
 
 # Locale
 APP_LOCALE=es
@@ -50,11 +50,11 @@ LOG_LEVEL=error
 
 | Variable | Required | Description | MVP Value |
 |----------|----------|-------------|-----------|
-| `APP_NAME` | Yes | Application name | `ANCLA` |
+| `APP_NAME` | Yes | Application name | `Firmalum` |
 | `APP_ENV` | Yes | Environment (local/staging/production) | `production` |
 | `APP_KEY` | Yes | Encryption key (generate with `php artisan key:generate`) | Auto-generated |
 | `APP_DEBUG` | Yes | Show debug info (MUST be false in prod) | `false` |
-| `APP_URL` | Yes | Full application URL | `https://ancla.app` |
+| `APP_URL` | Yes | Full application URL | `https://firmalum.com` |
 | `APP_TIMEZONE` | Yes | Server timezone | `UTC` |
 
 ---
@@ -106,7 +106,7 @@ SESSION_DRIVER=redis
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=true
 SESSION_PATH=/
-SESSION_DOMAIN=.ancla.app
+SESSION_DOMAIN=.firmalum.com
 SESSION_SECURE_COOKIE=true
 SESSION_SAME_SITE=lax
 
@@ -127,7 +127,7 @@ REDIS_CACHE_DB=1
 | `SESSION_DRIVER` | Yes | Session backend | `redis` |
 | `SESSION_LIFETIME` | Yes | Session duration (minutes) | `120` |
 | `SESSION_ENCRYPT` | Yes | Encrypt session data | `true` |
-| `SESSION_DOMAIN` | Yes | Cookie domain (include dot for subdomains) | `.ancla.app` |
+| `SESSION_DOMAIN` | Yes | Cookie domain (include dot for subdomains) | `.firmalum.com` |
 | `SESSION_SECURE_COOKIE` | Yes | HTTPS-only cookies | `true` |
 | `REDIS_HOST` | Yes | Redis server | `127.0.0.1` or managed |
 
@@ -169,14 +169,14 @@ FILESYSTEM_DISK=s3
 AWS_ACCESS_KEY_ID=DOxxxxxxxxxxxxxxxx
 AWS_SECRET_ACCESS_KEY=your-secret-key
 AWS_DEFAULT_REGION=fra1
-AWS_BUCKET=ancla-storage
+AWS_BUCKET=firmalum-storage
 AWS_ENDPOINT=https://fra1.digitaloceanspaces.com
-AWS_URL=https://ancla-storage.fra1.digitaloceanspaces.com
+AWS_URL=https://firmalum-storage.fra1.digitaloceanspaces.com
 AWS_USE_PATH_STYLE_ENDPOINT=false
 
 # Document Storage (separate bucket for security)
 DOCUMENTS_DISK=s3
-DOCUMENTS_BUCKET=ancla-documents
+DOCUMENTS_BUCKET=firmalum-documents
 
 # Evidence Storage
 EVIDENCE_STORAGE_DISK=s3
@@ -192,7 +192,7 @@ DOSSIER_STORAGE_DISK=s3
 | `AWS_ACCESS_KEY_ID` | Yes | Spaces access key | From DO console |
 | `AWS_SECRET_ACCESS_KEY` | Yes | Spaces secret | From DO console |
 | `AWS_DEFAULT_REGION` | Yes | Spaces region | `fra1` |
-| `AWS_BUCKET` | Yes | Default bucket | `ancla-storage` |
+| `AWS_BUCKET` | Yes | Default bucket | `firmalum-storage` |
 | `AWS_ENDPOINT` | Yes | Spaces endpoint | `https://fra1.digitaloceanspaces.com` |
 
 ---
@@ -207,8 +207,8 @@ MAIL_PORT=587
 MAIL_USERNAME=your-postmark-api-key
 MAIL_PASSWORD=your-postmark-api-key
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=noreply@ancla.app
-MAIL_FROM_NAME="ANCLA"
+MAIL_FROM_ADDRESS=noreply@firmalum.com
+MAIL_FROM_NAME="Firmalum"
 
 # Postmark Configuration
 POSTMARK_TOKEN=your-postmark-server-token
@@ -222,7 +222,7 @@ POSTMARK_MESSAGE_STREAM_ID=outbound
 | `MAIL_MAILER` | Yes | Mail driver | `smtp` |
 | `MAIL_HOST` | Yes | SMTP server | `smtp.postmarkapp.com` |
 | `MAIL_PORT` | Yes | SMTP port | `587` |
-| `MAIL_FROM_ADDRESS` | Yes | Default sender email | `noreply@ancla.app` |
+| `MAIL_FROM_ADDRESS` | Yes | Default sender email | `noreply@firmalum.com` |
 | `POSTMARK_TOKEN` | Yes | Postmark API token | From Postmark console |
 
 ---
@@ -231,11 +231,11 @@ POSTMARK_MESSAGE_STREAM_ID=outbound
 
 ```env
 # Tenant Resolution
-APP_BASE_DOMAIN=ancla.app
+APP_BASE_DOMAIN=firmalum.com
 TENANT_DEFAULT_SLUG=demo
 
 # Subdomain Routing
-TENANT_SUBDOMAIN_PATTERN={tenant}.ancla.app
+TENANT_SUBDOMAIN_PATTERN={tenant}.firmalum.com
 
 # Admin Exclusions (subdomains that bypass tenant)
 TENANT_EXCLUDED_DOMAINS=admin,api,www,app
@@ -245,7 +245,7 @@ TENANT_EXCLUDED_DOMAINS=admin,api,www,app
 
 | Variable | Required | Description | MVP Value |
 |----------|----------|-------------|-----------|
-| `APP_BASE_DOMAIN` | Yes | Main domain for subdomains | `ancla.app` |
+| `APP_BASE_DOMAIN` | Yes | Main domain for subdomains | `firmalum.com` |
 | `TENANT_EXCLUDED_DOMAINS` | Yes | Subdomains to exclude from tenant resolution | `admin,api,www` |
 
 ---
@@ -281,7 +281,7 @@ AUDIT_RETENTION_DAYS=1825
 
 # Dossier Generation
 EVIDENCE_PLATFORM_SIGNING_KEY=your-platform-signing-key
-DOSSIER_VERIFICATION_URL=https://verify.ancla.app
+DOSSIER_VERIFICATION_URL=https://verify.firmalum.com
 ```
 
 ### Variable Details
@@ -344,7 +344,7 @@ RATE_LIMIT_LOGIN=5
 RATE_LIMIT_API=60
 
 # CORS
-CORS_ALLOWED_ORIGINS=https://ancla.app,https://*.ancla.app
+CORS_ALLOWED_ORIGINS=https://firmalum.com,https://*.firmalum.com
 
 # Security Headers
 SECURITY_HEADERS_ENABLED=true
@@ -428,7 +428,7 @@ MVP_MODE=true
 
 ```env
 ###############################################################################
-# ANCLA ENVIRONMENT CONFIGURATION
+# Firmalum ENVIRONMENT CONFIGURATION
 # ================================
 # Copy this file to .env and configure for your environment
 ###############################################################################
@@ -436,7 +436,7 @@ MVP_MODE=true
 #------------------------------------------------------------------------------
 # CORE APPLICATION
 #------------------------------------------------------------------------------
-APP_NAME=ANCLA
+APP_NAME=Firmalum
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
@@ -717,4 +717,4 @@ class ValidateEnv extends Command
 
 **Document Version**: 1.0
 **Last Updated**: 2025-12-28
-**Author**: ANCLA Architecture Team
+**Author**: Firmalum Architecture Team

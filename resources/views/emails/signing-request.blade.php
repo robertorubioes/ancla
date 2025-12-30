@@ -200,7 +200,7 @@
                     <div class="email-content">
                         <!-- Header -->
                         <div class="email-header">
-                            <h1 class="logo">ANCLA</h1>
+                            <h1 class="logo">Firmalum</h1>
                             <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px;">
                                 Firma Digital Segura
                             </p>
@@ -267,14 +267,14 @@
                         <!-- Footer -->
                         <div class="email-footer">
                             <p class="footer-text">
-                                Este correo ha sido enviado por <strong>ANCLA</strong><br>
+                                Este correo ha sido enviado por <strong>Firmalum</strong><br>
                                 Plataforma de Firma Digital con Valor Legal
                             </p>
                             <p class="no-reply">
                                 ⚠️ No respondas a este correo electrónico
                             </p>
                             <p class="footer-text" style="margin-top: 20px;">
-                                © {{ date('Y') }} ANCLA. Todos los derechos reservados.
+                                © {{ date('Y') }} Firmalum. Todos los derechos reservados.
                             </p>
                         </div>
                     </div>

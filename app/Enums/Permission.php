@@ -5,7 +5,7 @@ namespace App\Enums;
 /**
  * Permission enumeration for role-based access control.
  *
- * Defines all permissions available in the ANCLA platform.
+ * Defines all permissions available in the Firmalum platform.
  * Permissions are grouped by resource type.
  */
 enum Permission: string

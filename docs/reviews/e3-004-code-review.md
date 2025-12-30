@@ -354,7 +354,7 @@ Agregar sección:
 21. ✅ **Certificados Generados**:
     - RSA 4096 bits ✅
     - Validez 10 años (2025-2035) ✅
-    - Subject: CN=ancla.local, O=ANCLA Development ✅
+    - Subject: CN=ancla.local, O=Firmalum Development ✅
     - Permisos correctos (644 .crt, 600 .key) ✅
 
 ### Calidad de Código
@@ -384,9 +384,9 @@ SignedDocument::create([
 ### ✅ GDPR Compliance
 ```php
 // prepareEmbeddedMetadata() - Solo hashes, NO datos personales
-'ANCLA_IP_Hash' => hash('sha256', $metadata['ip_address']), // ✅
-'ANCLA_Device_FP' => hash('sha256', $metadata['device_fingerprint']), // ✅
-'ANCLA_Location' => 'Madrid, Spain', // ✅ Solo ciudad/país
+'Firmalum_IP_Hash' => hash('sha256', $metadata['ip_address']), // ✅
+'Firmalum_Device_FP' => hash('sha256', $metadata['device_fingerprint']), // ✅
+'Firmalum_Location' => 'Madrid, Spain', // ✅ Solo ciudad/país
 // NO embebe: email, nombre completo, IP real, coordenadas GPS
 ```
 
@@ -593,7 +593,7 @@ La implementación de E3-004 demuestra **excelente calidad arquitectónica y de 
 
 Las limitaciones identificadas (TSA embedding, PDF embedding) son **compromises MVP documentados**, no defectos de diseño. El código está estructurado correctamente para implementar la versión completa en iteraciones futuras.
 
-Con las **3 correcciones obligatorias** aplicadas, esta implementación es **production-ready para MVP** y establece bases sólidas para la funcionalidad core de ANCLA.
+Con las **3 correcciones obligatorias** aplicadas, esta implementación es **production-ready para MVP** y establece bases sólidas para la funcionalidad core de Firmalum.
 
 **APROBADO** ✅
 

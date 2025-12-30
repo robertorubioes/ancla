@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\SigningProcess;
+use App\Observers\SigningProcessObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register model observers
+        SigningProcess::observe(SigningProcessObserver::class);
     }
 }

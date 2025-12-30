@@ -134,18 +134,18 @@ class PdfEmbedder
         $this->metadata = $metadata;
 
         // Add metadata to PDF properties
-        if (isset($metadata['ANCLA_Version'])) {
-            $this->pdf->SetCreator('ANCLA Digital Signature Platform v'.$metadata['ANCLA_Version']);
+        if (isset($metadata['Firmalum_Version'])) {
+            $this->pdf->SetCreator('Firmalum Digital Signature Platform v'.$metadata['Firmalum_Version']);
         }
 
-        if (isset($metadata['ANCLA_Process_ID'])) {
-            $this->pdf->SetSubject('Signed Document - Process ID: '.$metadata['ANCLA_Process_ID']);
+        if (isset($metadata['Firmalum_Process_ID'])) {
+            $this->pdf->SetSubject('Signed Document - Process ID: '.$metadata['Firmalum_Process_ID']);
         }
 
         // Add custom keywords with metadata
         $keywords = [];
         foreach ($metadata as $key => $value) {
-            if (str_starts_with($key, 'ANCLA_')) {
+            if (str_starts_with($key, 'Firmalum_')) {
                 $keywords[] = "{$key}={$value}";
             }
         }
@@ -375,7 +375,7 @@ class PdfEmbedder
     }
 
     /**
-     * Draw ANCLA logo.
+     * Draw Firmalum logo.
      */
     private function drawLogo(): void
     {

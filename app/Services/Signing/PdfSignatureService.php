@@ -395,17 +395,17 @@ class PdfSignatureService
     private function prepareEmbeddedMetadata(Signer $signer, array $metadata): array
     {
         return [
-            'ANCLA_Version' => config('signing.metadata.version', '1.0'),
-            'ANCLA_Evidence_ID' => $metadata['evidence_package_uuid'] ?? null,
-            'ANCLA_Process_ID' => $signer->signing_process_id,
-            'ANCLA_Signer_ID' => $signer->id,
-            'ANCLA_Verify_Code' => $metadata['verification_code'] ?? null,
-            'ANCLA_Verify_URL' => $metadata['verification_url'] ?? config('app.url'),
-            'ANCLA_IP_Hash' => isset($metadata['ip_address']) ? hash('sha256', $metadata['ip_address']) : null,
-            'ANCLA_Location' => $metadata['location_summary'] ?? null,
-            'ANCLA_Device_FP' => isset($metadata['device_fingerprint']) ? hash('sha256', $metadata['device_fingerprint']) : null,
-            'ANCLA_Consent_ID' => $metadata['consent_id'] ?? null,
-            'ANCLA_Audit_Chain' => $metadata['audit_chain_hash'] ?? null,
+            'Firmalum_Version' => config('signing.metadata.version', '1.0'),
+            'Firmalum_Evidence_ID' => $metadata['evidence_package_uuid'] ?? null,
+            'Firmalum_Process_ID' => $signer->signing_process_id,
+            'Firmalum_Signer_ID' => $signer->id,
+            'Firmalum_Verify_Code' => $metadata['verification_code'] ?? null,
+            'Firmalum_Verify_URL' => $metadata['verification_url'] ?? config('app.url'),
+            'Firmalum_IP_Hash' => isset($metadata['ip_address']) ? hash('sha256', $metadata['ip_address']) : null,
+            'Firmalum_Location' => $metadata['location_summary'] ?? null,
+            'Firmalum_Device_FP' => isset($metadata['device_fingerprint']) ? hash('sha256', $metadata['device_fingerprint']) : null,
+            'Firmalum_Consent_ID' => $metadata['consent_id'] ?? null,
+            'Firmalum_Audit_Chain' => $metadata['audit_chain_hash'] ?? null,
         ];
     }
 }

@@ -9,7 +9,7 @@
 
 ## Contexto
 
-Para que las firmas electrónicas de ANCLA tengan máxima validez legal ante tribunales, el sistema de evidencias core (ADR-005) debe complementarse con **evidencias contextuales** que demuestren:
+Para que las firmas electrónicas de Firmalum tengan máxima validez legal ante tribunales, el sistema de evidencias core (ADR-005) debe complementarse con **evidencias contextuales** que demuestren:
 
 1. **Identidad del dispositivo**: Huella digital que identifica inequívocamente el dispositivo usado
 2. **Ubicación del firmante**: Geolocalización GPS o aproximada por IP
@@ -349,11 +349,11 @@ Generar un PDF verificable que contenga todas las evidencias del proceso de firm
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         DOSSIER PROBATORIO                          │
-│                              ANCLA                                  │
+│                              Firmalum                                  │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  PÁGINA 1: PORTADA                                                  │
-│  ├── Logo ANCLA + Logo Tenant                                       │
+│  ├── Logo Firmalum + Logo Tenant                                       │
 │  ├── Título: "Dossier de Evidencias"                               │
 │  ├── Código de verificación: XXXX-XXXX-XXXX                        │
 │  ├── QR de verificación                                            │
@@ -400,7 +400,7 @@ Generar un PDF verificable que contenga todas las evidencias del proceso de firm
 │  └── Screenshots de consentimiento (miniatura)                     │
 │                                                                     │
 │  PÁGINA FINAL: CERTIFICACIÓN                                        │
-│  ├── Firma digital de ANCLA                                        │
+│  ├── Firma digital de Firmalum                                        │
 │  ├── TSA Token del dossier                                         │
 │  ├── Hash del PDF                                                  │
 │  ├── Instrucciones de verificación                                 │

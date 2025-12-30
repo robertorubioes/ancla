@@ -102,7 +102,7 @@ public function embedTsaToken(string $pkcs7Der, TsaToken $tsaToken): string
 **Estado Actual**:
 - Se genera PKCS#7 válido ✅
 - Se crea visual signature appearance ✅
-- Se embebe metadata ANCLA ✅
+- Se embebe metadata Firmalum ✅
 - **PERO**: NO se crea signature dictionary con ByteRange ❌
 
 **Archivo**: [`app/Services/Signing/PdfEmbedder.php:109-127`](../app/Services/Signing/PdfEmbedder.php:109)
@@ -422,7 +422,7 @@ class CertificateServiceTest extends TestCase
 
         // Assert
         $this->assertNotNull($certificate);
-        $this->assertStringContainsString('ANCLA', $certificate->getSubject());
+        $this->assertStringContainsString('Firmalum', $certificate->getSubject());
         $this->assertTrue($certificate->isValid());
         $this->assertFalse($certificate->isExpired());
         $this->assertGreaterThan(0, $certificate->getDaysUntilExpiration());
@@ -508,8 +508,8 @@ class SignedDocumentFactory extends Factory
             'original_hash' => hash('sha256', '%PDF-1.4 original'),
             'hash_algorithm' => 'SHA-256',
             'pkcs7_signature' => bin2hex(random_bytes(256)),
-            'certificate_subject' => 'CN=ANCLA Development, O=ANCLA',
-            'certificate_issuer' => 'CN=ANCLA Development, O=ANCLA',
+            'certificate_subject' => 'CN=Firmalum Development, O=Firmalum',
+            'certificate_issuer' => 'CN=Firmalum Development, O=Firmalum',
             'certificate_serial' => (string) random_int(1000000, 9999999),
             'certificate_fingerprint' => hash('sha256', random_bytes(32)),
             'pades_level' => 'B-LT',
@@ -526,7 +526,7 @@ class SignedDocumentFactory extends Factory
             'signature_visible' => true,
             'signature_appearance' => [],
             'embedded_metadata' => [
-                'ANCLA_Version' => '1.0',
+                'Firmalum_Version' => '1.0',
             ],
             'verification_code_id' => null,
             'qr_code_embedded' => true,

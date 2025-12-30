@@ -102,7 +102,7 @@
     - Self-signed certificate for development
     - RSA 4096 bits
     - Validity: 10 years (2025-12-30 to 2035-12-27)
-    - Subject: C=ES, ST=Madrid, L=Madrid, O=ANCLA Development, CN=ancla.local
+    - Subject: C=ES, ST=Madrid, L=Madrid, O=Firmalum Development, CN=ancla.local
     - Key Usage: digitalSignature
     - Extended Key Usage: emailProtection
     - Permissions: 644 (cert), 600 (key)
@@ -181,7 +181,7 @@
    │   ├─ drawVerificationInfo()
    │   ├─ drawQrCode()
    │   └─ drawLogo()
-   ├─ embedMetadata(ANCLA custom fields)
+   ├─ embedMetadata(Firmalum custom fields)
    └─ generate() → signed PDF content
 
 9. storeSignedPdf()
@@ -238,7 +238,7 @@ Eventos logged automáticamente vía Auditable trait:
 - ✅ X.509 Certificate embedded
 - ✅ TSA Qualified timestamp (via TsaService)
 - ✅ Signature appearance visible
-- ✅ Metadata ANCLA embebida
+- ✅ Metadata Firmalum embebida
 - ✅ Hash integrity verification
 - ⚠️ Adobe Reader validation (pendiente testing manual)
 
@@ -323,7 +323,7 @@ TSA_MOCK=true  # false en producción
 Esta implementación es un MVP funcional que:
 - ✅ Crea firmas digitales válidas con PKCS#7
 - ✅ Integra TSA timestamps
-- ✅ Embeds metadata ANCLA
+- ✅ Embeds metadata Firmalum
 - ✅ Genera PDF con appearance visual
 - ⚠️ Embedding PKCS#7 simplificado (no ByteRange completo)
 
@@ -354,7 +354,7 @@ Para validación completa en Adobe Reader, se requiere (Sprint 5):
 - [ ] PKCS#7 signature creado correctamente
 - [ ] TSA timestamp integrado
 - [ ] PDF con appearance visible
-- [ ] Metadata ANCLA embebida
+- [ ] Metadata Firmalum embebida
 - [ ] Storage paths correctos
 - [ ] Validación de firmas funciona
 

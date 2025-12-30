@@ -41,7 +41,7 @@ class SigningRequestMail extends Mailable
         return new Envelope(
             from: new Address(
                 address: config('mail.from.address', 'noreply@ancla.app'),
-                name: config('mail.from.name', 'ANCLA')
+                name: config('mail.from.name', 'Firmalum')
             ),
             subject: "Firma requerida: {$documentName}",
         );
@@ -80,7 +80,7 @@ class SigningRequestMail extends Mailable
      */
     private function getPromoterName(): string
     {
-        return $this->signingProcess->createdBy->name ?? 'ANCLA';
+        return $this->signingProcess->createdBy->name ?? 'Firmalum';
     }
 
     /**

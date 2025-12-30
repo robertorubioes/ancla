@@ -51,7 +51,7 @@ return new class extends Migration
             $table->json('signature_appearance')->nullable(); // Layout config
 
             // Embedded metadata
-            $table->json('embedded_metadata'); // ANCLA custom fields
+            $table->json('embedded_metadata'); // Firmalum custom fields
             $table->foreignId('verification_code_id')->nullable()->constrained();
             $table->boolean('qr_code_embedded')->default(true);
 

@@ -22,7 +22,7 @@
 
 ### Contexto
 
-ANCLA es una plataforma SaaS de firma electrónica que opera como **marca blanca (white-label)**. Múltiples organizaciones (tenants) usarán la plataforma, cada una con:
+Firmalum es una plataforma SaaS de firma electrónica que opera como **marca blanca (white-label)**. Múltiples organizaciones (tenants) usarán la plataforma, cada una con:
 - Sus propios usuarios
 - Sus propios documentos
 - Sus propias configuraciones de marca
@@ -58,7 +58,7 @@ El tenant se identificará mediante **subdomain-first con fallback a header**:
 
 ```
 Prioridad de resolución:
-1. Subdominio: empresa.ancla.app → tenant "empresa"
+1. Subdominio: empresa.firmalum.com → tenant "empresa"
 2. Dominio personalizado: firma.empresa.com → buscar en tabla tenants
 3. Header X-Tenant-ID: Para APIs internas/testing
 ```
@@ -68,7 +68,7 @@ Prioridad de resolución:
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        Request HTTP                                  │
-│              empresa.ancla.app/documentos                           │
+│              empresa.firmalum.com/documentos                           │
 └─────────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -346,7 +346,7 @@ class IdentifyTenant
      */
     protected function extractSubdomain(string $host): ?string
     {
-        $baseDomain = config('app.base_domain', 'ancla.app');
+        $baseDomain = config('app.base_domain', 'firmalum.com');
         
         if (str_ends_with($host, $baseDomain)) {
             $subdomain = str_replace('.' . $baseDomain, '', $host);
@@ -468,7 +468,7 @@ class Tenant extends Model
             return "https://{$this->domain}";
         }
         
-        $baseDomain = config('app.base_domain', 'ancla.app');
+        $baseDomain = config('app.base_domain', 'firmalum.com');
         return "https://{$this->slug}.{$baseDomain}";
     }
     
@@ -717,12 +717,12 @@ return new class extends Migration
 ```php
 // config/app.php (añadir)
 
-'base_domain' => env('APP_BASE_DOMAIN', 'ancla.app'),
+'base_domain' => env('APP_BASE_DOMAIN', 'firmalum.com'),
 ```
 
 ```env
 # .env
-APP_BASE_DOMAIN=ancla.app
+APP_BASE_DOMAIN=firmalum.com
 ```
 
 ---
@@ -801,7 +801,7 @@ APP_BASE_DOMAIN=ancla.app
 
 ### Contexto
 
-ANCLA requiere un sistema de autenticación robusto que:
+Firmalum requiere un sistema de autenticación robusto que:
 1. **Se integre con multi-tenant**: Login en contexto del tenant (subdominio/dominio)
 2. **Sea seguro**: Protección contra ataques comunes (brute force, session hijacking)
 3. **Soporte 2FA**: TOTP compatible con Google Authenticator, Authy, etc.
@@ -836,7 +836,7 @@ La autenticación es el pilar de seguridad sobre el cual se construyen los proce
 │                    FLUJO DE AUTENTICACIÓN MULTI-TENANT                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-        Usuario accede a: empresa.ancla.app/login
+        Usuario accede a: empresa.firmalum.com/login
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -1042,7 +1042,7 @@ sequenceDiagram
     participant DB as Database
     participant 2FA as TwoFactorAuth
     
-    U->>B: Accede a empresa.ancla.app/login
+    U->>B: Accede a empresa.firmalum.com/login
     B->>TM: GET /login
     TM->>DB: SELECT * FROM tenants WHERE slug='empresa'
     DB-->>TM: Tenant encontrado
@@ -1098,7 +1098,7 @@ sequenceDiagram
     alt Usuario existe en tenant
         F->>DB: INSERT INTO password_reset_tokens (email, tenant_id, token)
         F->>M: Enviar email con link reset
-        Note over M: Link: empresa.ancla.app/reset-password/{token}
+        Note over M: Link: empresa.firmalum.com/reset-password/{token}
         M-->>U: Email recibido
         F-->>B: "Reset link sent"
     else Usuario no existe
@@ -1908,7 +1908,7 @@ return [
     
     'cookie' => env('SESSION_COOKIE', 'ancla_session'),
     
-    'domain' => env('SESSION_DOMAIN'),  // .ancla.app para subdominios
+    'domain' => env('SESSION_DOMAIN'),  // .firmalum.com para subdominios
     
     'secure' => env('SESSION_SECURE_COOKIE', true),  // Solo HTTPS
     
@@ -2301,13 +2301,13 @@ class LogAuthenticationEvents
 
 ### Contexto
 
-ANCLA es una plataforma de **firma electrónica avanzada conforme a eIDAS**. Para que las firmas tengan validez legal ante tribunales, necesitamos un **Sistema de Evidencias** robusto que garantice:
+Firmalum es una plataforma de **firma electrónica avanzada conforme a eIDAS**. Para que las firmas tengan validez legal ante tribunales, necesitamos un **Sistema de Evidencias** robusto que garantice:
 
 1. **Timestamping Cualificado (TSA)**: Prueba criptográfica del momento exacto de cada evento
 2. **Integridad de Documentos**: Hash SHA-256 que detecta cualquier alteración
 3. **Audit Trail Inmutable**: Registro encadenado tipo blockchain imposible de manipular
 
-Este sistema es el **núcleo diferenciador de ANCLA**. Sin evidencias verificables, las firmas no tendrían valor legal.
+Este sistema es el **núcleo diferenciador de Firmalum**. Sin evidencias verificables, las firmas no tendrían valor legal.
 
 ### Requisitos Legales eIDAS
 
@@ -2352,7 +2352,7 @@ Este sistema es el **núcleo diferenciador de ANCLA**. Sin evidencias verificabl
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                           SISTEMA DE EVIDENCIAS ANCLA                                │
+│                           SISTEMA DE EVIDENCIAS Firmalum                                │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────┐    ┌─────────────────────────┐    ┌─────────────────────────┐
@@ -2395,7 +2395,7 @@ Este sistema es el **núcleo diferenciador de ANCLA**. Sin evidencias verificabl
 ```mermaid
 sequenceDiagram
     participant U as Usuario
-    participant A as ANCLA
+    participant A as Firmalum
     participant HS as HashingService
     participant TS as TsaService
     participant AT as AuditTrailService
@@ -3522,7 +3522,7 @@ class EvidencePackageService
             'package' => [
                 'uuid' => $uuid->toString(),
                 'generated_at' => now()->toIso8601String(),
-                'generator' => 'ANCLA Evidence System v1.0',
+                'generator' => 'Firmalum Evidence System v1.0',
                 'tenant' => [
                     'id' => $tenant->id,
                     'name' => $tenant->name,
@@ -3656,11 +3656,11 @@ class EvidencePackageService
     {
         return <<<README
 ================================================================================
-                    ANCLA - PAQUETE DE EVIDENCIAS LEGALES
+                    Firmalum - PAQUETE DE EVIDENCIAS LEGALES
 ================================================================================
 
 Este paquete contiene las evidencias criptográficas del documento firmado
-electrónicamente a través de la plataforma ANCLA.
+electrónicamente a través de la plataforma Firmalum.
 
 CONTENIDO DEL PAQUETE:
 ----------------------
@@ -3694,10 +3694,10 @@ Las evidencias contenidas son verificables ante tribunal.
 
 SOPORTE:
 --------
-Para dudas sobre este paquete: soporte@ancla.app
+Para dudas sobre este paquete: soporte@firmalum.com
 
 ================================================================================
-Generado por ANCLA - Plataforma de Firma Electrónica Avanzada
+Generado por Firmalum - Plataforma de Firma Electrónica Avanzada
 {$document->created_at->format('Y')} - Todos los derechos reservados
 ================================================================================
 README;
@@ -4739,7 +4739,7 @@ TSA Timestamp → Encrypt → Store → Audit Trail
 
 ### Contexto
 
-ANCLA necesita una estrategia de despliegue que permita:
+Firmalum necesita una estrategia de despliegue que permita:
 
 1. **Velocidad de lanzamiento**: MVP debe estar en producción rápidamente
 2. **Iteración rápida**: Deploy frecuentes con nuevas funcionalidades
@@ -4771,7 +4771,7 @@ ANCLA necesita una estrategia de despliegue que permita:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        ARQUITECTURA MVP ANCLA                            │
+│                        ARQUITECTURA MVP Firmalum                            │
 └─────────────────────────────────────────────────────────────────────────┘
 
                               Internet
@@ -4779,7 +4779,7 @@ ANCLA necesita una estrategia de despliegue que permita:
                                  ▼
                     ┌─────────────────────────┐
                     │   DNS (Cloudflare/DO)   │
-                    │   *.ancla.app           │
+                    │   *.firmalum.com           │
                     └───────────┬─────────────┘
                                 │
                                 ▼
@@ -4879,7 +4879,7 @@ ANCLA necesita una estrategia de despliegue que permita:
 | DO Managed MySQL 1GB | $15 (€14) | Base de datos |
 | DO Spaces 100GB | $5 (€5) | Almacenamiento |
 | Postmark 10K emails | $10 (€9) | Transactional email |
-| Domain (ancla.app) | ~$2 (€2) | Registro anual prorrateado |
+| Domain (firmalum.com) | ~$2 (€2) | Registro anual prorrateado |
 | **TOTAL** | **~€60-70/mes** | |
 
 #### Growth Phase (Meses 6-12)

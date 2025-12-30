@@ -22,13 +22,19 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'slug',
+        'subdomain',
         'domain',
         'logo_path',
         'primary_color',
         'secondary_color',
         'status',
         'plan',
+        'max_users',
+        'max_documents_per_month',
         'trial_ends_at',
+        'suspended_at',
+        'suspended_reason',
+        'admin_notes',
         'settings',
     ];
 
@@ -42,6 +48,7 @@ class Tenant extends Model
         return [
             'settings' => 'array',
             'trial_ends_at' => 'datetime',
+            'suspended_at' => 'datetime',
         ];
     }
 
@@ -210,5 +217,116 @@ class Tenant extends Model
     public function scopeByDomain($query, string $domain)
     {
         return $query->where('domain', $domain);
+    }
+
+    /**
+     * Scope para buscar por subdomain.
+     */
+    public function scopeBySubdomain($query, string $subdomain)
+    {
+        return $query->where('subdomain', $subdomain);
+    }
+
+    /**
+     * Suspender el tenant con un motivo.
+     */
+    public function suspend(string $reason): void
+    {
+        $this->update([
+            'status' => 'suspended',
+            'suspended_at' => now(),
+            'suspended_reason' => $reason,
+        ]);
+    }
+
+    /**
+     * Reactivar un tenant suspendido.
+     */
+    public function unsuspend(): void
+    {
+        $this->update([
+            'status' => 'active',
+            'suspended_at' => null,
+            'suspended_reason' => null,
+        ]);
+    }
+
+    /**
+     * Verificar si el tenant puede agregar más usuarios.
+     */
+    public function canAddUser(): bool
+    {
+        if ($this->max_users === null) {
+            return true;
+        }
+
+        return $this->users()->count() < $this->max_users;
+    }
+
+    /**
+     * Obtener la cuota de documentos por mes.
+     */
+    public function getDocumentQuota(): ?int
+    {
+        return $this->max_documents_per_month;
+    }
+
+    /**
+     * Verificar si el tenant ha alcanzado su cuota de documentos.
+     */
+    public function hasReachedDocumentQuota(): bool
+    {
+        if ($this->max_documents_per_month === null) {
+            return false;
+        }
+
+        $documentsThisMonth = Document::where('tenant_id', $this->id)
+            ->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+
+        return $documentsThisMonth >= $this->max_documents_per_month;
+    }
+
+    /**
+     * Obtener límites del plan según el tipo.
+     */
+    public static function getPlanLimits(string $plan): array
+    {
+        return match ($plan) {
+            'free' => [
+                'max_users' => 1,
+                'max_documents_per_month' => 10,
+            ],
+            'starter' => [
+                'max_users' => 5,
+                'max_documents_per_month' => 50,
+            ],
+            'professional' => [
+                'max_users' => 20,
+                'max_documents_per_month' => 500,
+            ],
+            'enterprise' => [
+                'max_users' => null, // unlimited
+                'max_documents_per_month' => null, // unlimited
+            ],
+            default => [
+                'max_users' => 1,
+                'max_documents_per_month' => 10,
+            ],
+        };
+    }
+
+    /**
+     * Aplicar límites del plan.
+     */
+    public function applyPlanLimits(): void
+    {
+        $limits = self::getPlanLimits($this->plan);
+
+        $this->update([
+            'max_users' => $limits['max_users'],
+            'max_documents_per_month' => $limits['max_documents_per_month'],
+        ]);
     }
 }

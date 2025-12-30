@@ -9,7 +9,7 @@
 
 ## Contexto
 
-El Sprint 3 aborda tres funcionalidades fundamentales para la plataforma ANCLA:
+El Sprint 3 aborda tres funcionalidades fundamentales para la plataforma Firmalum:
 
 1. **E1-008 - Conservación de Evidencias 5+ Años**: La normativa eIDAS y las regulaciones de firma electrónica avanzada requieren conservar las evidencias durante un mínimo de 5 años. Necesitamos una estrategia de preservación a largo plazo que garantice la integridad criptográfica en el tiempo.
 

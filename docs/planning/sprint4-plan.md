@@ -1,7 +1,7 @@
 # Sprint 4 - Plan de Ejecución: Sistema de Firma Electrónica
 
 **Fecha creación**: 2025-12-29  
-**Product Owner**: ANCLA Team  
+**Product Owner**: Firmalum Team  
 **Duración estimada**: 4 semanas  
 **Estado**: Planificado
 
@@ -335,7 +335,7 @@ E3-001 (Crear proceso) ← BLOQUEANTE
   - Metadata: cómo embeber evidencias en PDF
 
 **AC2: Generación de certificado de plataforma**
-- [ ] Script para generar certificado X.509 para ANCLA
+- [ ] Script para generar certificado X.509 para Firmalum
 - [ ] Almacenar cert + private key en storage seguro
 - [ ] Configuración en `.env`:
   - `SIGNATURE_CERT_PATH`
@@ -355,9 +355,9 @@ E3-001 (Crear proceso) ← BLOQUEANTE
 - [ ] Output: PDF firmado con extensión PAdES
 
 **AC4: Metadata embebida en PDF**
-- [ ] Campo PDF: `/ANCLA_EvidencePackage_ID` → UUID del evidence package
-- [ ] Campo PDF: `/ANCLA_Verification_URL` → URL pública de verificación
-- [ ] Campo PDF: `/ANCLA_QR_Code` → Embedded QR como imagen
+- [ ] Campo PDF: `/Firmalum_EvidencePackage_ID` → UUID del evidence package
+- [ ] Campo PDF: `/Firmalum_Verification_URL` → URL pública de verificación
+- [ ] Campo PDF: `/Firmalum_QR_Code` → Embedded QR como imagen
 - [ ] Campo PDF: `/SignatureTime` → ISO 8601 timestamp
 - [ ] Campo PDF: `/SignerInfo` → Nombre, email (hasheado)
 

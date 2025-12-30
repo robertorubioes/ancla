@@ -3,7 +3,7 @@
 namespace App\Enums;
 
 /**
- * User role enumeration for the ANCLA platform.
+ * User role enumeration for the Firmalum platform.
  *
  * Defines all roles available and their associated permissions.
  */

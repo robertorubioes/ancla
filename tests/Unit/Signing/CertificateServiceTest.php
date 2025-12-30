@@ -28,7 +28,7 @@ class CertificateServiceTest extends TestCase
 
         // Assert
         $this->assertNotNull($certificate);
-        $this->assertStringContainsString('ANCLA', $certificate->getSubject());
+        $this->assertStringContainsString('Firmalum', $certificate->getSubject());
         $this->assertTrue($certificate->isValid());
         $this->assertFalse($certificate->isExpired());
         $this->assertGreaterThan(0, $certificate->getDaysUntilExpiration());

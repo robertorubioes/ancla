@@ -64,6 +64,11 @@ class Signer extends Model
         'signature_data',
         'evidence_package_id',
         'signature_metadata',
+        'copy_sent_at',
+        'download_token',
+        'download_expires_at',
+        'downloaded_at',
+        'download_count',
     ];
 
     /**
@@ -79,6 +84,10 @@ class Signer extends Model
         'rejected_at' => 'datetime',
         'metadata' => 'array',
         'signature_metadata' => 'array',
+        'copy_sent_at' => 'datetime',
+        'download_expires_at' => 'datetime',
+        'downloaded_at' => 'datetime',
+        'download_count' => 'integer',
     ];
 
     /**
