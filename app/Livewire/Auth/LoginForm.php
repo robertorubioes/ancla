@@ -31,11 +31,17 @@ class LoginForm extends Component
 
         $tenant = app()->bound('tenant') ? app('tenant') : null;
 
-        if (! Auth::attempt([
+        // Build credentials array - only include tenant_id if tenant is bound
+        $credentials = [
             'email' => $this->email,
             'password' => $this->password,
-            'tenant_id' => $tenant?->id,
-        ], $this->remember)) {
+        ];
+
+        if ($tenant) {
+            $credentials['tenant_id'] = $tenant->id;
+        }
+
+        if (! Auth::attempt($credentials, $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -47,8 +53,9 @@ class LoginForm extends Component
 
         session()->regenerate();
 
-        // Store tenant_id in session for validation
-        session(['tenant_id' => $tenant?->id]);
+        // Store tenant_id in session for validation (use authenticated user's tenant)
+        $user = Auth::user();
+        session(['tenant_id' => $user->tenant_id]);
 
         $this->redirectIntended(default: route('dashboard'), navigate: true);
     }
