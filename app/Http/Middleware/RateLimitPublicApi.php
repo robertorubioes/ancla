@@ -79,6 +79,10 @@ class RateLimitPublicApi
                 config('verification.rate_limit.download_per_minute', 10),
                 config('verification.rate_limit.download_per_day', 100),
             ],
+            'signing' => [
+                config('signing.rate_limit.per_minute', 10),
+                config('signing.rate_limit.per_day', 200),
+            ],
             default => [
                 config('verification.rate_limit.per_minute', 60),
                 config('verification.rate_limit.per_day', 1000),

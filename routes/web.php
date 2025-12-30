@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\PublicVerificationController;
 use App\Http\Controllers\DocumentController;
+use App\Livewire\Signing\SigningPage;
+use App\Livewire\SigningProcess\CreateSigningProcess;
 use App\Livewire\Verification\VerificationPage;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,22 @@ Route::middleware(['rate.limit.public:verification'])->group(function () {
     // Short URL for QR codes
     Route::get('/v/{code}', VerificationPage::class)
         ->name('verify.short');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Public Signing Routes (No Authentication Required)
+|--------------------------------------------------------------------------
+|
+| These routes are publicly accessible for signers to access and sign
+| documents via unique token links. Rate limiting is applied.
+|
+*/
+
+Route::middleware(['rate.limit.public:signing'])->group(function () {
+    // Signing page with unique token
+    Route::get('/sign/{token}', SigningPage::class)
+        ->name('sign.show');
 });
 
 /*
@@ -97,6 +115,26 @@ Route::middleware(['auth', 'identify.tenant'])->group(function () {
     // Document verification
     Route::post('/documents/{document}/verify', [DocumentController::class, 'verify'])
         ->name('documents.verify');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Signing Process Routes
+|--------------------------------------------------------------------------
+|
+| Routes for managing electronic signature processes including creation,
+| viewing process status, and managing signers.
+|
+*/
+
+Route::middleware(['auth', 'identify.tenant'])->group(function () {
+    // Create signing process
+    Route::get('/signing-processes/create', CreateSigningProcess::class)
+        ->name('signing-processes.create');
+
+    // Create with pre-selected document
+    Route::get('/signing-processes/create/{documentId}', CreateSigningProcess::class)
+        ->name('signing-processes.create.document');
 });
 
 // Signed URL routes for document download and thumbnail
