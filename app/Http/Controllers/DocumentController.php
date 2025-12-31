@@ -343,4 +343,58 @@ class DocumentController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Preview document inline (for signers).
+     *
+     * This endpoint allows signers to view the document they need to sign.
+     * Access is controlled via session-based signer token verification.
+     * Signers can view the document before OTP verification (to read before signing).
+     */
+    public function preview(Request $request, Document $document): Response
+    {
+        // Check if user is authenticated owner OR is a valid signer
+        $isOwner = auth()->check() && $document->user_id === auth()->id();
+        
+        // Check if request comes from a signer with valid token in session
+        $signerToken = session('signer_token');
+        $isValidSigner = false;
+        
+        if ($signerToken) {
+            // Signer just needs a valid token for this document - OTP not required for preview
+            $isValidSigner = \App\Models\Signer::where('token', $signerToken)
+                ->whereHas('signingProcess', function ($query) use ($document) {
+                    $query->where('document_id', $document->id);
+                })
+                ->exists();
+        }
+
+        if (! $isOwner && ! $isValidSigner) {
+            abort(403, 'Unauthorized access to document preview');
+        }
+
+        if (! $document->isReady()) {
+            abort(404, 'Document is not available for preview');
+        }
+
+        try {
+            $content = $this->uploadService->getDecryptedContent($document);
+
+            return response($content, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$document->original_filename.'"',
+                'Content-Length' => strlen($content),
+                'Cache-Control' => 'private, no-cache, no-store',
+                'X-Content-Type-Options' => 'nosniff',
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Document preview failed', [
+                'document_id' => $document->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            abort(500, 'Failed to retrieve document');
+        }
+    }
 }

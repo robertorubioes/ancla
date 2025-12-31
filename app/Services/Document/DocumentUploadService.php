@@ -352,7 +352,8 @@ class DocumentUploadService
      */
     public function getDecryptedContent(Document $document): string
     {
-        $content = Storage::disk($document->storage_disk)->get($document->storage_path);
+        $fullPath = $document->storage_path . '/' . $document->stored_filename;
+        $content = Storage::disk($document->storage_disk)->get($fullPath);
 
         if ($content === null) {
             throw new DocumentUploadException('Document file not found in storage');
@@ -431,8 +432,9 @@ class DocumentUploadService
     public function forceDelete(Document $document): bool
     {
         // Delete the stored file
-        if ($document->storage_path) {
-            Storage::disk($document->storage_disk)->delete($document->storage_path);
+        if ($document->storage_path && $document->stored_filename) {
+            $fullPath = $document->storage_path . '/' . $document->stored_filename;
+            Storage::disk($document->storage_disk)->delete($fullPath);
         }
 
         // Delete thumbnail if exists

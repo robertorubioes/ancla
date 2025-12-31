@@ -63,6 +63,31 @@ class SigningPage extends Component
 
     public bool $signatureError = false;
 
+    // New step-based flow properties
+    public bool $showSignaturePad = false;
+
+    public bool $documentRead = false;
+
+    public bool $hasReadDocument = false;
+
+    /**
+     * Proceed to the OTP verification step after reading the document.
+     */
+    public function proceedToVerification(): void
+    {
+        if ($this->documentRead) {
+            $this->hasReadDocument = true;
+        }
+    }
+
+    /**
+     * Go back to the document reading step from OTP.
+     */
+    public function backToReading(): void
+    {
+        $this->hasReadDocument = false;
+    }
+
     /**
      * Mount the component and validate access.
      */
@@ -74,6 +99,9 @@ class SigningPage extends Component
             $result = $accessService->validateAccess($token);
             $this->signerId = $result->signer->id;
             $this->isLoading = false;
+            
+            // Store signer token in session for document preview access
+            session(['signer_token' => $token]);
         } catch (SigningAccessException $e) {
             $this->errorMessage = $e->getMessage();
             $this->errorCode = $e->getCode();
@@ -320,9 +348,39 @@ class SigningPage extends Component
     }
 
     /**
+     * Proceed to the signature pad after OTP verification.
+     */
+    public function proceedToSign(): void
+    {
+        if ($this->hasVerifiedOtp) {
+            $this->showSignaturePad = true;
+        }
+    }
+
+    /**
+     * Go back to the OTP verification step.
+     */
+    public function backToVerification(): void
+    {
+        $this->showSignaturePad = false;
+    }
+
+    /**
+     * Use the typed signature as signature data.
+     */
+    public function useTypedSignature(): void
+    {
+        if (! empty($this->typedSignature)) {
+            // Create a simple text-based signature indicator
+            // The actual conversion to image happens server-side when signing
+            $this->signatureData = 'typed:' . $this->typedSignature;
+        }
+    }
+
+    /**
      * Render the component.
      */
-    #[Layout('layouts.public')]
+    #[Layout('layouts.signing')]
     public function render(): View
     {
         return view('livewire.signing.signing-page');
