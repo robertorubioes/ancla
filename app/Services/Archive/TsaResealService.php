@@ -38,7 +38,7 @@ class TsaResealService
             $preservedHash = $document->content_hash;
 
             // Request initial TSA timestamp
-            $initialToken = $this->tsaService->requestTimestamp($preservedHash);
+            $initialToken = $this->tsaService->requestTimestamp($preservedHash, $document->tenant_id);
 
             // Calculate expiry date (if available from TSA token)
             $expiresAt = $initialToken->expires_at ?? now()->addYears(2);
@@ -112,7 +112,7 @@ class TsaResealService
                 $dataToSeal = $this->calculateCumulativeHash($chain);
 
                 // Request new TSA timestamp
-                $newToken = $this->tsaService->requestTimestamp($dataToSeal);
+                $newToken = $this->tsaService->requestTimestamp($dataToSeal, $chain->tenant_id);
 
                 // Calculate expiry
                 $expiresAt = $newToken->expires_at ?? now()->addYears(2);

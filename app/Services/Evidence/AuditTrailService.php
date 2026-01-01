@@ -102,7 +102,7 @@ class AuditTrailService
 
             // Request TSA timestamp for critical events
             if ($this->requiresTsa($event)) {
-                $tsaToken = $this->tsaService->requestTimestamp($hash);
+                $tsaToken = $this->tsaService->requestTimestamp($hash, $tenantId);
                 $entry->update(['tsa_token_id' => $tsaToken->id]);
             }
 
