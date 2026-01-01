@@ -134,8 +134,7 @@ class CreateSigningProcess extends Component
                 $uploadService = app(DocumentUploadService::class);
                 $document = $uploadService->upload(
                     $this->uploadedFile,
-                    auth()->user()->tenant_id,
-                    auth()->id()
+                    auth()->user()
                 );
                 
                 $this->documentId = $document->id;
