@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Document;
 
 use App\Models\Document;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Evidence\AuditTrailService;
 use App\Services\Evidence\HashingService;
@@ -61,7 +62,7 @@ class DocumentUploadService
         // 3. Get tenant context - fallback to user's tenant
         $tenant = $this->tenantContext->get();
         if (! $tenant && $user->tenant_id) {
-            $tenant = $user->tenant;
+            $tenant = Tenant::find($user->tenant_id);
         }
         if (! $tenant) {
             throw new DocumentUploadException('No tenant context available');
