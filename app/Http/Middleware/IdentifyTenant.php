@@ -105,14 +105,14 @@ class IdentifyTenant
     }
 
     /**
-     * Buscar tenant por slug con cache.
+     * Buscar tenant por subdomain con cache.
      */
-    protected function findTenantBySlug(string $slug): ?Tenant
+    protected function findTenantBySlug(string $subdomain): ?Tenant
     {
         return Cache::remember(
-            "tenant:slug:{$slug}",
+            "tenant:subdomain:{$subdomain}",
             now()->addMinutes(60),
-            fn () => Tenant::where('slug', $slug)->first()
+            fn () => Tenant::where('subdomain', $subdomain)->first()
         );
     }
 
