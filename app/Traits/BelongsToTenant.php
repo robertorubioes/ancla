@@ -17,9 +17,9 @@ trait BelongsToTenant
         // Añadir scope global para filtrar por tenant
         static::addGlobalScope(new TenantScope);
 
-        // Auto-asignar tenant_id al crear
+        // Auto-asignar tenant_id al crear (solo si no viene ya asignado)
         static::creating(function ($model): void {
-            if (app()->bound('tenant') && app('tenant')) {
+            if (! $model->tenant_id && app()->bound('tenant') && app('tenant')) {
                 $model->tenant_id = app('tenant')->id;
             }
         });
