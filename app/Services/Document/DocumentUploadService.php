@@ -145,7 +145,7 @@ class DocumentUploadService
                 }
 
                 // 12. Get TSA timestamp
-                $tsaToken = $this->tsaService->requestTimestamp($contentHash);
+                $tsaToken = $this->tsaService->requestTimestamp($contentHash, $tenant->id);
                 $document->update(['upload_tsa_token_id' => $tsaToken->id]);
 
                 // 13. Mark as ready

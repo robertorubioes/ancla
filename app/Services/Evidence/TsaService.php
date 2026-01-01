@@ -55,20 +55,21 @@ class TsaService
      * Request a timestamp for a given hash.
      *
      * @param  string  $hash  SHA-256 hash to timestamp
+     * @param  int|null  $tenantId  Optional tenant ID to associate with token
      * @return TsaToken The created TSA token
      *
      * @throws RuntimeException If all TSA providers fail
      */
-    public function requestTimestamp(string $hash): TsaToken
+    public function requestTimestamp(string $hash, ?int $tenantId = null): TsaToken
     {
         // Use mock mode for testing
         if ($this->mockEnabled) {
-            return $this->createMockToken($hash);
+            return $this->createMockToken($hash, $tenantId);
         }
 
         // Try primary provider
         try {
-            return $this->requestFromProvider($hash, $this->primaryProvider);
+            return $this->requestFromProvider($hash, $this->primaryProvider, $tenantId);
         } catch (RuntimeException $e) {
             Log::warning('TSA primary provider failed, trying fallback', [
                 'provider' => $this->primaryProvider,
@@ -78,7 +79,7 @@ class TsaService
 
         // Try fallback provider
         try {
-            return $this->requestFromProvider($hash, $this->fallbackProvider);
+            return $this->requestFromProvider($hash, $this->fallbackProvider, $tenantId);
         } catch (RuntimeException $e) {
             Log::error('TSA fallback provider also failed', [
                 'provider' => $this->fallbackProvider,
@@ -186,11 +187,12 @@ class TsaService
      *
      * @param  string  $hash  Hash to timestamp
      * @param  string  $provider  Provider name
+     * @param  int|null  $tenantId  Optional tenant ID
      * @return TsaToken Created token
      *
      * @throws RuntimeException If request fails
      */
-    private function requestFromProvider(string $hash, string $provider): TsaToken
+    private function requestFromProvider(string $hash, string $provider, ?int $tenantId = null): TsaToken
     {
         $config = config("evidence.tsa.providers.{$provider}");
 
@@ -228,10 +230,13 @@ class TsaService
             );
         }
 
+        // Resolve tenant_id: param > context > null
+        $resolvedTenantId = $tenantId ?? (app()->bound('tenant') ? app('tenant')?->id : null);
+
         // Create and return the token
         return TsaToken::create([
             'uuid' => Str::uuid(),
-            'tenant_id' => app()->bound('tenant') ? app('tenant')?->id : null,
+            'tenant_id' => $resolvedTenantId,
             'hash_algorithm' => 'SHA-256',
             'data_hash' => $hash,
             'token' => base64_encode($parsed['token']),
@@ -246,11 +251,15 @@ class TsaService
      * Create a mock token for testing.
      *
      * @param  string  $hash  Hash to timestamp
+     * @param  int|null  $tenantId  Optional tenant ID
      * @return TsaToken Mock token
      */
-    private function createMockToken(string $hash): TsaToken
+    private function createMockToken(string $hash, ?int $tenantId = null): TsaToken
     {
         $mockTimestamp = now();
+
+        // Resolve tenant_id: param > context > null
+        $resolvedTenantId = $tenantId ?? (app()->bound('tenant') ? app('tenant')?->id : null);
 
         // Create a mock token response
         $mockTokenData = [
@@ -265,7 +274,7 @@ class TsaService
 
         return TsaToken::create([
             'uuid' => Str::uuid(),
-            'tenant_id' => app()->bound('tenant') ? app('tenant')?->id : null,
+            'tenant_id' => $resolvedTenantId,
             'hash_algorithm' => 'SHA-256',
             'data_hash' => $hash,
             'token' => base64_encode(json_encode($mockTokenData)),
