@@ -87,7 +87,10 @@ class DocumentUploadService
             $file->getClientOriginalName()
         );
 
-        return DB::transaction(function () use ($file, $user, $tenant, $contentHash, $originalFilename, $validation) {
+        // Capture tenant ID as int to avoid object serialization issues
+        $tenantId = (int) $tenant->id;
+
+        return DB::transaction(function () use ($file, $user, $tenant, $tenantId, $contentHash, $originalFilename, $validation) {
             // 6. Generate UUID for document
             $uuid = (string) Str::uuid();
 
@@ -145,7 +148,7 @@ class DocumentUploadService
                 }
 
                 // 12. Get TSA timestamp
-                $tsaToken = $this->tsaService->requestTimestamp($contentHash, $tenant->id);
+                $tsaToken = $this->tsaService->requestTimestamp($contentHash, $tenantId);
                 $document->update(['upload_tsa_token_id' => $tsaToken->id]);
 
                 // 13. Mark as ready
