@@ -181,10 +181,9 @@ class LongTermArchiveServiceTest extends TestCase
             ->andReturn($archiveHash);
 
         $verificationResult = new ChainVerificationResult(
-            isValid: true,
+            valid: true,
             entriesVerified: 1,
-            errors: [],
-            warnings: []
+            errors: []
         );
 
         $this->resealService
@@ -228,10 +227,9 @@ class LongTermArchiveServiceTest extends TestCase
             ->andReturn(hash('sha256', 'modified content')); // Different hash
 
         $verificationResult = new ChainVerificationResult(
-            isValid: true,
+            valid: true,
             entriesVerified: 1,
-            errors: [],
-            warnings: []
+            errors: []
         );
 
         $this->resealService

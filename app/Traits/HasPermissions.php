@@ -165,7 +165,7 @@ trait HasPermissions
     {
         $roleValue = $role instanceof UserRole ? $role->value : $role;
 
-        return $this->role === $roleValue;
+        return $this->getRoleValue() === $roleValue;
     }
 
     /**
@@ -185,11 +185,19 @@ trait HasPermissions
     }
 
     /**
+     * Get the role value as string for comparisons.
+     */
+    private function getRoleValue(): string
+    {
+        return $this->role instanceof UserRole ? $this->role->value : $this->role;
+    }
+
+    /**
      * Check if user is super admin (no tenant, global access).
      */
     public function isSuperAdmin(): bool
     {
-        return $this->tenant_id === null && $this->role === UserRole::SUPER_ADMIN->value;
+        return $this->tenant_id === null && $this->getRoleValue() === UserRole::SUPER_ADMIN->value;
     }
 
     /**
@@ -197,7 +205,7 @@ trait HasPermissions
      */
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::ADMIN->value || $this->isSuperAdmin();
+        return $this->getRoleValue() === UserRole::ADMIN->value || $this->isSuperAdmin();
     }
 
     /**
@@ -205,7 +213,7 @@ trait HasPermissions
      */
     public function isOperator(): bool
     {
-        return $this->role === UserRole::OPERATOR->value;
+        return $this->getRoleValue() === UserRole::OPERATOR->value;
     }
 
     /**
@@ -213,7 +221,7 @@ trait HasPermissions
      */
     public function isViewer(): bool
     {
-        return $this->role === UserRole::VIEWER->value;
+        return $this->getRoleValue() === UserRole::VIEWER->value;
     }
 
     /**

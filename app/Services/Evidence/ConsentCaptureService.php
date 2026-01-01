@@ -100,8 +100,9 @@ class ConsentCaptureService
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.consent_captured',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'consent_id' => $consent->id,
                 'consent_type' => $consentType,
                 'consent_version' => $consentVersion,

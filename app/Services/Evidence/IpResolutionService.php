@@ -87,9 +87,11 @@ class IpResolutionService
             $eventData['warnings'] = $record->active_warnings;
         }
 
+        $eventData['signable_type'] = get_class($signable);
+        $eventData['signable_id'] = $signable->getKey();
+
         $this->auditTrailService->logEvent(
             'evidence.ip_resolution_captured',
-            $signable,
             $eventData
         );
 

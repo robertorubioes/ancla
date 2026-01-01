@@ -126,6 +126,14 @@ class UserManagement extends Component
             return;
         }
 
+        // SEC-014: Validate user can assign this role
+        $role = UserRole::from($this->inviteRole);
+        if (! auth()->user()->canAssignRole($role)) {
+            $this->addError('inviteRole', 'You do not have permission to invite users with this role.');
+
+            return;
+        }
+
         // Create invitation
         $invitation = UserInvitation::createInvitation(
             tenantId: $tenant->id,
@@ -228,6 +236,14 @@ class UserManagement extends Component
             return;
         }
 
+        // SEC-014: Validate user can assign this role
+        $newRole = UserRole::from($this->editRole);
+        if (! auth()->user()->canAssignRole($newRole)) {
+            $this->addError('editRole', 'You do not have permission to assign this role.');
+
+            return;
+        }
+
         $oldRole = $this->editingUser->role->value;
         $oldEmail = $this->editingUser->email;
 
@@ -260,10 +276,13 @@ class UserManagement extends Component
         $newStatus = $user->isActive() ? 'inactive' : 'active';
         $user->update(['status' => $newStatus]);
 
-        // Log event
-        $auditTrail->log($newStatus === 'active' ? 'user.reactivated' : 'user.deactivated', [
+        // Log event with Laravel's built-in logging (TODO: Integrate with AuditTrailService)
+        \Log::info($newStatus === 'active' ? 'user.reactivated' : 'user.deactivated', [
+            'user_id' => $user->id,
             'user_email' => $user->email,
-            'changed_by' => auth()->user()->name,
+            'changed_by' => auth()->id(),
+            'changed_by_name' => auth()->user()->name,
+            'tenant_id' => auth()->user()->tenant_id,
         ]);
 
         session()->flash('message', 'User '.($newStatus === 'active' ? 'activated' : 'deactivated').' successfully');

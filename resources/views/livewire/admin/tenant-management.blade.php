@@ -164,7 +164,7 @@
                                     <div class="text-sm text-gray-500">{{ $tenant->slug }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900 font-mono">{{ $tenant->subdomain }}.ancla.app</div>
+                                    <div class="text-sm text-gray-900 font-mono">{{ $tenant->subdomain }}.{{ config('app.base_domain') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -241,9 +241,11 @@
     @if($showModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
+                <!-- Background overlay -->
+                <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" wire:click="closeModal"></div>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <!-- Modal content - z-index superior al overlay -->
+                <div class="relative z-10 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                     <form wire:submit.prevent="saveTenant">
                         <div class="bg-white px-6 pt-5 pb-4">
                             <div class="flex items-center justify-between mb-4">
@@ -277,7 +279,7 @@
                                         <label for="subdomain" class="block text-sm font-medium text-gray-700 mb-1">Subdomain *</label>
                                         <div class="flex">
                                             <input type="text" id="subdomain" wire:model="subdomain" class="flex-1 rounded-l-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 font-mono text-sm" required>
-                                            <span class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">.ancla.app</span>
+                                            <span class="inline-flex items-center px-3 rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">.{{ config('app.base_domain') }}</span>
                                         </div>
                                         @error('subdomain') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                                     </div>
@@ -380,9 +382,11 @@
     @if($showSuspendModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="$set('showSuspendModal', false)"></div>
+                <!-- Background overlay -->
+                <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" wire:click="$set('showSuspendModal', false)"></div>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <!-- Modal content - z-index superior al overlay -->
+                <div class="relative z-10 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <form wire:submit.prevent="suspendTenant">
                         <div class="bg-white px-6 pt-5 pb-4">
                             <div class="flex items-center mb-4">

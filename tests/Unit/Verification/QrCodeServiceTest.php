@@ -39,11 +39,6 @@ class QrCodeServiceTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Ensure any open transactions are rolled back
-        while (\DB::transactionLevel() > 0) {
-            \DB::rollBack();
-        }
-
         parent::tearDown();
     }
 

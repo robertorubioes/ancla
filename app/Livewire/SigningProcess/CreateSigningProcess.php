@@ -158,7 +158,7 @@ class CreateSigningProcess extends Component
     /**
      * Create the signing process.
      */
-    public function create(AuditTrailService $auditService): void
+    public function create(AuditTrailService $auditService)
     {
         $this->creating = true;
         $this->error = null;
@@ -225,7 +225,6 @@ class CreateSigningProcess extends Component
                 // Register in audit trail
                 $auditService->logEvent(
                     eventType: 'signing_process.created',
-                    description: 'Signing process created',
                     metadata: [
                         'process_id' => $process->id,
                         'process_uuid' => $process->uuid,
@@ -247,8 +246,8 @@ class CreateSigningProcess extends Component
                 // Dispatch event
                 $this->dispatch('process-created', processUuid: $process->uuid);
 
-                // Redirect after a short delay to show success message
-                $this->dispatch('redirect-to-process', uuid: $process->uuid);
+                // Redirect to processes list
+                return $this->redirect(route('signing-processes.index'), navigate: true);
 
             } catch (\Exception $e) {
                 DB::rollBack();

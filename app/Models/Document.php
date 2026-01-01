@@ -78,6 +78,8 @@ class Document extends Model
         'storage_path',
         'stored_filename',
         'is_encrypted',
+        'encrypted_at',
+        'encryption_key_version',
         'encryption_key_id',
         'sha256_hash',
         'hash_algorithm',

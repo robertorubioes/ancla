@@ -44,8 +44,14 @@ class AuditTrailService
     public function record(Model $auditable, string $event, array $payload = []): AuditTrailEntry
     {
         return DB::transaction(function () use ($auditable, $event, $payload) {
-            $tenant = app('tenant');
+            // Get tenant_id: first try container, then from auditable model
+            $tenant = app()->bound('tenant') ? app('tenant') : null;
             $tenantId = $tenant?->id;
+            
+            // Fallback: get tenant_id from the auditable model or its relations
+            if ($tenantId === null) {
+                $tenantId = $this->resolveTenantIdFromModel($auditable);
+            }
 
             // Get the last entry to chain to (lock for update to prevent race conditions)
             $lastEntry = $this->getLastEntry($auditable);
@@ -102,6 +108,33 @@ class AuditTrailService
 
             return $entry->fresh();
         });
+    }
+
+    /**
+     * Log an event without requiring a specific model.
+     * This is a convenience method for logging events that may not have a direct model association.
+     *
+     * @param  string  $eventType  Event type (e.g., 'signing_process.created')
+     * @param  array<string, mixed>  $metadata  Additional event data
+     * @param  int|null  $userId  The user ID performing the action
+     * @param  int|null  $tenantId  The tenant ID
+     * @return void
+     */
+    public function logEvent(
+        string $eventType,
+        array $metadata = [],
+        ?int $userId = null,
+        ?int $tenantId = null
+    ): void {
+        \Illuminate\Support\Facades\Log::info("Audit: {$eventType}", [
+            'event_type' => $eventType,
+            'metadata' => $metadata,
+            'user_id' => $userId ?? auth()->id(),
+            'tenant_id' => $tenantId ?? (app()->bound('tenant') ? app('tenant')?->id : null),
+            'ip' => request()?->ip(),
+            'user_agent' => request()?->userAgent(),
+            'timestamp' => now()->toIso8601String(),
+        ]);
     }
 
     /**
@@ -289,5 +322,36 @@ class AuditTrailService
     public function getGenesisHash(): string
     {
         return self::GENESIS_HASH;
+    }
+
+    /**
+     * Resolve tenant_id from the auditable model.
+     *
+     * Tries to get tenant_id directly from the model, or from related models
+     * (e.g., SigningProcess from Signer, or Document from SigningProcess).
+     *
+     * @param  Model  $auditable  The model being audited
+     * @return int|null The tenant_id or null
+     */
+    private function resolveTenantIdFromModel(Model $auditable): ?int
+    {
+        // Direct tenant_id attribute
+        if (isset($auditable->tenant_id)) {
+            return $auditable->tenant_id;
+        }
+
+        // Try common relationships that have tenant_id
+        $relationships = ['signingProcess', 'document', 'tenant'];
+        
+        foreach ($relationships as $relation) {
+            if (method_exists($auditable, $relation)) {
+                $related = $auditable->$relation;
+                if ($related && isset($related->tenant_id)) {
+                    return $related->tenant_id;
+                }
+            }
+        }
+
+        return null;
     }
 }

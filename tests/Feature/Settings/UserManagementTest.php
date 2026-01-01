@@ -564,4 +564,55 @@ class UserManagementTest extends TestCase
 
         $response->assertSessionHasErrors(['password']);
     }
+
+    /** @test */
+    public function admin_cannot_invite_super_admin(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->set('inviteEmail', 'newsuperadmin@example.com')
+            ->set('inviteName', 'New Super Admin')
+            ->set('inviteRole', 'super_admin')
+            ->call('inviteUser')
+            ->assertHasErrors(['inviteRole']);
+
+        $this->assertDatabaseMissing('user_invitations', [
+            'email' => 'newsuperadmin@example.com',
+        ]);
+    }
+
+    /** @test */
+    public function operator_cannot_invite_admin(): void
+    {
+        // Note: This test validates the logic, but in practice operators can't access user management
+        // If an operator somehow bypassed the middleware, this validation would catch them
+        Livewire::actingAs($this->operator)
+            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->set('inviteEmail', 'newadmin@example.com')
+            ->set('inviteName', 'New Admin')
+            ->set('inviteRole', 'admin')
+            ->call('inviteUser')
+            ->assertHasErrors(['inviteRole']);
+
+        $this->assertDatabaseMissing('user_invitations', [
+            'email' => 'newadmin@example.com',
+        ]);
+    }
+
+    /** @test */
+    public function admin_cannot_assign_super_admin_role(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->call('editUser', $this->viewer->id)
+            ->set('editName', $this->viewer->name)
+            ->set('editEmail', $this->viewer->email)
+            ->set('editRole', 'super_admin')
+            ->call('updateUser')
+            ->assertHasErrors(['editRole']);
+
+        $this->viewer->refresh();
+
+        $this->assertEquals(UserRole::VIEWER, $this->viewer->role);
+    }
 }

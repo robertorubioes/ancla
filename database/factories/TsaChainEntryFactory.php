@@ -151,7 +151,7 @@ class TsaChainEntryFactory extends Factory
     /**
      * Set with a specific sequence number.
      */
-    public function sequence(int $number): static
+    public function withSequenceNumber(int $number): static
     {
         return $this->state(fn (array $attributes) => [
             'sequence_number' => $number,

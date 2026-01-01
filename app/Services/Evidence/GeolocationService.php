@@ -81,8 +81,9 @@ class GeolocationService
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.geolocation_captured',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'geolocation_id' => $record->id,
                 'capture_method' => $captureMethod,
                 'permission_status' => $permissionStatus,

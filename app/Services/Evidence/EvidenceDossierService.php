@@ -125,8 +125,9 @@ class EvidenceDossierService
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.dossier_generated',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'dossier_id' => $dossier->id,
                 'dossier_type' => $dossierType,
                 'verification_code' => $verificationCode,

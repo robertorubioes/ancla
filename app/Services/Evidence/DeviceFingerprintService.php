@@ -98,8 +98,9 @@ class DeviceFingerprintService
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.device_fingerprint_captured',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'fingerprint_id' => $fingerprint->id,
                 'fingerprint_hash' => $fingerprintHash,
                 'device_type' => $fingerprint->device_type,

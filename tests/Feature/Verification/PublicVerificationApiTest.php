@@ -42,12 +42,6 @@ class PublicVerificationApiTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
-
-        // Ensure any open transactions are rolled back
-        while (\DB::transactionLevel() > 0) {
-            \DB::rollBack();
-        }
-
         parent::tearDown();
     }
 

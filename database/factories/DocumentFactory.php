@@ -48,6 +48,8 @@ class DocumentFactory extends Factory
             'stored_filename' => Str::uuid().'.pdf.enc',
             'is_encrypted' => true,
             'encryption_key_id' => null,
+            'encrypted_at' => null,
+            'encryption_key_version' => 'v1',
             'sha256_hash' => hash('sha256', Str::random(100)),
             'hash_algorithm' => 'SHA-256',
             'hash_verified_at' => null,

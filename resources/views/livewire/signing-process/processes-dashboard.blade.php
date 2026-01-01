@@ -345,8 +345,12 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100"
                          x-transition:leave-end="opacity-0"
-                         class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" 
+                         class="fixed inset-0 transition-opacity" 
+                         style="background-color: rgba(0, 0, 0, 0.5);"
                          wire:click="closeDetails"></div>
+
+                    {{-- Centering spacer for sm+ screens --}}
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                     {{-- Modal panel --}}
                     <div x-show="show"
@@ -356,7 +360,7 @@
                          x-transition:leave="ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         class="inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
+                         class="relative z-10 inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
                         
                         {{-- Modal Header --}}
                         <div class="px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600">

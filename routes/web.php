@@ -12,18 +12,22 @@ use App\Livewire\SigningProcess\ProcessesDashboard;
 use App\Livewire\Verification\VerificationPage;
 use Illuminate\Support\Facades\Route;
 
+// Root route - redirect based on authentication status
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('signing-processes.index');
+    }
+    return redirect()->route('login');
 });
 
 // Home route after authentication
 Route::middleware(['auth', 'identify.tenant'])->group(function () {
     Route::get('/home', function () {
-        return view('welcome')->with('user', auth()->user());
+        return redirect()->route('signing-processes.index');
     })->name('home');
 
     Route::get('/dashboard', function () {
-        return view('welcome')->with('user', auth()->user());
+        return redirect()->route('signing-processes.index');
     })->name('dashboard');
 });
 
@@ -64,6 +68,10 @@ Route::middleware(['rate.limit.public:signing'])->group(function () {
     // Signing page with unique token
     Route::get('/sign/{token}', SigningPage::class)
         ->name('sign.show');
+
+    // Document preview for signers (requires OTP verification)
+    Route::get('/documents/{document}/preview', [DocumentController::class, 'preview'])
+        ->name('documents.preview');
 });
 
 /*
