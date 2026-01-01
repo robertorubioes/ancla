@@ -58,8 +58,11 @@ class DocumentUploadService
         // 2. Calculate hash before any processing
         $contentHash = $this->hashingService->hashUploadedFile($file);
 
-        // 3. Get tenant context
+        // 3. Get tenant context - fallback to user's tenant
         $tenant = $this->tenantContext->get();
+        if (! $tenant && $user->tenant_id) {
+            $tenant = $user->tenant;
+        }
         if (! $tenant) {
             throw new DocumentUploadException('No tenant context available');
         }
