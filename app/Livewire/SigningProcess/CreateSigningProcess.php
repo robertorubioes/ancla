@@ -7,6 +7,7 @@ namespace App\Livewire\SigningProcess;
 use App\Models\Document;
 use App\Models\Signer;
 use App\Models\SigningProcess;
+use App\Services\Document\DocumentUploadService;
 use App\Services\Evidence\AuditTrailService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,24 +15,38 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 /**
  * Livewire component for creating signing processes.
  *
  * Features:
- * - Select document to sign
- * - Add multiple signers
+ * - Upload document directly or select existing
+ * - Add multiple signers with inline editing
+ * - Drag & drop reordering for sequential signing
  * - Set signing order (sequential/parallel)
  * - Optional deadline
  * - Custom message to signers
  */
 class CreateSigningProcess extends Component
 {
+    use WithFileUploads;
+
     /**
      * The selected document ID.
      */
-    #[Validate('required|exists:documents,id')]
     public ?int $documentId = null;
+
+    /**
+     * File upload for new document.
+     */
+    #[Validate('nullable|file|max:51200|mimes:pdf')]
+    public $uploadedFile = null;
+
+    /**
+     * Whether to show upload or select mode.
+     */
+    public string $documentMode = 'select'; // 'select' or 'upload'
 
     /**
      * Custom message for signers.
@@ -59,9 +74,19 @@ class CreateSigningProcess extends Component
     public array $signers = [];
 
     /**
+     * Index of signer being edited (for mobile).
+     */
+    public ?int $editingSignerIndex = null;
+
+    /**
      * Whether a process is being created.
      */
     public bool $creating = false;
+
+    /**
+     * Whether file is uploading.
+     */
+    public bool $uploadingFile = false;
 
     /**
      * Error message if creation fails.
@@ -84,9 +109,62 @@ class CreateSigningProcess extends Component
     public function mount(?int $documentId = null): void
     {
         $this->documentId = $documentId;
+        
+        // If document provided, use select mode
+        if ($documentId) {
+            $this->documentMode = 'select';
+        }
 
         // Start with one empty signer
         $this->addSigner();
+    }
+
+    /**
+     * Handle file upload.
+     */
+    public function updatedUploadedFile(): void
+    {
+        $this->validateOnly('uploadedFile');
+        
+        if ($this->uploadedFile) {
+            $this->uploadingFile = true;
+            $this->error = null;
+            
+            try {
+                $uploadService = app(DocumentUploadService::class);
+                $document = $uploadService->upload(
+                    $this->uploadedFile,
+                    auth()->user()->tenant_id,
+                    auth()->id()
+                );
+                
+                $this->documentId = $document->id;
+                $this->documentMode = 'select';
+                $this->uploadedFile = null;
+                $this->success = 'Document uploaded successfully!';
+                
+            } catch (\Exception $e) {
+                $this->error = 'Failed to upload document: ' . $e->getMessage();
+                Log::error('Document upload failed in signing process', [
+                    'error' => $e->getMessage(),
+                    'user_id' => auth()->id(),
+                ]);
+            }
+            
+            $this->uploadingFile = false;
+        }
+    }
+
+    /**
+     * Switch document mode.
+     */
+    public function setDocumentMode(string $mode): void
+    {
+        $this->documentMode = $mode;
+        if ($mode === 'upload') {
+            $this->documentId = null;
+        }
+        $this->error = null;
     }
 
     /**
@@ -123,6 +201,48 @@ class CreateSigningProcess extends Component
         unset($this->signers[$index]);
         $this->signers = array_values($this->signers); // Re-index array
         $this->error = null;
+    }
+
+    /**
+     * Move signer up in order.
+     */
+    public function moveSignerUp(int $index): void
+    {
+        if ($index <= 0) {
+            return;
+        }
+        
+        $temp = $this->signers[$index - 1];
+        $this->signers[$index - 1] = $this->signers[$index];
+        $this->signers[$index] = $temp;
+    }
+
+    /**
+     * Move signer down in order.
+     */
+    public function moveSignerDown(int $index): void
+    {
+        if ($index >= count($this->signers) - 1) {
+            return;
+        }
+        
+        $temp = $this->signers[$index + 1];
+        $this->signers[$index + 1] = $this->signers[$index];
+        $this->signers[$index] = $temp;
+    }
+
+    /**
+     * Reorder signers from drag & drop.
+     */
+    public function reorderSigners(array $order): void
+    {
+        $newSigners = [];
+        foreach ($order as $index) {
+            if (isset($this->signers[$index])) {
+                $newSigners[] = $this->signers[$index];
+            }
+        }
+        $this->signers = $newSigners;
     }
 
     /**
@@ -165,8 +285,20 @@ class CreateSigningProcess extends Component
         $this->success = null;
 
         try {
+            // Validate document is selected
+            if (!$this->documentId) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'documentId' => ['Please select or upload a document.'],
+                ]);
+            }
+
             // Validate basic fields
-            $this->validate();
+            $this->validate([
+                'documentId' => 'required|exists:documents,id',
+                'signatureOrder' => 'required|in:sequential,parallel',
+                'customMessage' => 'nullable|string|max:500',
+                'deadlineAt' => 'nullable|date|after:today',
+            ]);
 
             // Validate signers
             $this->validateSigners();
