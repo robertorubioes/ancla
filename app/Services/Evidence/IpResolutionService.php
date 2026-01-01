@@ -25,7 +25,7 @@ class IpResolutionService
         ?string $signerEmail = null,
         ?int $signerId = null
     ): IpResolutionRecord {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
         $ipAddress = $this->getRealIp($request);
         $ipVersion = $this->detectIpVersion($ipAddress);
 

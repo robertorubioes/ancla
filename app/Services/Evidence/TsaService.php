@@ -231,7 +231,7 @@ class TsaService
         // Create and return the token
         return TsaToken::create([
             'uuid' => Str::uuid(),
-            'tenant_id' => app('tenant')?->id,
+            'tenant_id' => app()->bound('tenant') ? app('tenant')?->id : null,
             'hash_algorithm' => 'SHA-256',
             'data_hash' => $hash,
             'token' => base64_encode($parsed['token']),
@@ -265,7 +265,7 @@ class TsaService
 
         return TsaToken::create([
             'uuid' => Str::uuid(),
-            'tenant_id' => app('tenant')?->id,
+            'tenant_id' => app()->bound('tenant') ? app('tenant')?->id : null,
             'hash_algorithm' => 'SHA-256',
             'data_hash' => $hash,
             'token' => base64_encode(json_encode($mockTokenData)),

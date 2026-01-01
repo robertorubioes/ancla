@@ -30,7 +30,7 @@ class EvidenceDossierService
         string $dossierType = 'full_evidence',
         ?int $generatedBy = null
     ): EvidenceDossier {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
 
         // Generate verification code
         $verificationCode = $this->generateVerificationCode();

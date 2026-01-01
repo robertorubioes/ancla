@@ -28,7 +28,7 @@ class ConsentCaptureService
         ?int $signerId = null,
         string $language = 'es'
     ): ConsentRecord {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
 
         // Get consent text and version
         $legalText = $this->getLegalText($consentType, $language);

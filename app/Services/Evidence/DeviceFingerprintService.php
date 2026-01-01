@@ -41,7 +41,7 @@ class DeviceFingerprintService
         ?string $signerEmail = null,
         ?int $signerId = null
     ): DeviceFingerprint {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
         $userAgent = $request->userAgent() ?? '';
 
         // Validate and sanitize client data

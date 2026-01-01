@@ -29,7 +29,7 @@ class GeolocationService
         ?string $signerEmail = null,
         ?int $signerId = null
     ): GeolocationRecord {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
         $ipAddress = $this->getRealIp($request);
 
         // Validate GPS data if provided
