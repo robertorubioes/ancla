@@ -371,6 +371,17 @@ class CreateSigningProcess extends Component
 
                 DB::commit();
 
+                // Send notifications to signers (outside transaction)
+                try {
+                    $process->sendNotifications();
+                } catch (\Exception $e) {
+                    Log::error('Failed to send signing notifications', [
+                        'process_id' => $process->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                    // Don't fail the creation, notifications can be resent
+                }
+
                 $this->success = 'Signing process created successfully!';
                 $this->createdProcessUuid = $process->uuid;
 
