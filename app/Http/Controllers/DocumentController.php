@@ -355,11 +355,11 @@ class DocumentController extends Controller
     {
         // Check if user is authenticated owner OR is a valid signer
         $isOwner = auth()->check() && $document->user_id === auth()->id();
-        
+
         // Check if request comes from a signer with valid token in session
         $signerToken = session('signer_token');
         $isValidSigner = false;
-        
+
         if ($signerToken) {
             // Signer just needs a valid token for this document - OTP not required for preview
             $isValidSigner = \App\Models\Signer::where('token', $signerToken)

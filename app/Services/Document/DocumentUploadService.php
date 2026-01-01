@@ -359,7 +359,7 @@ class DocumentUploadService
      */
     public function getDecryptedContent(Document $document): string
     {
-        $fullPath = $document->storage_path . '/' . $document->stored_filename;
+        $fullPath = $document->storage_path.'/'.$document->stored_filename;
         $content = Storage::disk($document->storage_disk)->get($fullPath);
 
         if ($content === null) {
@@ -440,7 +440,7 @@ class DocumentUploadService
     {
         // Delete the stored file
         if ($document->storage_path && $document->stored_filename) {
-            $fullPath = $document->storage_path . '/' . $document->stored_filename;
+            $fullPath = $document->storage_path.'/'.$document->stored_filename;
             Storage::disk($document->storage_disk)->delete($fullPath);
         }
 

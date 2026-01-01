@@ -47,7 +47,7 @@ class AuditTrailService
             // Get tenant_id: first try container, then from auditable model
             $tenant = app()->bound('tenant') ? app('tenant') : null;
             $tenantId = $tenant?->id;
-            
+
             // Fallback: get tenant_id from the auditable model or its relations
             if ($tenantId === null) {
                 $tenantId = $this->resolveTenantIdFromModel($auditable);
@@ -118,7 +118,6 @@ class AuditTrailService
      * @param  array<string, mixed>  $metadata  Additional event data
      * @param  int|null  $userId  The user ID performing the action
      * @param  int|null  $tenantId  The tenant ID
-     * @return void
      */
     public function logEvent(
         string $eventType,
@@ -342,7 +341,7 @@ class AuditTrailService
 
         // Try common relationships that have tenant_id
         $relationships = ['signingProcess', 'document', 'tenant'];
-        
+
         foreach ($relationships as $relation) {
             if (method_exists($auditable, $relation)) {
                 $related = $auditable->$relation;

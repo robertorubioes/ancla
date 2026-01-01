@@ -17,6 +17,7 @@ Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('signing-processes.index');
     }
+
     return redirect()->route('login');
 });
 

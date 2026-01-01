@@ -109,7 +109,7 @@ class CreateSigningProcess extends Component
     public function mount(?int $documentId = null): void
     {
         $this->documentId = $documentId;
-        
+
         // If document provided, use select mode
         if ($documentId) {
             $this->documentMode = 'select';
@@ -125,31 +125,31 @@ class CreateSigningProcess extends Component
     public function updatedUploadedFile(): void
     {
         $this->validateOnly('uploadedFile');
-        
+
         if ($this->uploadedFile) {
             $this->uploadingFile = true;
             $this->error = null;
-            
+
             try {
                 $uploadService = app(DocumentUploadService::class);
                 $document = $uploadService->upload(
                     $this->uploadedFile,
                     auth()->user()
                 );
-                
+
                 $this->documentId = $document->id;
                 $this->documentMode = 'select';
                 $this->uploadedFile = null;
                 $this->success = 'Document uploaded successfully!';
-                
+
             } catch (\Exception $e) {
-                $this->error = 'Failed to upload document: ' . $e->getMessage();
+                $this->error = 'Failed to upload document: '.$e->getMessage();
                 Log::error('Document upload failed in signing process', [
                     'error' => $e->getMessage(),
                     'user_id' => auth()->id(),
                 ]);
             }
-            
+
             $this->uploadingFile = false;
         }
     }
@@ -210,7 +210,7 @@ class CreateSigningProcess extends Component
         if ($index <= 0) {
             return;
         }
-        
+
         $temp = $this->signers[$index - 1];
         $this->signers[$index - 1] = $this->signers[$index];
         $this->signers[$index] = $temp;
@@ -224,7 +224,7 @@ class CreateSigningProcess extends Component
         if ($index >= count($this->signers) - 1) {
             return;
         }
-        
+
         $temp = $this->signers[$index + 1];
         $this->signers[$index + 1] = $this->signers[$index];
         $this->signers[$index] = $temp;
@@ -285,7 +285,7 @@ class CreateSigningProcess extends Component
 
         try {
             // Validate document is selected
-            if (!$this->documentId) {
+            if (! $this->documentId) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'documentId' => ['Please select or upload a document.'],
                 ]);

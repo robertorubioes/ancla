@@ -16,12 +16,12 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request)
     {
         $user = auth()->user();
-        
+
         // Superadmin goes to admin panel
         if ($user->role === UserRole::SUPER_ADMIN || $user->role?->value === 'super_admin') {
             return redirect()->intended('/admin/tenants');
         }
-        
+
         // Regular users go to signing processes dashboard
         return redirect()->intended('/signing-processes');
     }

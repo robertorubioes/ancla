@@ -99,7 +99,7 @@ class SigningPage extends Component
             $result = $accessService->validateAccess($token);
             $this->signerId = $result->signer->id;
             $this->isLoading = false;
-            
+
             // Store signer token in session for document preview access
             session(['signer_token' => $token]);
         } catch (SigningAccessException $e) {
@@ -373,7 +373,7 @@ class SigningPage extends Component
         if (! empty($this->typedSignature)) {
             // Create a simple text-based signature indicator
             // The actual conversion to image happens server-side when signing
-            $this->signatureData = 'typed:' . $this->typedSignature;
+            $this->signatureData = 'typed:'.$this->typedSignature;
         }
     }
 
