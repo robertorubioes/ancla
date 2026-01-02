@@ -26,6 +26,16 @@ class TenantManagement extends Component
 
     public $planFilter = '';
 
+    // Check if we should open create modal on mount
+    public function mount()
+    {
+        if (request()->query('action') === 'create') {
+            $this->openCreateModal();
+        }
+    }
+
+    public $planFilter = '';
+
     // Form fields
     public $showModal = false;
 
