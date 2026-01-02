@@ -84,7 +84,6 @@ class TenantManagement extends Component
             'name' => 'required|string|min:3|max:100',
             'slug' => 'required|string|min:3|max:50|unique:tenants,slug,'.$this->tenantId,
             'subdomain' => 'required|string|min:3|max:50|unique:tenants,subdomain,'.$this->tenantId,
-            'contactEmail' => 'required|email',
             'plan' => 'required|in:free,starter,professional,enterprise',
             'status' => 'required|in:trial,active,suspended,cancelled',
             'maxUsers' => 'nullable|integer|min:1',
@@ -163,22 +162,7 @@ class TenantManagement extends Component
 
     public function saveTenant()
     {
-        Log::info('========== SAVETENANT INICIO ==========');
-        Log::info('saveTenant called', [
-            'name' => $this->name,
-            'adminEmail' => $this->adminEmail,
-            'slug' => $this->slug,
-            'subdomain' => $this->subdomain,
-            'editMode' => $this->editMode
-        ]);
-        
-        try {
-            $this->validate();
-            Log::info('Validación pasó correctamente');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validación falló', ['errors' => $e->errors()]);
-            throw $e;
-        };
+        $this->validate();
 
         DB::beginTransaction();
         try {
