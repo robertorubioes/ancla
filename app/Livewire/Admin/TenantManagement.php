@@ -163,6 +163,8 @@ class TenantManagement extends Component
 
     public function saveTenant()
     {
+        Log::info('saveTenant called', ['name' => $this->name, 'adminEmail' => $this->adminEmail]);
+        
         $this->validate();
 
         DB::beginTransaction();
