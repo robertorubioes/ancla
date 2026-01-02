@@ -30,14 +30,14 @@
                         </svg>
                         <span class="ml-2 text-xl font-bold text-gray-900">{{ config('app.name', 'Firmalum') }}</span>
                         @auth
-                            @if(auth()->user()->role === 'super_admin')
+                            @if(auth()->user()->role->value === 'super_admin')
                                 <span class="ml-2 px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full">Superadmin</span>
                             @endif
                         @endauth
                     </a>
                     <nav class="flex items-center space-x-4">
                         @auth
-                            @if(auth()->user()->role === 'super_admin')
+                            @if(auth()->user()->role->value === 'super_admin')
                                 <a href="{{ route('admin.tenants') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
                                     Tenants
                                 </a>
@@ -48,7 +48,12 @@
                                     New Tenant
                                 </a>
                             @endif
-                            <a href="/dashboard" class="text-sm text-gray-600 hover:text-gray-900">
+                            @if(auth()->user()->role->value === 'admin' && auth()->user()->tenant_id)
+                                <a href="{{ route('settings.users') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
+                                    Users
+                                </a>
+                            @endif
+                            <a href="/signing-processes" class="text-sm text-gray-600 hover:text-gray-900">
                                 Dashboard
                             </a>
                             <div class="flex items-center space-x-2">
