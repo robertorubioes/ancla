@@ -34,8 +34,6 @@ class TenantManagement extends Component
         }
     }
 
-    public $planFilter = '';
-
     // Form fields
     public $showModal = false;
 
