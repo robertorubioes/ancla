@@ -34,8 +34,8 @@
                         @auth
                             {{-- Navigation Links --}}
                             <div class="flex items-center space-x-4">
-                                <a href="/signing-processes" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
-                                    Dashboard
+                                <a href="{{ route('signing-processes.index') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
+                                    Procesos de firma
                                 </a>
                                 
                                 @if(auth()->user()->role->value === 'admin' && auth()->user()->tenant_id)
