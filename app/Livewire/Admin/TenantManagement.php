@@ -163,9 +163,22 @@ class TenantManagement extends Component
 
     public function saveTenant()
     {
-        Log::info('saveTenant called', ['name' => $this->name, 'adminEmail' => $this->adminEmail]);
+        Log::info('========== SAVETENANT INICIO ==========');
+        Log::info('saveTenant called', [
+            'name' => $this->name,
+            'adminEmail' => $this->adminEmail,
+            'slug' => $this->slug,
+            'subdomain' => $this->subdomain,
+            'editMode' => $this->editMode
+        ]);
         
-        $this->validate();
+        try {
+            $this->validate();
+            Log::info('Validación pasó correctamente');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validación falló', ['errors' => $e->errors()]);
+            throw $e;
+        };
 
         DB::beginTransaction();
         try {
