@@ -40,11 +40,14 @@
                                 
                                 @if(auth()->user()->role->value === 'admin' && auth()->user()->tenant_id)
                                     <a href="{{ route('settings.users') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
-                                        Users
+                                        Usuarios
                                     </a>
                                 @endif
                                 
                                 @if(auth()->user()->role->value === 'super_admin')
+                                    <a href="{{ route('settings.users') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
+                                        Usuarios
+                                    </a>
                                     <a href="{{ route('admin.tenants') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
                                         Tenants
                                     </a>

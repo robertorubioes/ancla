@@ -25,6 +25,11 @@ class EnsureTenantAdmin
             abort(401, 'Unauthenticated');
         }
 
+        // Superadmins have full access
+        if ($user->role->value === 'super_admin') {
+            return $next($request);
+        }
+
         // User must belong to a tenant (not superadmin)
         if (! $user->tenant_id) {
             abort(403, 'This action requires a tenant context');
