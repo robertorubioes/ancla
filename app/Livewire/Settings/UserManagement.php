@@ -68,10 +68,14 @@ class UserManagement extends Component
      */
     protected function editRules(): array
     {
+        $roleRule = auth()->user()->role->value === 'super_admin' && $this->editingUser?->id === auth()->id()
+            ? ['required', 'in:super_admin']
+            : ['required', 'in:admin,operator,viewer'];
+
         return [
             'editName' => ['required', 'string', 'max:255'],
             'editEmail' => ['required', 'email', 'max:255'],
-            'editRole' => ['required', 'in:admin,operator,viewer'],
+            'editRole' => $roleRule,
         ];
     }
 
@@ -202,8 +206,13 @@ class UserManagement extends Component
      */
     public function editUser(int $userId): void
     {
-        $this->editingUser = User::where('tenant_id', auth()->user()->tenant_id)
-            ->findOrFail($userId);
+        // Superadmin can edit their own profile
+        if (auth()->user()->role->value === 'super_admin' && $userId === auth()->id()) {
+            $this->editingUser = auth()->user();
+        } else {
+            $this->editingUser = User::where('tenant_id', auth()->user()->tenant_id)
+                ->findOrFail($userId);
+        }
 
         $this->editName = $this->editingUser->name;
         $this->editEmail = $this->editingUser->email;
@@ -236,12 +245,15 @@ class UserManagement extends Component
             return;
         }
 
-        // SEC-014: Validate user can assign this role
-        $newRole = UserRole::from($this->editRole);
-        if (! auth()->user()->canAssignRole($newRole)) {
-            $this->addError('editRole', 'You do not have permission to assign this role.');
+        // SEC-014: Validate user can assign this role (skip for superadmin editing themselves)
+        $isSuperadminEditingSelf = auth()->user()->role->value === 'super_admin' && $this->editingUser->id === auth()->id();
+        if (! $isSuperadminEditingSelf) {
+            $newRole = UserRole::from($this->editRole);
+            if (! auth()->user()->canAssignRole($newRole)) {
+                $this->addError('editRole', 'You do not have permission to assign this role.');
 
-            return;
+                return;
+            }
         }
 
         $oldRole = $this->editingUser->role->value;
