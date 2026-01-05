@@ -1,8 +1,12 @@
 <div class="max-w-4xl mx-auto py-6 px-4 sm:px-0 space-y-6">
     {{-- Header --}}
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 class="text-2xl font-bold text-gray-900">{{ __('Create Signing Process') }}</h2>
-        <p class="mt-1 text-sm text-gray-600">{{ __('Set up a document for electronic signature') }}</p>
+        <h2 class="text-2xl font-bold text-gray-900">
+            {{ $isEditing ? __('Edit Signing Process') : __('Create Signing Process') }}
+        </h2>
+        <p class="mt-1 text-sm text-gray-600">
+            {{ $isEditing ? __('Modify the draft before sending') : __('Set up a document for electronic signature') }}
+        </p>
     </div>
 
     {{-- Success Message --}}
@@ -90,7 +94,7 @@
                     <select
                         id="documentId"
                         wire:model.live="documentId"
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('documentId') border-red-500 @enderror"
+                        class="w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('documentId') border-red-500 @enderror"
                     >
                         <option value="">{{ __('-- Select a document --') }}</option>
                         @foreach($this->availableDocuments as $doc)
@@ -214,9 +218,9 @@
                 </button>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-4" wire:key="signers-container-{{ $signatureOrder }}">
                 @foreach($signers as $index => $signer)
-                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg" wire:key="signer-{{ $index }}">
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg" wire:key="signer-{{ $signatureOrder }}-{{ $index }}">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center space-x-2">
                                 {{-- Order Badge --}}
@@ -279,7 +283,7 @@
                                     id="signer-name-{{ $index }}"
                                     wire:model.blur="signers.{{ $index }}.name"
                                     placeholder="{{ __('John Doe') }}"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('signers.'.$index.'.name') border-red-500 @enderror"
+                                    class="w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('signers.'.$index.'.name') border-red-500 @enderror"
                                     required
                                 >
                                 @error('signers.'.$index.'.name')
@@ -297,7 +301,7 @@
                                     id="signer-email-{{ $index }}"
                                     wire:model.blur="signers.{{ $index }}.email"
                                     placeholder="{{ __('john@example.com') }}"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('signers.'.$index.'.email') border-red-500 @enderror"
+                                    class="w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('signers.'.$index.'.email') border-red-500 @enderror"
                                     required
                                 >
                                 @error('signers.'.$index.'.email')
@@ -315,7 +319,7 @@
                                     id="signer-phone-{{ $index }}"
                                     wire:model.blur="signers.{{ $index }}.phone"
                                     placeholder="{{ __('+34 600 000 000') }}"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('signers.'.$index.'.phone') border-red-500 @enderror"
+                                    class="w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('signers.'.$index.'.phone') border-red-500 @enderror"
                                 >
                                 @error('signers.'.$index.'.phone')
                                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
@@ -345,7 +349,7 @@
                         <label class="flex items-start p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors @if($signatureOrder === 'parallel') bg-blue-50 border-blue-500 @endif">
                             <input
                                 type="radio"
-                                wire:model="signatureOrder"
+                                wire:model.live="signatureOrder"
                                 value="parallel"
                                 class="mt-1 text-blue-600 focus:ring-blue-500"
                             >
@@ -357,7 +361,7 @@
                         <label class="flex items-start p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors @if($signatureOrder === 'sequential') bg-blue-50 border-blue-500 @endif">
                             <input
                                 type="radio"
-                                wire:model="signatureOrder"
+                                wire:model.live="signatureOrder"
                                 value="sequential"
                                 class="mt-1 text-blue-600 focus:ring-blue-500"
                             >
@@ -383,7 +387,7 @@
                         rows="3"
                         maxlength="500"
                         placeholder="{{ __('Please review and sign this document...') }}"
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('customMessage') border-red-500 @enderror"
+                        class="w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('customMessage') border-red-500 @enderror"
                     ></textarea>
                     <div class="flex items-center justify-between mt-1">
                         @error('customMessage')
@@ -405,7 +409,7 @@
                         id="deadlineAt"
                         wire:model="deadlineAt"
                         min="{{ $this->minDeadlineDate }}"
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('deadlineAt') border-red-500 @enderror"
+                        class="w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('deadlineAt') border-red-500 @enderror"
                     >
                     @error('deadlineAt')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -418,33 +422,64 @@
 
         {{-- Actions --}}
         <div class="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-            <button
-                type="button"
-                wire:click="resetForm"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                @if($creating) disabled @endif
-            >
-                {{ __('Reset') }}
-            </button>
+            <div class="flex items-center space-x-3">
+                {{-- Back Button --}}
+                <a
+                    href="{{ route('signing-processes.index') }}"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    wire:navigate
+                >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    {{ __('Cancel') }}
+                </a>
+                
+                {{-- Reset Button --}}
+                <button
+                    type="button"
+                    wire:click="resetForm"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    @if($creating) disabled @endif
+                >
+                    {{ __('Reset') }}
+                </button>
+            </div>
 
-            <button
-                type="submit"
-                class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                @if($creating || !$documentId) disabled @endif
-            >
-                @if($creating)
-                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            <div class="flex items-center space-x-3">
+                {{-- Save as Draft Button --}}
+                <button
+                    type="button"
+                    wire:click="saveAsDraft"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    @if($creating || !$documentId) disabled @endif
+                >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
                     </svg>
-                    {{ __('Creating...') }}
-                @else
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    {{ __('Create Signing Process') }}
-                @endif
-            </button>
+                    {{ __('Save Draft') }}
+                </button>
+
+                {{-- Create & Send Button --}}
+                <button
+                    type="submit"
+                    class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    @if($creating || !$documentId) disabled @endif
+                >
+                    @if($creating)
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        {{ __('Creating...') }}
+                    @else
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        {{ __('Create & Send') }}
+                    @endif
+                </button>
+            </div>
         </div>
     </form>
 </div>

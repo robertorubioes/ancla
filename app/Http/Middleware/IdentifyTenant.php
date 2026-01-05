@@ -60,7 +60,10 @@ class IdentifyTenant
         $subdomain = $this->extractSubdomain($host);
 
         if ($subdomain && ! in_array($subdomain, $this->excludedSubdomains)) {
-            return $this->findTenantBySlug($subdomain);
+            $tenant = $this->findTenantBySlug($subdomain);
+            if ($tenant) {
+                return $tenant;
+            }
         }
 
         // 2. Intentar por dominio personalizado

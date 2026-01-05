@@ -11,7 +11,7 @@
             </label>
             <input wire:model="email" 
                    id="email" 
-                   class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('email') border-red-300 @enderror" 
+                   class="block mt-1 w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-300 @enderror" 
                    type="email" 
                    name="email" 
                    required 
@@ -29,7 +29,7 @@
             </label>
             <input wire:model="password" 
                    id="password" 
-                   class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('password') border-red-300 @enderror" 
+                   class="block mt-1 w-full py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password') border-red-300 @enderror" 
                    type="password" 
                    name="password" 
                    required 

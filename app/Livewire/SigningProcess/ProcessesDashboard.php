@@ -105,6 +105,33 @@ class ProcessesDashboard extends Component
     }
 
     /**
+     * Send a draft process (trigger notifications).
+     */
+    public function sendProcess(int $processId): void
+    {
+        $process = SigningProcess::query()
+            ->where('id', $processId)
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->where('created_by', auth()->id())
+            ->where('status', SigningProcess::STATUS_DRAFT)
+            ->firstOrFail();
+
+        try {
+            // Send notifications to signers
+            $process->sendNotifications();
+
+            session()->flash('message', __('Process sent successfully! Signers have been notified.'));
+        } catch (\Exception $e) {
+            session()->flash('error', __('Failed to send process. Please try again.'));
+            
+            \Illuminate\Support\Facades\Log::error('Failed to send process', [
+                'process_id' => $processId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
      * Get processes query.
      */
     protected function getProcessesQuery()

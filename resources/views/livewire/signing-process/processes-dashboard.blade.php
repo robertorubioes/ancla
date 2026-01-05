@@ -1,6 +1,29 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        {{-- Flash Messages --}}
+        @if (session()->has('message'))
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-sm font-medium text-green-800">{{ session('message') }}</span>
+                </div>
+            </div>
+        @endif
+
+        @if (session()->has('error'))
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-sm font-medium text-red-800">{{ session('error') }}</span>
+                </div>
+            </div>
+        @endif
+
         {{-- Header --}}
         <div class="mb-8">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -242,10 +265,30 @@
                                     </td>
                                     <td class="px-6 py-4 text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-2">
-                                            <button wire:click="showDetails({{ $process->id }})"
-                                                    class="text-purple-600 hover:text-purple-900 font-medium transition-colors">
-                                                View Details
-                                            </button>
+                                            {{-- Draft actions: Edit and Send --}}
+                                            @if($process->status === 'draft')
+                                                <a href="{{ route('signing-processes.edit', $process) }}"
+                                                   class="inline-flex items-center px-3 py-1.5 text-purple-600 hover:text-purple-900 font-medium transition-colors"
+                                                   wire:navigate>
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                    Edit
+                                                </a>
+                                                <button wire:click="sendProcess({{ $process->id }})"
+                                                        wire:confirm="Are you sure you want to send this process? Notifications will be sent to all signers."
+                                                        class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                                    </svg>
+                                                    Send
+                                                </button>
+                                            @else
+                                                <button wire:click="showDetails({{ $process->id }})"
+                                                        class="text-purple-600 hover:text-purple-900 font-medium transition-colors">
+                                                    View Details
+                                                </button>
+                                            @endif
                                             
                                             @if($process->isCompleted() && $process->hasFinalDocument())
                                                 <div class="relative inline-block text-left" x-data="{ open: false }">

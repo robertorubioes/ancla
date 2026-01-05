@@ -201,6 +201,10 @@ Route::middleware(['auth', 'identify.tenant'])->group(function () {
     Route::get('/signing-processes/create/{documentId}', CreateSigningProcess::class)
         ->name('signing-processes.create.document');
 
+    // Edit draft signing process
+    Route::get('/signing-processes/{signingProcess}/edit', CreateSigningProcess::class)
+        ->name('signing-processes.edit');
+
     // Download signed document (promoter)
     Route::get('/signing-processes/{signingProcess}/download-document', [DocumentDownloadController::class, 'downloadDocument'])
         ->name('signing-processes.download-document');

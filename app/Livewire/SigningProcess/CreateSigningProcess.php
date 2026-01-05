@@ -104,10 +104,53 @@ class CreateSigningProcess extends Component
     public ?string $createdProcessUuid = null;
 
     /**
+     * The signing process being edited (null for new).
+     */
+    public ?SigningProcess $editingProcess = null;
+
+    /**
+     * Whether we are in edit mode.
+     */
+    public bool $isEditing = false;
+
+    /**
      * Mount the component.
      */
-    public function mount(?int $documentId = null): void
+    public function mount(?int $documentId = null, ?SigningProcess $signingProcess = null): void
     {
+        // Edit mode: load existing draft process
+        if ($signingProcess) {
+            // Verify it's a draft and belongs to user's tenant
+            if ($signingProcess->status !== SigningProcess::STATUS_DRAFT) {
+                abort(403, 'Only draft processes can be edited.');
+            }
+            if ($signingProcess->tenant_id !== auth()->user()->tenant_id) {
+                abort(403, 'Unauthorized.');
+            }
+
+            $this->isEditing = true;
+            $this->editingProcess = $signingProcess;
+            $this->documentId = $signingProcess->document_id;
+            $this->documentMode = 'select';
+            $this->signatureOrder = $signingProcess->signature_order;
+            $this->customMessage = $signingProcess->custom_message;
+            $this->deadlineAt = $signingProcess->deadline_at?->format('Y-m-d');
+
+            // Load existing signers
+            $this->signers = $signingProcess->signers()
+                ->orderBy('order')
+                ->get()
+                ->map(fn ($s) => [
+                    'name' => $s->name,
+                    'email' => $s->email,
+                    'phone' => $s->phone,
+                ])
+                ->toArray();
+
+            return;
+        }
+
+        // Create mode
         $this->documentId = $documentId;
 
         // If document provided, use select mode
@@ -323,21 +366,35 @@ class CreateSigningProcess extends Component
                 ->ready()
                 ->firstOrFail();
 
-            // Create process in transaction
+            // Create or update process in transaction
             DB::beginTransaction();
 
             try {
-                // Create signing process
-                $process = SigningProcess::create([
-                    'uuid' => (string) Str::uuid(),
-                    'tenant_id' => auth()->user()->tenant_id,
-                    'document_id' => $document->id,
-                    'created_by' => auth()->id(),
-                    'status' => SigningProcess::STATUS_DRAFT,
-                    'signature_order' => $this->signatureOrder,
-                    'custom_message' => $this->customMessage,
-                    'deadline_at' => $this->deadlineAt ? now()->parse($this->deadlineAt) : null,
-                ]);
+                if ($this->isEditing && $this->editingProcess) {
+                    // Update existing process
+                    $process = $this->editingProcess;
+                    $process->update([
+                        'document_id' => $document->id,
+                        'signature_order' => $this->signatureOrder,
+                        'custom_message' => $this->customMessage,
+                        'deadline_at' => $this->deadlineAt ? now()->parse($this->deadlineAt) : null,
+                    ]);
+
+                    // Delete existing signers and recreate
+                    $process->signers()->delete();
+                } else {
+                    // Create new signing process
+                    $process = SigningProcess::create([
+                        'uuid' => (string) Str::uuid(),
+                        'tenant_id' => auth()->user()->tenant_id,
+                        'document_id' => $document->id,
+                        'created_by' => auth()->id(),
+                        'status' => SigningProcess::STATUS_DRAFT,
+                        'signature_order' => $this->signatureOrder,
+                        'custom_message' => $this->customMessage,
+                        'deadline_at' => $this->deadlineAt ? now()->parse($this->deadlineAt) : null,
+                    ]);
+                }
 
                 // Create signers
                 foreach ($this->signers as $index => $signerData) {
@@ -355,7 +412,7 @@ class CreateSigningProcess extends Component
 
                 // Register in audit trail
                 $auditService->logEvent(
-                    eventType: 'signing_process.created',
+                    eventType: $this->isEditing ? 'signing_process.updated' : 'signing_process.created',
                     metadata: [
                         'process_id' => $process->id,
                         'process_uuid' => $process->uuid,
@@ -382,7 +439,9 @@ class CreateSigningProcess extends Component
                     // Don't fail the creation, notifications can be resent
                 }
 
-                $this->success = 'Signing process created successfully!';
+                $this->success = $this->isEditing 
+                    ? 'Signing process updated and sent successfully!'
+                    : 'Signing process created successfully!';
                 $this->createdProcessUuid = $process->uuid;
 
                 // Dispatch event
@@ -403,6 +462,137 @@ class CreateSigningProcess extends Component
             $this->error = 'Failed to create signing process. Please try again.';
 
             Log::error('Failed to create signing process', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => auth()->id(),
+                'document_id' => $this->documentId,
+            ]);
+        }
+
+        $this->creating = false;
+    }
+
+    /**
+     * Save the signing process as draft without sending notifications.
+     */
+    public function saveAsDraft(AuditTrailService $auditService)
+    {
+        $this->creating = true;
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            // Validate document is selected
+            if (! $this->documentId) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'documentId' => ['Please select or upload a document.'],
+                ]);
+            }
+
+            // Validate basic fields
+            $this->validate([
+                'documentId' => 'required|exists:documents,id',
+                'signatureOrder' => 'required|in:sequential,parallel',
+                'customMessage' => 'nullable|string|max:500',
+                'deadlineAt' => 'nullable|date|after:today',
+            ]);
+
+            // Validate signers
+            $this->validateSigners();
+
+            // Check minimum signers
+            if (count($this->signers) < 1) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'signers' => ['At least one signer is required.'],
+                ]);
+            }
+
+            // Get the document
+            $document = Document::query()
+                ->where('id', $this->documentId)
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->ready()
+                ->firstOrFail();
+
+            // Create or update process in transaction
+            DB::beginTransaction();
+
+            try {
+                if ($this->isEditing && $this->editingProcess) {
+                    // Update existing draft
+                    $process = $this->editingProcess;
+                    $process->update([
+                        'document_id' => $document->id,
+                        'signature_order' => $this->signatureOrder,
+                        'custom_message' => $this->customMessage,
+                        'deadline_at' => $this->deadlineAt ? now()->parse($this->deadlineAt) : null,
+                    ]);
+
+                    // Delete existing signers and recreate
+                    $process->signers()->delete();
+                } else {
+                    // Create signing process as draft
+                    $process = SigningProcess::create([
+                        'uuid' => (string) Str::uuid(),
+                        'tenant_id' => auth()->user()->tenant_id,
+                        'document_id' => $document->id,
+                        'created_by' => auth()->id(),
+                        'status' => SigningProcess::STATUS_DRAFT,
+                        'signature_order' => $this->signatureOrder,
+                        'custom_message' => $this->customMessage,
+                        'deadline_at' => $this->deadlineAt ? now()->parse($this->deadlineAt) : null,
+                    ]);
+                }
+
+                // Create signers (without sending notifications)
+                foreach ($this->signers as $index => $signerData) {
+                    Signer::create([
+                        'uuid' => (string) Str::uuid(),
+                        'signing_process_id' => $process->id,
+                        'name' => trim($signerData['name']),
+                        'email' => trim(strtolower($signerData['email'])),
+                        'phone' => ! empty($signerData['phone']) ? trim($signerData['phone']) : null,
+                        'order' => $index,
+                        'status' => Signer::STATUS_PENDING,
+                        'token' => Str::random(32),
+                    ]);
+                }
+
+                // Register in audit trail
+                $auditService->logEvent(
+                    eventType: $this->isEditing ? 'signing_process.draft_updated' : 'signing_process.draft_saved',
+                    metadata: [
+                        'process_id' => $process->id,
+                        'process_uuid' => $process->uuid,
+                        'document_id' => $document->id,
+                        'document_name' => $document->original_filename,
+                        'signers_count' => count($this->signers),
+                        'signature_order' => $this->signatureOrder,
+                    ],
+                    userId: auth()->id(),
+                    tenantId: auth()->user()->tenant_id
+                );
+
+                DB::commit();
+
+                $this->success = __('Draft saved successfully! You can send it later.');
+                $this->createdProcessUuid = $process->uuid;
+
+                // Redirect to processes list
+                return $this->redirect(route('signing-processes.index'), navigate: true);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->creating = false;
+            throw $e;
+        } catch (\Exception $e) {
+            $this->error = __('Failed to save draft. Please try again.');
+
+            Log::error('Failed to save signing process draft', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'user_id' => auth()->id(),

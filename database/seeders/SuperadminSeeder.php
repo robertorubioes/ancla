@@ -38,19 +38,19 @@ class SuperadminSeeder extends Seeder
 
         // Create superadmin user
         User::firstOrCreate(
-            ['email' => 'superadmin@ancla.app'],
+            ['email' => 'mail@robertorubio.es'],
             [
                 'tenant_id' => $superadminTenant->id,
-                'name' => 'Firmalum Superadmin',
-                'password' => Hash::make('password'), // Change in production!
+                'name' => 'Roberto Rubio',
+                'password' => Hash::make('961531931'),
                 'role' => 'super_admin',
                 'email_verified_at' => now(),
             ]
         );
 
         $this->command->info('✅ Superadmin user created successfully!');
-        $this->command->info('   Email: superadmin@ancla.app');
-        $this->command->info('   Password: password');
+        $this->command->info('   Email: mail@robertorubio.es');
+        $this->command->info('   Password: 961531931');
         $this->command->warn('⚠️  Please change the default password in production!');
     }
 }

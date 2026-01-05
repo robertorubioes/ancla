@@ -105,6 +105,6 @@
     </div>
     
     <!-- Livewire Scripts -->
-    @livewireScripts
+    @livewireScriptConfig
 </body>
 </html>
