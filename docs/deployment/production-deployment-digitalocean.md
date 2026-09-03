@@ -768,9 +768,10 @@ QUEUE_CONNECTION=redis
 MAIL_MAILER=ses
 MAIL_FROM_ADDRESS=noreply@firmalum.com
 MAIL_FROM_NAME="Firmalum"
-AWS_ACCESS_KEY_ID=AKIA_YOUR_AWS_KEY_ID
-AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY
-AWS_DEFAULT_REGION=eu-west-1
+# SES lleva sus propias claves: AWS_ACCESS_KEY_ID y companeras las usa el
+# disco s3, que aqui apunta a DigitalOcean Spaces con credenciales distintas.
+AWS_SES_KEY=AKIA_YOUR_AWS_KEY_ID
+AWS_SES_SECRET=YOUR_AWS_SECRET_KEY
 AWS_SES_REGION=eu-west-1
 
 # ============================================
@@ -778,11 +779,11 @@ AWS_SES_REGION=eu-west-1
 # ============================================
 FILESYSTEM_DISK=s3
 AWS_BUCKET=ancla-production
-AWS_REGION=ams3
+AWS_DEFAULT_REGION=ams3
 AWS_ENDPOINT=https://ams3.digitaloceanspaces.com
 AWS_USE_PATH_STYLE_ENDPOINT=false
-AWS_S3_KEY=DO00_YOUR_SPACES_KEY_ID
-AWS_S3_SECRET=YOUR_SPACES_SECRET_KEY
+AWS_ACCESS_KEY_ID=DO00_YOUR_SPACES_KEY_ID
+AWS_SECRET_ACCESS_KEY=YOUR_SPACES_SECRET_KEY
 
 # ============================================
 # ENCRYPTION (AES-256-GCM)
