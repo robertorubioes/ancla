@@ -236,12 +236,12 @@ class TsaResealService
         ]);
 
         return new ChainVerificationResult(
-            isValid: $isValid,
+            valid: $isValid,
             entriesVerified: $entries->count(),
             errors: $errors,
             warnings: $warnings,
-            firstEntry: $entries->first()?->toArray(),
-            lastEntry: $entries->last()?->toArray()
+            firstSequence: $entries->first()?->sequence_number,
+            lastSequence: $entries->last()?->sequence_number
         );
     }
 
@@ -356,7 +356,7 @@ class TsaResealService
         foreach ($chains as $chain) {
             try {
                 $verification = $this->verifyChain($chain);
-                if ($verification->isValid) {
+                if ($verification->isValid()) {
                     $results['valid']++;
                 } else {
                     $results['invalid']++;

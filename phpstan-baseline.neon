@@ -2467,12 +2467,6 @@ parameters:
 			path: app/Providers/FortifyServiceProvider.php
 
 		-
-			message: '#^Access to an undefined property App\\Services\\Evidence\\ChainVerificationResult\:\:\$isValid\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/LongTermArchiveService.php
-
-		-
 			message: '#^Method App\\Services\\Archive\\LongTermArchiveService\:\:getStatistics\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2551,80 +2545,8 @@ parameters:
 			path: app/Services/Archive/RetentionPolicyService.php
 
 		-
-			message: '#^Access to an undefined property App\\Services\\Evidence\\ChainVerificationResult\:\:\$isValid\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content_hash\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cumulative_hash\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$expires_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$previous_entry_hash\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$previous_entry_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sealed_hash\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sequence_number\.$#'
-			identifier: property.notFound
-			count: 11
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$timestamp_value\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tsaToken\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tsa_token_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isExpiringSoon\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: app/Services/Archive/TsaResealService.php
 
@@ -2637,36 +2559,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\Archive\\TsaResealService\:\:verifyAllChains\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Missing parameter \$valid \(bool\) in call to App\\Services\\Evidence\\ChainVerificationResult constructor\.$#'
-			identifier: argument.missing
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Unknown parameter \$firstEntry in call to App\\Services\\Evidence\\ChainVerificationResult constructor\.$#'
-			identifier: argument.unknown
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Unknown parameter \$isValid in call to App\\Services\\Evidence\\ChainVerificationResult constructor\.$#'
-			identifier: argument.unknown
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Unknown parameter \$lastEntry in call to App\\Services\\Evidence\\ChainVerificationResult constructor\.$#'
-			identifier: argument.unknown
-			count: 1
-			path: app/Services/Archive/TsaResealService.php
-
-		-
-			message: '#^Unknown parameter \$warnings in call to App\\Services\\Evidence\\ChainVerificationResult constructor\.$#'
-			identifier: argument.unknown
 			count: 1
 			path: app/Services/Archive/TsaResealService.php
 
@@ -4019,30 +3911,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: tests/Unit/Archive/LongTermArchiveServiceTest.php
-
-		-
-			message: '#^Access to an undefined property App\\Services\\Evidence\\ChainVerificationResult\:\:\$isValid\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/Unit/Archive/TsaResealServiceTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$previous_entry_hash\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Unit/Archive/TsaResealServiceTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reseal_reason\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Unit/Archive/TsaResealServiceTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sequence_number\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Unit/Archive/TsaResealServiceTest.php
 
 		-
 			message: '#^Parameter \#1 \$hashingService of class App\\Services\\Archive\\TsaResealService constructor expects App\\Services\\Evidence\\HashingService, Mockery\\MockInterface given\.$#'
