@@ -6,16 +6,46 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SuperadminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * Las credenciales NO se cablean: se leen de SUPERADMIN_EMAIL y
+     * SUPERADMIN_PASSWORD. Fuera de local/testing la contrasena es
+     * obligatoria; si falta, el seeder aborta en lugar de crear una cuenta
+     * con una clave conocida.
      */
     public function run(): void
     {
-        // Create a default tenant for superadmin (Firmalum internal)
+        $email = config('superadmin.email');
+
+        if (blank($email)) {
+            $this->command->error('SUPERADMIN_EMAIL no esta definido. Seeder abortado.');
+
+            return;
+        }
+
+        $password = config('superadmin.password');
+        $generated = false;
+
+        if (blank($password)) {
+            if (app()->environment(['production', 'staging'])) {
+                $this->command->error(
+                    'SUPERADMIN_PASSWORD es obligatorio en '.app()->environment().'. Seeder abortado.'
+                );
+
+                return;
+            }
+
+            $password = Str::password(20);
+            $generated = true;
+        }
+
         $superadminTenant = Tenant::firstOrCreate(
+            // Slug historico: renombrarlo crearia un tenant duplicado en produccion.
             ['slug' => 'ancla-admin'],
             [
                 'name' => 'Firmalum Admin',
@@ -36,21 +66,29 @@ class SuperadminSeeder extends Seeder
             ]
         );
 
-        // Create superadmin user
-        User::firstOrCreate(
-            ['email' => 'mail@robertorubio.es'],
+        $user = User::firstOrCreate(
+            ['email' => $email],
             [
                 'tenant_id' => $superadminTenant->id,
-                'name' => 'Roberto Rubio',
-                'password' => Hash::make('961531931'),
+                'name' => config('superadmin.name'),
+                'password' => Hash::make($password),
                 'role' => 'super_admin',
                 'email_verified_at' => now(),
             ]
         );
 
-        $this->command->info('✅ Superadmin user created successfully!');
-        $this->command->info('   Email: mail@robertorubio.es');
-        $this->command->info('   Password: 961531931');
-        $this->command->warn('⚠️  Please change the default password in production!');
+        if (! $user->wasRecentlyCreated) {
+            $this->command->info("El superadmin {$email} ya existia; no se toca su contrasena.");
+
+            return;
+        }
+
+        $this->command->info('Superadmin creado.');
+        $this->command->info("   Email: {$email}");
+
+        if ($generated) {
+            $this->command->warn("   Contrasena generada: {$password}");
+            $this->command->warn('   Guardala ahora: no se vuelve a mostrar.');
+        }
     }
 }
