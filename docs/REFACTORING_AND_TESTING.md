@@ -66,8 +66,23 @@ mucho mas rapido.
 ### 1.3 Estado real
 
 ```
-657 tests - 44 errores - 49 fallos - 3 incompletos
+local (SQLite)  657 tests - 44 errores - 49 fallos    = 93
+CI    (MySQL)   657 tests - 63 errores - 50 fallos    = 113
 ```
+
+**La cifra buena es la del CI**: produccion es MySQL. Los 20 fallos extra no
+son ruido del entorno, son bugs reales que SQLite tolera en silencio y MySQL
+rechaza:
+
+| Error solo en MySQL | Veces | Que significa |
+|---|---|---|
+| `Data truncated for column 'status'` | 10 | Se escribe un valor que no esta en el ENUM de la columna. SQLite lo acepta; MySQL lo trunca y avisa. |
+| `Incorrect string value: '\xFF\x99...'` | 10 | Se guardan bytes binarios en una columna de texto utf8mb4. Deberia ir en base64 o en una columna binaria. |
+| `Unknown column 'action' in 'where clause'` | 1 | Una consulta filtra por una columna que no existe. |
+
+Correr los tests en SQLite mientras produccion es MySQL **oculta bugs de
+produccion**. Conviene apuntar `phpunit.xml` a MySQL, con una BD aislada
+`firmalum_test` como pide el estandar de la casa.
 
 Reparto por fichero (menciones en la salida, como orden de magnitud):
 
