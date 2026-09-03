@@ -114,11 +114,15 @@ Reparto por fichero (menciones en la salida, como orden de magnitud):
 
 ### 1.5 Desajustes de configuracion pendientes
 
-`.env.production` usa `AWS_REGION`, `AWS_S3_KEY` y `AWS_S3_SECRET`, pero
-`config/filesystems.php` lee `AWS_DEFAULT_REGION`, `AWS_ACCESS_KEY_ID` y
-`AWS_SECRET_ACCESS_KEY`. **Los nombres no coinciden**, asi que aun con el
-adaptador instalado las credenciales no se recogen. Hay que alinearlos antes
-del proximo despliegue.
+El origen del desajuste estaba en las guias de despliegue, que documentaban
+`AWS_REGION`, `AWS_S3_KEY` y `AWS_S3_SECRET` cuando `config/filesystems.php`
+lee `AWS_DEFAULT_REGION`, `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS_KEY`. Las
+guias ya estan corregidas, y `config/services.php` acepta credenciales
+propias para SES (que antes chocaban con las del disco s3).
+
+**Queda por aplicar en el servidor**: el `.env` de produccion sigue con los
+nombres antiguos. Ver
+[admin/rotacion-de-credenciales.md](admin/rotacion-de-credenciales.md).
 
 ### Orden sugerido para lo que queda
 
@@ -169,5 +173,5 @@ gh api -X PATCH repos/robertorubioes/ancla/branches/main/protection/required_sta
 | Identificadores `ancla` en infraestructura | BD `ancla_production`, supervisor `ancla-worker`, rutas `/var/www/ancla`, logs de nginx y el propio repositorio siguen con el nombre viejo. Renombrarlos exige ventana de parada. |
 | PHP 8.2 / Node 20 | El estandar de la casa apunta a PHP 8.4 / Node 22. |
 | Clave de desarrollo en el historico | `storage/certificates/ancla-dev.key` ya no se trackea, pero sigue siendo recuperable del historico de un repositorio publico. Debe considerarse comprometida. |
-| Contrasena del superadmin en el historico | Igual que la anterior: el seeder ya lee del entorno, pero el valor viejo sigue en el historico. **Rotarla en produccion.** |
+| Contrasena del superadmin en el historico | El seeder ya lee del entorno, pero el valor viejo sigue en el historico de un repositorio publico. Se rota con `php artisan superadmin:rotate-password`; **pendiente de ejecutar en produccion**. |
 | Sin `app/Modules/` | Las integraciones externas (TSA, IPinfo, ProxyCheck) viven en `app/Services/`. El estandar pide un modulo propio por integracion. |

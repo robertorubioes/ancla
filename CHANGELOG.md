@@ -23,6 +23,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Anadido
 
+- Comando `superadmin:rotate-password`: rota la contrasena de un
+  superadministrador y la muestra una sola vez, sin pasarla por argumento.
+  Cubierto por 8 tests.
+- `config/services.php` acepta `AWS_SES_KEY`, `AWS_SES_SECRET` y
+  `AWS_SES_REGION`, con respaldo a las compartidas: antes SES y el disco s3
+  se peleaban por las mismas tres variables.
+- `docs/admin/rotacion-de-credenciales.md`.
 - Analisis estatico real: `larastan/larastan` en nivel 6, con la deuda
   existente congelada en `phpstan-baseline.neon` (892 incidencias).
 - `brianium/paratest`, sin el cual el job de tests del CI no arrancaba.
@@ -83,6 +90,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Cambiado
 
+- Las guias de despliegue documentaban `AWS_REGION`, `AWS_S3_KEY` y
+  `AWS_S3_SECRET`, que la aplicacion no lee. Corregidas a los nombres
+  estandar de Laravel.
+- `User::$role` se documenta como `UserRole`, no como `string`. Eso deja al
+  descubierto varias ramas defensivas que ya no podian darse
+  (`instanceof UserRole` siempre cierto, comparaciones de enum con cadena
+  siempre falsas) y se eliminan.
 - Renombrado ANCLA a **Firmalum** en codigo y documentacion. `base_domain`
   por defecto pasa de `ancla.app` a `firmalum.com`.
 - `config/evidence.php`: `include_ancla_logo` -> `include_firmalum_logo`.
