@@ -1,12 +1,12 @@
 # Análisis Competitivo - Flujos de Firma Electrónica
 
 > 📅 **Fecha**: 2025-12-30  
-> 🎯 **Objetivo**: Comparar ANCLA vs competencia y proponer evolución  
-> 👤 **Product Owner**: ANCLA Team
+> 🎯 **Objetivo**: Comparar Firmalum vs competencia y proponer evolución  
+> 👤 **Product Owner**: Firmalum Team
 
 ---
 
-## 🎯 ANCLA - Flujo Actual (MVP Sprint 1-6)
+## 🎯 Firmalum - Flujo Actual (MVP Sprint 1-6)
 
 ### Enfoque: **"PDF Final Subido"**
 
@@ -252,14 +252,14 @@
 
 | Enfoque | Pros | Contras | Market Fit | Ejemplos |
 |---------|------|---------|------------|----------|
-| **PDF Final Subido** | ✅ Simple<br>✅ Control total del documento<br>✅ Rápido de implementar | ❌ No escalable<br>❌ No reusable<br>❌ Manual cada vez | Casos únicos, contratos custom, documentos legales complejos | HelloSign Basic, ANCLA MVP |
+| **PDF Final Subido** | ✅ Simple<br>✅ Control total del documento<br>✅ Rápido de implementar | ❌ No escalable<br>❌ No reusable<br>❌ Manual cada vez | Casos únicos, contratos custom, documentos legales complejos | HelloSign Basic, Firmalum MVP |
 | **Templates con Variables** | ✅ Reusable<br>✅ Escalable<br>✅ Automatizable<br>✅ Bulk operations | ❌ Complejo de configurar<br>❌ Requiere upfront design<br>❌ Menos flexible | Procesos repetitivos, HR, Sales, B2B | DocuSign, PandaDoc |
 | **Form-to-PDF** | ✅ No requiere PDF<br>✅ Web forms simples<br>✅ Mobile-friendly | ❌ Menos control visual<br>❌ Requiere document builder<br>❌ No para docs complejos | Formularios simples, applications, agreements | Adobe Sign Forms, JotForm Sign |
 | **Hybrid** | ✅ Flexibilidad máxima<br>✅ Best of both worlds | ❌ Complejo de mantener<br>❌ Confuso para usuarios | Enterprise con casos diversos | DocuSign, Adobe Sign |
 
 ---
 
-## 🎯 ANCLA - Estado Actual vs Competencia
+## 🎯 Firmalum - Estado Actual vs Competencia
 
 ### ✅ Fortalezas Actuales (Diferenciadores Únicos)
 
@@ -292,26 +292,26 @@
    - DocuSign: ✅ Editor visual completo
    - PandaDoc: ✅ Document builder
    - Adobe Sign: ✅ Smart templates
-   - **ANCLA**: ❌ No implementado (E2-005 en backlog)
+   - **Firmalum**: ❌ No implementado (E2-005 en backlog)
 
 2. **Zonas de Firma Definibles** ❌
    - Todos los competidores: ✅ Click para asignar zona
-   - **ANCLA**: ❌ Firma se coloca automáticamente (E2-002 postponed)
+   - **Firmalum**: ❌ Firma se coloca automáticamente (E2-002 postponed)
 
 3. **Workflows Avanzados** ❌
    - DocuSign: ✅ Conditional routing
    - SignNow: ✅ Approval chains
-   - **ANCLA**: ⚠️ Solo secuencial/paralelo básico
+   - **Firmalum**: ⚠️ Solo secuencial/paralelo básico
 
 4. **Bulk Operations** ❌
    - SignNow: ✅ CSV upload + mass send
    - DocuSign: ✅ Bulk send
-   - **ANCLA**: ❌ No implementado
+   - **Firmalum**: ❌ No implementado
 
 5. **API REST Pública** ⚠️
    - HelloSign: ✅ API-first strategy
    - DocuSign: ✅ API completa
-   - **ANCLA**: ⚠️ Solo API de verificación (no signing API)
+   - **Firmalum**: ⚠️ Solo API de verificación (no signing API)
 
 ---
 
@@ -447,10 +447,10 @@ Visual Editor (PandaDoc-like):
 - **DocuSign**: Template con variables → Fill CSV → Bulk send ✅ (5 min setup)
 - **PandaDoc**: Document builder → Variables → Send individual ✅ (10 min)
 
-**ANCLA Actual (MVP)**:
+**Firmalum Actual (MVP)**:
 - Upload PDF → Crear proceso → Enviar ❌ (repetitivo, 20 min cada uno)
 
-**ANCLA Futuro (Sprint 7 con E2-005)**:
+**Firmalum Futuro (Sprint 7 con E2-005)**:
 - Template "Contrato Empleado" → Fill variables → Generate PDF → Send ✅ (5 min)
 
 **ROI Mejora**: 75% time saving (de 20 min a 5 min)
@@ -466,10 +466,10 @@ Visual Editor (PandaDoc-like):
 - **DocuSign**: Upload PDF → Define zones → Send ✅
 - **Adobe Sign**: Acrobat edit → Form fields → Send ✅
 
-**ANCLA Actual (MVP)**:
+**Firmalum Actual (MVP)**:
 - Upload PDF → Crear proceso → Enviar ✅✅ (PERFECTO para esto)
 
-**Ventaja ANCLA**:
+**Ventaja Firmalum**:
 - ✅ Evidence package más robusto que competencia
 - ✅ Dossier probatorio para litigios
 - ✅ Verificación pública (licitaciones)
@@ -487,10 +487,10 @@ Visual Editor (PandaDoc-like):
 - **PandaDoc**: Template con pricing tables → CPQ → Send ✅✅ (15 min)
 - **DocuSign**: Template básico → Variables → Send ✅ (20 min)
 
-**ANCLA Actual (MVP)**:
+**Firmalum Actual (MVP)**:
 - Upload PDF → Send ❌ (no pricing tables, 30 min manual)
 
-**ANCLA Futuro (Sprint 9-11 con E2-006)**:
+**Firmalum Futuro (Sprint 9-11 con E2-006)**:
 - Document builder → Pricing blocks → Variables → PDF → Send ✅ (15 min)
 
 **Gap actual**: Pricing tables y CPQ (no prioritario para MVP legal-focus)
@@ -506,13 +506,13 @@ Visual Editor (PandaDoc-like):
 - **Adobe Sign**: FedRAMP + 21 CFR Part 11 ✅ (compliance excelente)
 - **DocuSign**: GovCloud ✅ (compliance bueno)
 
-**ANCLA Actual (MVP)**:
+**Firmalum Actual (MVP)**:
 - Evidence package robusto ✅✅✅ (MEJOR que competencia)
 - eIDAS compliance ✅✅✅ (PAdES-B-LT desde tier 1)
 - Verificación pública ✅✅✅ (ÚNICO - diferenciador total)
 - Dossier exportable ✅✅✅ (ÚNICO - para auditorías)
 
-**ANCLA Futuro (Sprint 7)**:
+**Firmalum Futuro (Sprint 7)**:
 - Mismo + Templates = **Líder indiscutible en compliance**
 
 **Ventaja competitiva**: Ya somos MEJORES que Adobe/DocuSign en evidencias legales
@@ -596,12 +596,12 @@ Historias:
 
 3. **eIDAS Compliance desde Free Tier** ⭐⭐⭐⭐
    - Competencia: Solo Enterprise tier ($100+/mes)
-   - ANCLA: Desde $15/mes
+   - Firmalum: Desde $15/mes
    - Marketing: "Enterprise compliance, startup price"
 
 4. **Multi-tenant White-Label desde MVP** ⭐⭐⭐⭐
    - Competencia: Solo tier Enterprise
-   - ANCLA: Desde tier Business ($75/mes)
+   - Firmalum: Desde tier Business ($75/mes)
    - Marketing: "Build your own signing platform"
 
 ---
@@ -680,9 +680,9 @@ Historias:
 
 ## 📊 Matriz Competitiva Final
 
-### ANCLA vs Competencia - Feature Comparison
+### Firmalum vs Competencia - Feature Comparison
 
-| Feature | ANCLA MVP | HelloSign | DocuSign | PandaDoc | Adobe Sign |
+| Feature | Firmalum MVP | HelloSign | DocuSign | PandaDoc | Adobe Sign |
 |---------|-----------|-----------|----------|----------|------------|
 | **PDF Upload** | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Zonas de firma** | ❌ Sprint 7 | ✅ | ✅ | ✅ | ✅ |
@@ -814,6 +814,6 @@ Historias:
 
 ---
 
-*Product Owner: ANCLA Team*  
+*Product Owner: Firmalum Team*  
 *Next Action: Completar Sprint 6 → Deploy MVP → Gather feedback → Plan Sprint 7*  
 *Status: Analysis completo, decisión tomada, execution en progreso*

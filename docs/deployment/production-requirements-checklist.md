@@ -1,14 +1,14 @@
 # ✅ Checklist de Requerimientos para Deployment a Producción
 
 > **Para**: Usuario/Cliente  
-> **Objetivo**: Deployment ANCLA a Digital Ocean  
+> **Objetivo**: Deployment Firmalum a Digital Ocean  
 > **Fecha**: 2026-01-01
 
 ---
 
 ## 🎯 Resumen
 
-Para realizar el deployment de ANCLA a producción en Digital Ocean, necesito que me proporciones la siguiente información. He organizado los requerimientos por prioridad.
+Para realizar el deployment de Firmalum a producción en Digital Ocean, necesito que me proporciones la siguiente información. He organizado los requerimientos por prioridad.
 
 ---
 
@@ -38,7 +38,7 @@ Para realizar el deployment de ANCLA a producción en Digital Ocean, necesito qu
 
 ```
 ☐ ¿Cuál es tu dominio?
-  Ejemplo: ancla.app, firma-electronica.es, etc.
+  Ejemplo: firmalum.com, firma-electronica.es, etc.
   
 ☐ ¿Tienes acceso al panel DNS?
   Proveedor: Cloudflare / Route53 / Otro: __________
@@ -313,5 +313,5 @@ Si tienes dudas sobre algún punto:
 
 **Versión**: 1.0  
 **Fecha**: 2026-01-01  
-**Proyecto**: ANCLA - Firma Electrónica Avanzada  
+**Proyecto**: Firmalum - Firma Electrónica Avanzada  
 **Estado**: MVP 100% Completo ✅ - Listo para Producción

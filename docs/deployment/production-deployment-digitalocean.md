@@ -24,7 +24,7 @@
 
 ## 🎯 Resumen Ejecutivo
 
-ANCLA es una plataforma SaaS multi-tenant de firma electrónica avanzada con **28 historias completadas** que incluye:
+Firmalum es una plataforma SaaS multi-tenant de firma electrónica avanzada con **28 historias completadas** que incluye:
 
 ### Funcionalidades Implementadas ✅
 
@@ -80,9 +80,9 @@ REQUERIDO:
 
 ```yaml
 REQUERIDO:
-  - Dominio principal (ej: ancla.app)
+  - Dominio principal (ej: firmalum.com)
   - Acceso a panel de DNS (Cloudflare, Route53, etc.)
-  - Wildcard subdomain support (*.ancla.app para multi-tenant)
+  - Wildcard subdomain support (*.firmalum.com para multi-tenant)
   
 OPCIONAL:
   - CDN configurado
@@ -387,18 +387,18 @@ sudo apt install -y certbot python3-certbot-nginx
 ### 4. Configurar Nginx
 
 ```bash
-# Crear configuración para ANCLA
-sudo nano /etc/nginx/sites-available/ancla
+# Crear configuración para Firmalum
+sudo nano /etc/nginx/sites-available/firmalum
 ```
 
 ```nginx
-# /etc/nginx/sites-available/ancla
+# /etc/nginx/sites-available/firmalum
 
 # Redirect HTTP to HTTPS
 server {
     listen 80;
     listen [::]:80;
-    server_name ancla.app *.ancla.app;
+    server_name firmalum.com *.firmalum.com;
     
     return 301 https://$host$request_uri;
 }
@@ -407,14 +407,14 @@ server {
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name ancla.app *.ancla.app;
+    server_name firmalum.com *.firmalum.com;
     
-    root /var/www/ancla/public;
+    root /var/www/firmalum/public;
     index index.php index.html;
     
     # SSL Certificates (Let's Encrypt)
-    ssl_certificate /etc/letsencrypt/live/ancla.app/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/ancla.app/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/firmalum.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/firmalum.com/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers on;
@@ -461,7 +461,7 @@ server {
 
 ```bash
 # Habilitar sitio
-sudo ln -s /etc/nginx/sites-available/ancla /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/firmalum /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 
 # Test y reload
@@ -511,14 +511,14 @@ sudo systemctl restart php8.2-fpm
 # - Enable automatic backups
 
 # 2. Obtener connection details
-# - Host: mysql-cluster-ancla-do-user-123456-0.db.ondigitalocean.com
+# - Host: mysql-cluster-firmalum-do-user-123456-0.db.ondigitalocean.com
 # - Port: 25060
 # - Username: doadmin
 # - Password: [generado por DO]
 # - Database: defaultdb
 
-# 3. Crear base de datos para ANCLA
-mysql -h mysql-cluster-ancla-do-user-123456-0.db.ondigitalocean.com \
+# 3. Crear base de datos para Firmalum
+mysql -h mysql-cluster-firmalum-do-user-123456-0.db.ondigitalocean.com \
       -P 25060 -u doadmin -p
 
 CREATE DATABASE ancla_production CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -578,8 +578,8 @@ EXIT;
 <?xml version="1.0" encoding="UTF-8"?>
 <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
   <CORSRule>
-    <AllowedOrigin>https://ancla.app</AllowedOrigin>
-    <AllowedOrigin>https://*.ancla.app</AllowedOrigin>
+    <AllowedOrigin>https://firmalum.com</AllowedOrigin>
+    <AllowedOrigin>https://*.firmalum.com</AllowedOrigin>
     <AllowedMethod>GET</AllowedMethod>
     <AllowedMethod>POST</AllowedMethod>
     <AllowedMethod>PUT</AllowedMethod>
@@ -631,7 +631,7 @@ ancla-production/
 ```bash
 # 1. Configurar en AWS Console
 # - Región: eu-west-1 (Irlanda) o us-east-1 (Virginia)
-# - Verify domain: ancla.app
+# - Verify domain: firmalum.com
 # - Add DNS records (SPF, DKIM, DMARC)
 
 # 2. DNS Records a añadir
@@ -639,27 +639,27 @@ ancla-production/
 
 ```dns
 # SPF
-ancla.app. IN TXT "v=spf1 include:amazonses.com ~all"
+firmalum.com. IN TXT "v=spf1 include:amazonses.com ~all"
 
 # DKIM (3 records proporcionados por SES)
-abcdefghijklmnop._domainkey.ancla.app. IN CNAME abcdefghijklmnop.dkim.amazonses.com.
-xyz123456789._domainkey.ancla.app. IN CNAME xyz123456789.dkim.amazonses.com.
-qwerty123456._domainkey.ancla.app. IN CNAME qwerty123456.dkim.amazonses.com.
+abcdefghijklmnop._domainkey.firmalum.com. IN CNAME abcdefghijklmnop.dkim.amazonses.com.
+xyz123456789._domainkey.firmalum.com. IN CNAME xyz123456789.dkim.amazonses.com.
+qwerty123456._domainkey.firmalum.com. IN CNAME qwerty123456.dkim.amazonses.com.
 
 # DMARC
-_dmarc.ancla.app. IN TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@ancla.app"
+_dmarc.firmalum.com. IN TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@firmalum.com"
 ```
 
 ```bash
 # 3. Crear IAM User para SMTP
-# - Create user: ancla-ses-smtp
+# - Create user: firmalum-ses-smtp
 # - Attach policy: AmazonSesSendingAccess
 # - Generate SMTP credentials
 
 # 4. Variables de entorno (ver sección Variables)
 MAIL_MAILER=ses
-MAIL_FROM_ADDRESS=noreply@ancla.app
-MAIL_FROM_NAME="ANCLA"
+MAIL_FROM_ADDRESS=noreply@firmalum.com
+MAIL_FROM_NAME="Firmalum"
 AWS_ACCESS_KEY_ID=AKIA...
 AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=eu-west-1
@@ -672,11 +672,11 @@ AWS_DEFAULT_REGION=eu-west-1
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.eu.mailgun.org
 MAIL_PORT=587
-MAIL_USERNAME=postmaster@mg.ancla.app
+MAIL_USERNAME=postmaster@mg.firmalum.com
 MAIL_PASSWORD=your_mailgun_password
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=noreply@ancla.app
-MAIL_FROM_NAME="ANCLA"
+MAIL_FROM_ADDRESS=noreply@firmalum.com
+MAIL_FROM_NAME="Firmalum"
 ```
 
 ---
@@ -688,19 +688,19 @@ MAIL_FROM_NAME="ANCLA"
 ```bash
 # 1. Obtener certificado wildcard (para multi-tenant)
 sudo certbot certonly --manual --preferred-challenges dns \
-  -d ancla.app -d *.ancla.app
+  -d firmalum.com -d *.firmalum.com
 
 # 2. Añadir TXT record en DNS
-# Certbot pedirá añadir un TXT record _acme-challenge.ancla.app
+# Certbot pedirá añadir un TXT record _acme-challenge.firmalum.com
 # con un valor específico. Añadir en tu panel DNS y esperar propagación.
 
 # 3. Verificar DNS propagation
-dig _acme-challenge.ancla.app TXT
+dig _acme-challenge.firmalum.com TXT
 
 # 4. Continuar con certbot (presionar Enter)
 # Certificados se guardan en:
-# /etc/letsencrypt/live/ancla.app/fullchain.pem
-# /etc/letsencrypt/live/ancla.app/privkey.pem
+# /etc/letsencrypt/live/firmalum.com/fullchain.pem
+# /etc/letsencrypt/live/firmalum.com/privkey.pem
 
 # 5. Auto-renewal (configurar cron)
 sudo crontab -e
@@ -722,7 +722,7 @@ Crear archivo `.env` de producción en el servidor:
 
 ```bash
 # En el servidor
-cd /var/www/ancla
+cd /var/www/firmalum
 nano .env
 ```
 
@@ -732,11 +732,11 @@ nano .env
 # ============================================
 # APP CONFIG
 # ============================================
-APP_NAME="ANCLA"
+APP_NAME="Firmalum"
 APP_ENV=production
 APP_KEY=base64:GENERATE_WITH_php_artisan_key:generate
 APP_DEBUG=false
-APP_URL=https://ancla.app
+APP_URL=https://firmalum.com
 APP_TIMEZONE=Europe/Madrid
 APP_LOCALE=es
 
@@ -744,7 +744,7 @@ APP_LOCALE=es
 # DATABASE (Digital Ocean Managed DB)
 # ============================================
 DB_CONNECTION=mysql
-DB_HOST=mysql-cluster-ancla-XXXXX.db.ondigitalocean.com
+DB_HOST=mysql-cluster-firmalum-XXXXX.db.ondigitalocean.com
 DB_PORT=25060
 DB_DATABASE=ancla_production
 DB_USERNAME=ancla_user
@@ -766,8 +766,8 @@ QUEUE_CONNECTION=redis
 # MAIL (Amazon SES)
 # ============================================
 MAIL_MAILER=ses
-MAIL_FROM_ADDRESS=noreply@ancla.app
-MAIL_FROM_NAME="ANCLA"
+MAIL_FROM_ADDRESS=noreply@firmalum.com
+MAIL_FROM_NAME="Firmalum"
 AWS_ACCESS_KEY_ID=AKIA_YOUR_AWS_KEY_ID
 AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY
 AWS_DEFAULT_REGION=eu-west-1
@@ -845,7 +845,7 @@ RATE_LIMIT_API_PUBLIC_DAILY=1000,1440
 # ============================================
 # SUPERADMIN
 # ============================================
-SUPERADMIN_EMAIL=admin@ancla.app
+SUPERADMIN_EMAIL=admin@firmalum.com
 SUPERADMIN_NAME="Super Admin"
 SUPERADMIN_PASSWORD=CHANGE_THIS_STRONG_PASSWORD_IMMEDIATELY
 
@@ -860,7 +860,7 @@ VITE_APP_NAME="${APP_NAME}"
 
 ```bash
 # En el servidor
-cd /var/www/ancla
+cd /var/www/firmalum
 
 # Generar APP_KEY
 php artisan key:generate
@@ -879,13 +879,13 @@ php artisan encryption:generate
 
 ```bash
 # Crear directorio
-sudo mkdir -p /var/www/ancla
-sudo chown -R deploy:deploy /var/www/ancla
+sudo mkdir -p /var/www/firmalum
+sudo chown -R deploy:deploy /var/www/firmalum
 cd /var/www
 
 # Clonar desde GitHub (branch main para producción)
-git clone -b main https://github.com/robertorubioes/ancla.git ancla
-cd ancla
+git clone -b main https://github.com/robertorubioes/ancla.git firmalum
+cd firmalum
 
 # Configurar git para auto-update
 git config pull.rebase false
@@ -894,7 +894,7 @@ git config pull.rebase false
 ### 2. Instalar Dependencias
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 
 # Composer (producción sin dev dependencies)
 composer install --optimize-autoloader --no-dev
@@ -947,7 +947,7 @@ mkdir -p storage/certificates
 openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
   -nodes -keyout storage/certificates/ancla-production.key \
   -out storage/certificates/ancla-production.crt \
-  -subj "/C=ES/ST=Madrid/L=Madrid/O=ANCLA Production/CN=ancla.app" \
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Production/CN=firmalum.com" \
   -addext "keyUsage=digitalSignature" \
   -addext "extendedKeyUsage=emailProtection"
 
@@ -969,7 +969,7 @@ sudo nano /etc/supervisor/conf.d/ancla-worker.conf
 ```ini
 [program:ancla-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/ancla/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600 --timeout=300
+command=php /var/www/firmalum/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600 --timeout=300
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -977,7 +977,7 @@ killasgroup=true
 user=deploy
 numprocs=4
 redirect_stderr=true
-stdout_logfile=/var/www/ancla/storage/logs/worker.log
+stdout_logfile=/var/www/firmalum/storage/logs/worker.log
 stopwaitsecs=3600
 ```
 
@@ -998,13 +998,13 @@ sudo supervisorctl status
 crontab -e
 
 # Añadir línea:
-* * * * * cd /var/www/ancla && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /var/www/firmalum && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 ### 8. Optimizar para Producción
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 
 # Cache everything
 php artisan config:cache
@@ -1027,12 +1027,12 @@ sudo supervisorctl restart ancla-worker:*
 ```bash
 # Obtener certificado Let's Encrypt wildcard
 sudo certbot certonly --manual --preferred-challenges dns \
-  -d ancla.app -d *.ancla.app
+  -d firmalum.com -d *.firmalum.com
 
 # Seguir instrucciones para añadir TXT record _acme-challenge
 
 # Actualizar nginx config con paths de certificados
-sudo nano /etc/nginx/sites-available/ancla
+sudo nano /etc/nginx/sites-available/firmalum
 # (Ver sección Configurar Nginx)
 
 # Reload nginx
@@ -1044,16 +1044,16 @@ sudo systemctl reload nginx
 
 ```bash
 # Crear script de deploy
-nano /var/www/ancla/deploy.sh
+nano /var/www/firmalum/deploy.sh
 ```
 
 ```bash
 #!/bin/bash
-# deploy.sh - ANCLA Production Deployment Script
+# deploy.sh - Firmalum Production Deployment Script
 
 set -e
 
-echo "🚀 Starting ANCLA deployment..."
+echo "🚀 Starting Firmalum deployment..."
 
 # Pull latest code
 echo "📥 Pulling latest code from Git..."
@@ -1099,7 +1099,7 @@ echo "✅ Deployment completed successfully!"
 
 ```bash
 # Dar permisos de ejecución
-chmod +x /var/www/ancla/deploy.sh
+chmod +x /var/www/firmalum/deploy.sh
 
 # Uso futuro:
 # ./deploy.sh
@@ -1114,7 +1114,7 @@ chmod +x /var/www/ancla/deploy.sh
 ```bash
 # Verificar Nginx
 sudo systemctl status nginx
-curl -I https://ancla.app
+curl -I https://firmalum.com
 
 # Verificar PHP-FPM
 sudo systemctl status php8.2-fpm
@@ -1147,7 +1147,7 @@ php artisan tinker
 ### 2. Crear Superadmin Inicial
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 php artisan tinker
 ```
 
@@ -1158,7 +1158,7 @@ use App\Enums\UserRole;
 
 $admin = User::create([
     'name' => 'Super Admin',
-    'email' => 'admin@ancla.app',
+    'email' => 'admin@firmalum.com',
     'password' => bcrypt('ChangeThisPassword123!'),
     'role' => UserRole::SUPER_ADMIN,
     'status' => 'active',
@@ -1170,8 +1170,8 @@ exit
 ```
 
 ```bash
-# Login en https://ancla.app/login
-# Email: admin@ancla.app
+# Login en https://firmalum.com/login
+# Email: admin@firmalum.com
 # Password: ChangeThisPassword123!
 
 # CAMBIAR PASSWORD INMEDIATAMENTE desde el panel
@@ -1181,12 +1181,12 @@ exit
 
 ```bash
 # Acceder como superadmin a:
-# https://ancla.app/admin/tenants
+# https://firmalum.com/admin/tenants
 
 # Crear tenant:
 # - Name: Empresa de Prueba
-# - Subdomain: demo (accesible en https://demo.ancla.app)
-# - Admin email: demo@ancla.app
+# - Subdomain: demo (accesible en https://demo.firmalum.com)
+# - Admin email: demo@firmalum.com
 # - Plan: trial (30 días)
 # - Max users: 5
 # - Max documents/month: 100
@@ -1201,7 +1201,7 @@ exit
 
 ```bash
 # Test upload documento
-# 1. Login como admin del tenant en https://demo.ancla.app
+# 1. Login como admin del tenant en https://demo.firmalum.com
 # 2. Navegar a "Upload Document"
 # 3. Subir PDF de prueba
 # 4. Verificar en Spaces que se guardó en:
@@ -1218,7 +1218,7 @@ exit
 # 8. Verificar email de entrega automática
 
 # Test verificación pública
-# 1. Ir a https://ancla.app/verify
+# 1. Ir a https://firmalum.com/verify
 # 2. Ingresar código de verificación del documento
 # 3. Debe mostrar información completa y QR code
 
@@ -1259,7 +1259,7 @@ nano ~/ancla-production-credentials.txt
 ```
 
 ```
-ANCLA PRODUCTION CREDENTIALS - CONFIDENTIAL
+Firmalum PRODUCTION CREDENTIALS - CONFIDENTIAL
 ============================================
 
 SERVER:
@@ -1268,12 +1268,12 @@ SERVER:
 - SSH Key: ~/.ssh/id_rsa_ancla
 
 SUPERADMIN:
-- URL: https://ancla.app/login
-- Email: admin@ancla.app
+- URL: https://firmalum.com/login
+- Email: admin@firmalum.com
 - Password: [cambiar inmediatamente]
 
 DATABASE:
-- Host: mysql-cluster-ancla-XXXXX.db.ondigitalocean.com
+- Host: mysql-cluster-firmalum-XXXXX.db.ondigitalocean.com
 - Port: 25060
 - Database: ancla_production
 - User: ancla_user
@@ -1290,11 +1290,11 @@ AMAZON SES:
 - Region: eu-west-1
 - Access Key ID: AKIAXXXXXXXXXXXX
 - Secret: [secret]
-- From: noreply@ancla.app
+- From: noreply@firmalum.com
 
 SSL:
 - Provider: Let's Encrypt
-- Cert Path: /etc/letsencrypt/live/ancla.app/
+- Cert Path: /etc/letsencrypt/live/firmalum.com/
 - Renewal: Auto (cron 3 AM daily)
 
 SIGNING CERT:
@@ -1316,7 +1316,7 @@ BACKUPS:
 MONITORING:
 - Digital Ocean: Enabled
 - Sentry DSN: [dsn]
-- Logs: /var/www/ancla/storage/logs/
+- Logs: /var/www/firmalum/storage/logs/
 ```
 
 ```bash
@@ -1339,7 +1339,7 @@ rm ~/ancla-production-credentials.txt
 
 ```bash
 # Laravel Application Logs
-tail -f /var/www/ancla/storage/logs/laravel.log
+tail -f /var/www/firmalum/storage/logs/laravel.log
 
 # Nginx Access Logs
 tail -f /var/log/nginx/ancla_access.log
@@ -1351,7 +1351,7 @@ tail -f /var/log/nginx/ancla_error.log
 tail -f /var/log/php8.2-fpm.log
 
 # Queue Worker Logs
-tail -f /var/www/ancla/storage/logs/worker.log
+tail -f /var/www/firmalum/storage/logs/worker.log
 
 # System Logs
 tail -f /var/log/syslog
@@ -1364,7 +1364,7 @@ tail -f /var/log/syslog
 
 ```bash
 # Limpiar logs antiguos (ejecutar mensualmente)
-cd /var/www/ancla
+cd /var/www/firmalum
 find storage/logs -name "*.log" -mtime +30 -delete
 
 # Limpiar archivos temp antiguos
@@ -1397,7 +1397,7 @@ php artisan evidence:cleanup-expired
 
 ```bash
 # Backup manual de base de datos
-mysqldump -h mysql-cluster-ancla-XXXXX.db.ondigitalocean.com \
+mysqldump -h mysql-cluster-firmalum-XXXXX.db.ondigitalocean.com \
   -P 25060 -u ancla_user -p ancla_production \
   > backup_$(date +%Y%m%d).sql
 
@@ -1424,7 +1424,7 @@ aws s3 ls s3://ancla-production/backups/ \
 
 ```bash
 # Crear snapshot manual del Droplet
-doctl compute droplet-action snapshot DROPLET_ID --snapshot-name ancla-$(date +%Y%m%d)
+doctl compute droplet-action snapshot DROPLET_ID --snapshot-name firmalum-$(date +%Y%m%d)
 
 # Listar snapshots
 doctl compute snapshot list
@@ -1438,21 +1438,21 @@ doctl compute snapshot list
 
 ```bash
 # Crear script de health check
-nano /var/www/ancla/healthcheck.sh
+nano /var/www/firmalum/healthcheck.sh
 ```
 
 ```bash
 #!/bin/bash
-# healthcheck.sh - ANCLA System Health Check
+# healthcheck.sh - Firmalum System Health Check
 
-echo "=== ANCLA HEALTH CHECK ==="
+echo "=== Firmalum HEALTH CHECK ==="
 echo "Date: $(date)"
 echo ""
 
 # Web Server
 echo "1. Nginx Status:"
 systemctl is-active nginx
-curl -s -o /dev/null -w "%{http_code}" https://ancla.app
+curl -s -o /dev/null -w "%{http_code}" https://firmalum.com
 
 # PHP-FPM
 echo "2. PHP-FPM Status:"
@@ -1464,7 +1464,7 @@ redis-cli ping
 
 # Database
 echo "4. Database Connection:"
-php /var/www/ancla/artisan tinker --execute="DB::connection()->getPdo(); echo 'OK';"
+php /var/www/firmalum/artisan tinker --execute="DB::connection()->getPdo(); echo 'OK';"
 
 # Queue Workers
 echo "5. Queue Workers:"
@@ -1480,14 +1480,14 @@ free -h | grep Mem | awk '{print $3 "/" $2 " used"}'
 
 # Spaces Connection
 echo "8. Spaces Storage:"
-php /var/www/ancla/artisan tinker --execute="Storage::disk('s3')->exists('test.txt') ? 'OK' : 'FAIL';"
+php /var/www/firmalum/artisan tinker --execute="Storage::disk('s3')->exists('test.txt') ? 'OK' : 'FAIL';"
 
 echo ""
 echo "=== END HEALTH CHECK ==="
 ```
 
 ```bash
-chmod +x /var/www/ancla/healthcheck.sh
+chmod +x /var/www/firmalum/healthcheck.sh
 
 # Ejecutar manualmente
 ./healthcheck.sh
@@ -1495,7 +1495,7 @@ chmod +x /var/www/ancla/healthcheck.sh
 # Programar ejecución diaria y enviar por email
 crontab -e
 # Añadir:
-0 8 * * * /var/www/ancla/healthcheck.sh | mail -s "ANCLA Health Check" admin@ancla.app
+0 8 * * * /var/www/firmalum/healthcheck.sh | mail -s "Firmalum Health Check" admin@firmalum.com
 ```
 
 ---
@@ -1524,7 +1524,7 @@ sudo systemctl reload nginx
 sudo supervisorctl status
 
 # Ver logs
-tail -f /var/www/ancla/storage/logs/worker.log
+tail -f /var/www/firmalum/storage/logs/worker.log
 
 # Restart workers
 sudo supervisorctl restart ancla-worker:*
@@ -1544,7 +1544,7 @@ php artisan tinker
 >>> exit
 
 # Verificar logs
-tail -f /var/www/ancla/storage/logs/laravel.log | grep -i mail
+tail -f /var/www/firmalum/storage/logs/laravel.log | grep -i mail
 
 # Verificar cola
 php artisan queue:work --once
@@ -1557,7 +1557,7 @@ php artisan queue:work --once
 
 ```bash
 # Reset permisos Laravel
-cd /var/www/ancla
+cd /var/www/firmalum
 sudo chown -R deploy:www-data storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
 sudo chmod -R 755 public
@@ -1565,8 +1565,8 @@ sudo chmod -R 755 public
 # Verificar SELinux (si aplica)
 getenforce
 # Si está en Enforcing, configurar contextos:
-sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/ancla/storage(/.*)?"
-sudo restorecon -R /var/www/ancla/storage
+sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/firmalum/storage(/.*)?"
+sudo restorecon -R /var/www/firmalum/storage
 ```
 
 ### Problema: SSL Certificate Errors
@@ -1583,12 +1583,12 @@ sudo certbot renew --force-renewal
 sudo nginx -t
 
 # Verificar DNS
-dig ancla.app
-dig demo.ancla.app
+dig firmalum.com
+dig demo.firmalum.com
 
 # Test SSL
-curl -I https://ancla.app
-openssl s_client -connect ancla.app:443 -servername ancla.app
+curl -I https://firmalum.com
+openssl s_client -connect firmalum.com:443 -servername firmalum.com
 ```
 
 ### Problema: Out of Memory
@@ -1622,7 +1622,7 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 # Verificar Managed DB status en DO Console
 
 # Test connection
-mysql -h mysql-cluster-ancla-XXXXX.db.ondigitalocean.com \
+mysql -h mysql-cluster-firmalum-XXXXX.db.ondigitalocean.com \
   -P 25060 -u ancla_user -p
 
 # Verificar firewall en DO
@@ -1633,7 +1633,7 @@ mysql -h mysql-cluster-ancla-XXXXX.db.ondigitalocean.com \
 mysql -h ... --ssl-mode=REQUIRED
 
 # Verificar .env
-cat /var/www/ancla/.env | grep DB_
+cat /var/www/firmalum/.env | grep DB_
 ```
 
 ---
@@ -1675,11 +1675,11 @@ systemctl status redis-server
 sudo supervisorctl status
 
 # Recent Logs
-tail -100 /var/www/ancla/storage/logs/laravel.log
+tail -100 /var/www/firmalum/storage/logs/laravel.log
 tail -100 /var/log/nginx/ancla_error.log
 
 # Environment (sanitized)
-cat /var/www/ancla/.env | grep -v PASSWORD | grep -v KEY | grep -v SECRET
+cat /var/www/firmalum/.env | grep -v PASSWORD | grep -v KEY | grep -v SECRET
 ```
 
 ---
@@ -1707,7 +1707,7 @@ cat /var/www/ancla/.env | grep -v PASSWORD | grep -v KEY | grep -v SECRET
 - [ ] Health check script creado
 - [ ] Tenant de prueba creado
 - [ ] Flujo end-to-end testado
-- [ ] DNS wildcard configurado (*.ancla.app)
+- [ ] DNS wildcard configurado (*.firmalum.com)
 - [ ] Documentación de credenciales encriptada y guardada
 - [ ] Deploy script creado
 - [ ] Team notificado del deployment

@@ -41,7 +41,7 @@ class SigningRequestMail extends Mailable
 
         return new Envelope(
             from: new Address(
-                address: config('mail.from.address', 'noreply@ancla.app'),
+                address: config('mail.from.address', 'noreply@firmalum.com'),
                 name: config('mail.from.name', 'Firmalum')
             ),
             subject: "Firma requerida: {$documentName}",

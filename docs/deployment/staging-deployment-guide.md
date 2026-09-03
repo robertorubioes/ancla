@@ -103,7 +103,7 @@ sudo mkdir -p /var/www
 cd /var/www
 
 # Clonar repositorio (ajustar URL)
-sudo git clone https://github.com/your-org/ancla-app.git firmalum-staging
+sudo git clone https://github.com/your-org/firmalum-app.git firmalum-staging
 cd firmalum-staging
 
 # Checkout a develop branch (Sprint 1-5 + E0-001)
