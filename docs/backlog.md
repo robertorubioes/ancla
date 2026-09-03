@@ -189,11 +189,11 @@
 | ID | Historia | Prioridad | Sprint estimado | Mercado objetivo |
 |----|----------|-----------|-----------------|------------------|
 | E2-002 | Definir zonas de firma | 🔴 ALTA | Sprint 7 | HR, Sales, General |
-| E2-005 | Plantillas de documentos | 🔴 ALTA | Sprint 7 | HR, Sales |
+| E2-005 | Plantillas de documentos | 🔴 ALTA | Sprint 7 | HR, Sales — diseño en [ADR-011](architecture/adr-011-plantillas-y-api-de-cumplimentacion.md) |
 | E3-007 | Reenviar recordatorios | 🟡 MEDIA | Sprint 7 | UX improvement |
 | E4-002 | SMS notifications | 🟡 MEDIA | Sprint 8 | Mobile users |
 | E5-004 | Acceso histórico avanzado | 🟡 MEDIA | Sprint 8 | Power users |
-| API-001 | REST API signing | 🔴 ALTA | Sprint 8 | Developers, integrations |
+| API-001 | REST API signing | 🔴 ALTA | Sprint 8 | Developers, integrations — diseño en [ADR-011](architecture/adr-011-plantillas-y-api-de-cumplimentacion.md) |
 | E2-006 | Document Builder | 🟡 MEDIA | Sprint 10-11 | Sales teams |
 | E6-001 | Personalizar logo/colores | 🟢 BAJA | Sprint 7-8 | White-label |
 | E6-002 | Dominio personalizado | 🟢 BAJA | Sprint 8 | White-label |
