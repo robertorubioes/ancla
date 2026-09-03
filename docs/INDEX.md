@@ -63,6 +63,7 @@ implementa.
 |---|---|
 | [admin/superadmin-guide.md](admin/superadmin-guide.md) | Panel de superadministrador. |
 | [admin/user-management-guide.md](admin/user-management-guide.md) | Gestion de usuarios y roles. |
+| [admin/rotacion-de-credenciales.md](admin/rotacion-de-credenciales.md) | Rotar la contrasena del superadmin y variables de S3, SES y dominio base. |
 
 ## Calidad
 
