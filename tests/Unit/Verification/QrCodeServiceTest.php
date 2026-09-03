@@ -37,11 +37,6 @@ class QrCodeServiceTest extends TestCase
         Storage::fake('local');
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /** @test */
     public function it_generates_verification_url(): void
     {

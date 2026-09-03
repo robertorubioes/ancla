@@ -359,10 +359,4 @@ class LongTermArchiveServiceTest extends TestCase
         $this->assertNotNull($archived->last_accessed_at);
         $this->assertEquals($document->id, $result->id);
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }

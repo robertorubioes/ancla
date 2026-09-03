@@ -406,10 +406,4 @@ class ConsentCaptureServiceTest extends TestCase
         $this->assertContains('terms', $types);
         $this->assertContains('privacy', $types);
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }

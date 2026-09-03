@@ -264,10 +264,4 @@ class TsaResealServiceTest extends TestCase
         $this->assertNotEmpty($hash);
         $this->assertEquals(64, strlen($hash));
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }

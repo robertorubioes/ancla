@@ -39,12 +39,6 @@ class PublicVerificationApiTest extends TestCase
         $this->mockVerificationServices();
     }
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     private function mockVerificationServices(): void
     {
         $hashingService = Mockery::mock(HashingService::class);

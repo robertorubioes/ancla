@@ -268,10 +268,4 @@ class DeviceFingerprintServiceTest extends TestCase
         $this->assertTrue($fingerprint->hasTouch());
         $this->assertEquals('375x812', $fingerprint->screen_resolution);
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }
