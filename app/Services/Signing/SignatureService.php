@@ -143,7 +143,7 @@ class SignatureService
                 'error' => $e->getMessage(),
             ]);
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Signature processing error', [
                 'signer_id' => $signer->id,

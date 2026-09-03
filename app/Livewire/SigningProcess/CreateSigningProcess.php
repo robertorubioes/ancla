@@ -12,6 +12,7 @@ use App\Services\Evidence\AuditTrailService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -311,7 +312,7 @@ class CreateSigningProcess extends Component
         $duplicates = array_filter(array_count_values($emails), fn ($count) => $count > 1);
 
         if (! empty($duplicates)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'signers' => ['Duplicate email addresses are not allowed in the same process.'],
             ]);
         }
@@ -329,7 +330,7 @@ class CreateSigningProcess extends Component
         try {
             // Validate document is selected
             if (! $this->documentId) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'documentId' => ['Please select or upload a document.'],
                 ]);
             }
@@ -347,14 +348,14 @@ class CreateSigningProcess extends Component
 
             // Check minimum signers
             if (count($this->signers) < 1) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'signers' => ['At least one signer is required.'],
                 ]);
             }
 
             // Check maximum signers
             if (count($this->signers) > 10) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'signers' => ['Maximum 10 signers allowed.'],
                 ]);
             }
@@ -439,7 +440,7 @@ class CreateSigningProcess extends Component
                     // Don't fail the creation, notifications can be resent
                 }
 
-                $this->success = $this->isEditing 
+                $this->success = $this->isEditing
                     ? 'Signing process updated and sent successfully!'
                     : 'Signing process created successfully!';
                 $this->createdProcessUuid = $process->uuid;
@@ -450,12 +451,12 @@ class CreateSigningProcess extends Component
                 // Redirect to processes list
                 return $this->redirect(route('signing-processes.index'), navigate: true);
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 DB::rollBack();
                 throw $e;
             }
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->creating = false;
             throw $e;
         } catch (\Exception $e) {
@@ -484,7 +485,7 @@ class CreateSigningProcess extends Component
         try {
             // Validate document is selected
             if (! $this->documentId) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'documentId' => ['Please select or upload a document.'],
                 ]);
             }
@@ -502,7 +503,7 @@ class CreateSigningProcess extends Component
 
             // Check minimum signers
             if (count($this->signers) < 1) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'signers' => ['At least one signer is required.'],
                 ]);
             }
@@ -581,12 +582,12 @@ class CreateSigningProcess extends Component
                 // Redirect to processes list
                 return $this->redirect(route('signing-processes.index'), navigate: true);
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 DB::rollBack();
                 throw $e;
             }
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->creating = false;
             throw $e;
         } catch (\Exception $e) {
