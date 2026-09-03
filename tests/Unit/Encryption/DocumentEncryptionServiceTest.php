@@ -14,7 +14,7 @@ use Tests\TestCase;
 /**
  * Unit tests for DocumentEncryptionService.
  *
- * @see \App\Services\Document\DocumentEncryptionService
+ * @see DocumentEncryptionService
  */
 class DocumentEncryptionServiceTest extends TestCase
 {

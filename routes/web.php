@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\PublicVerificationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentDownloadController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Middleware\EnsureSuperadmin;
+use App\Http\Middleware\EnsureTenantAdmin;
 use App\Livewire\Admin\TenantManagement;
 use App\Livewire\Settings\UserManagement;
 use App\Livewire\Signing\SigningPage;
@@ -239,7 +241,7 @@ Route::middleware(['auth'])->group(function () {
 |
 */
 
-Route::middleware(['auth', App\Http\Middleware\EnsureSuperadmin::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', EnsureSuperadmin::class])->prefix('admin')->group(function () {
     // Tenant management
     Route::get('/tenants', TenantManagement::class)
         ->name('admin.tenants');
@@ -255,7 +257,7 @@ Route::middleware(['auth', App\Http\Middleware\EnsureSuperadmin::class])->prefix
 |
 */
 
-Route::middleware(['auth', 'identify.tenant', App\Http\Middleware\EnsureTenantAdmin::class])->prefix('settings')->group(function () {
+Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])->prefix('settings')->group(function () {
     // User management
     Route::get('/users', UserManagement::class)
         ->name('settings.users');

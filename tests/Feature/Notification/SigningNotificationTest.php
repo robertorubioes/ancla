@@ -12,6 +12,7 @@ use App\Models\Signer;
 use App\Models\SigningProcess;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\Evidence\AuditTrailService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
@@ -227,7 +228,7 @@ class SigningNotificationTest extends TestCase
 
         // Manually execute the job
         $job = new SendSigningRequestJob($process->id, $signer->id);
-        $job->handle(app(\App\Services\Evidence\AuditTrailService::class));
+        $job->handle(app(AuditTrailService::class));
 
         $signer->refresh();
 
@@ -254,7 +255,7 @@ class SigningNotificationTest extends TestCase
 
         // Execute the job
         $job = new SendSigningRequestJob($process->id, $signer->id);
-        $job->handle(app(\App\Services\Evidence\AuditTrailService::class));
+        $job->handle(app(AuditTrailService::class));
 
         $this->assertDatabaseHas('audit_trail_entries', [
             'auditable_type' => SigningProcess::class,
@@ -289,7 +290,7 @@ class SigningNotificationTest extends TestCase
 
         // Execute the job - should not throw exception
         $job = new SendSigningRequestJob($process->id, $signer->id);
-        $job->handle(app(\App\Services\Evidence\AuditTrailService::class));
+        $job->handle(app(AuditTrailService::class));
 
         Mail::assertNothingSent();
 

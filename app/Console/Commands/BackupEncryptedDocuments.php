@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Document;
 use App\Models\SignedDocument;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -293,7 +294,7 @@ class BackupEncryptedDocuments extends Command
 
                 // Try to parse directory name as date
                 try {
-                    $backupDate = \Carbon\Carbon::createFromFormat('Y-m-d_His', $dirName);
+                    $backupDate = Carbon::createFromFormat('Y-m-d_His', $dirName);
 
                     if ($backupDate->lt($cutoffDate)) {
                         Storage::disk($backupDisk)->deleteDirectory($directory);

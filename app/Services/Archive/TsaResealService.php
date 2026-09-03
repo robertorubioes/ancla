@@ -10,6 +10,7 @@ use App\Models\TsaChainEntry;
 use App\Services\Evidence\ChainVerificationResult;
 use App\Services\Evidence\HashingService;
 use App\Services\Evidence\TsaService;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -273,7 +274,7 @@ class TsaResealService
     /**
      * Get the next required re-seal date.
      */
-    public function getNextResealDate(TsaChain $chain): \Carbon\Carbon
+    public function getNextResealDate(TsaChain $chain): Carbon
     {
         $latestEntry = $chain->entries()->orderByDesc('sequence_number')->first();
 
@@ -373,7 +374,7 @@ class TsaResealService
     /**
      * Calculate the next re-seal date based on certificate expiry.
      */
-    private function calculateNextResealDate(\Carbon\Carbon $expiresAt): \Carbon\Carbon
+    private function calculateNextResealDate(Carbon $expiresAt): Carbon
     {
         $beforeExpiryDays = config('archive.reseal.reseal_before_expiry_days', 90);
         $maxIntervalDays = config('archive.reseal.default_interval_days', 365);

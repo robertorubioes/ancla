@@ -11,6 +11,7 @@ use App\Services\Signing\SignatureException;
 use App\Services\Signing\SignatureService;
 use App\Services\Signing\SigningAccessException;
 use App\Services\Signing\SigningAccessService;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -260,7 +261,7 @@ class SigningPage extends Component
             $mimeType = $this->uploadedSignature->getMimeType();
             $base64 = base64_encode($imageData);
             $this->signatureData = "data:{$mimeType};base64,{$base64}";
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->signatureError = true;
             $this->signatureMessage = $e->validator->errors()->first('uploadedSignature');
             $this->uploadedSignature = null;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\Signer;
 use App\Services\Document\DocumentUploadException;
 use App\Services\Document\DocumentUploadService;
 use App\Services\Document\DuplicateDocumentException;
@@ -362,7 +363,7 @@ class DocumentController extends Controller
 
         if ($signerToken) {
             // Signer just needs a valid token for this document - OTP not required for preview
-            $isValidSigner = \App\Models\Signer::where('token', $signerToken)
+            $isValidSigner = Signer::where('token', $signerToken)
                 ->whereHas('signingProcess', function ($query) use ($document) {
                     $query->where('document_id', $document->id);
                 })

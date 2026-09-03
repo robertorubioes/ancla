@@ -3,6 +3,7 @@
 namespace Tests\Feature\Settings;
 
 use App\Enums\UserRole;
+use App\Livewire\Settings\UserManagement;
 use App\Mail\UserInvitationMail;
 use App\Mail\UserWelcomeMail;
 use App\Models\SigningProcess;
@@ -80,7 +81,7 @@ class UserManagementTest extends TestCase
     public function admin_can_see_all_tenant_users(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->assertSee($this->admin->name)
             ->assertSee($this->operator->name)
             ->assertSee($this->viewer->name);
@@ -92,7 +93,7 @@ class UserManagementTest extends TestCase
         Mail::fake();
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'newuser@example.com')
             ->set('inviteName', 'New User')
             ->set('inviteRole', 'operator')
@@ -116,7 +117,7 @@ class UserManagementTest extends TestCase
     public function cannot_invite_user_with_existing_email(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', $this->operator->email)
             ->set('inviteName', 'Duplicate User')
             ->set('inviteRole', 'viewer')
@@ -140,7 +141,7 @@ class UserManagementTest extends TestCase
         );
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'pending@example.com')
             ->set('inviteName', 'Another Name')
             ->set('inviteRole', 'operator')
@@ -152,7 +153,7 @@ class UserManagementTest extends TestCase
     public function invitation_email_validation(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'invalid-email')
             ->set('inviteName', 'Test User')
             ->set('inviteRole', 'viewer')
@@ -164,7 +165,7 @@ class UserManagementTest extends TestCase
     public function invitation_requires_name(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'test@example.com')
             ->set('inviteName', '')
             ->set('inviteRole', 'viewer')
@@ -176,7 +177,7 @@ class UserManagementTest extends TestCase
     public function invitation_requires_valid_role(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'test@example.com')
             ->set('inviteName', 'Test User')
             ->set('inviteRole', 'invalid_role')
@@ -200,7 +201,7 @@ class UserManagementTest extends TestCase
         $originalToken = $invitation->token;
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('resendInvitation', $invitation->id);
 
         $invitation->refresh();
@@ -242,7 +243,7 @@ class UserManagementTest extends TestCase
         );
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('cancelInvitation', $invitation->id);
 
         $this->assertDatabaseMissing('user_invitations', [
@@ -254,7 +255,7 @@ class UserManagementTest extends TestCase
     public function admin_can_edit_user(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('editUser', $this->operator->id)
             ->set('editName', 'Updated Name')
             ->set('editEmail', 'updated@example.com')
@@ -272,7 +273,7 @@ class UserManagementTest extends TestCase
     public function admin_cannot_change_own_role(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('editUser', $this->admin->id)
             ->set('editName', $this->admin->name)
             ->set('editEmail', $this->admin->email)
@@ -289,7 +290,7 @@ class UserManagementTest extends TestCase
     public function admin_can_deactivate_user(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('toggleUserStatus', $this->operator->id);
 
         $this->operator->refresh();
@@ -303,7 +304,7 @@ class UserManagementTest extends TestCase
         $this->operator->update(['status' => 'inactive']);
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('toggleUserStatus', $this->operator->id);
 
         $this->operator->refresh();
@@ -315,7 +316,7 @@ class UserManagementTest extends TestCase
     public function admin_cannot_deactivate_themselves(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('toggleUserStatus', $this->admin->id);
 
         $this->admin->refresh();
@@ -327,7 +328,7 @@ class UserManagementTest extends TestCase
     public function admin_can_delete_user(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('confirmDelete', $this->viewer->id)
             ->call('deleteUser');
 
@@ -340,7 +341,7 @@ class UserManagementTest extends TestCase
     public function admin_cannot_delete_themselves(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('confirmDelete', $this->admin->id)
             ->call('deleteUser');
 
@@ -360,7 +361,7 @@ class UserManagementTest extends TestCase
         ]);
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('confirmDelete', $this->operator->id)
             ->call('deleteUser');
 
@@ -374,7 +375,7 @@ class UserManagementTest extends TestCase
     public function can_search_users_by_name(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('search', $this->operator->name)
             ->assertSee($this->operator->name);
     }
@@ -383,7 +384,7 @@ class UserManagementTest extends TestCase
     public function can_search_users_by_email(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('search', $this->operator->email)
             ->assertSee($this->operator->email);
     }
@@ -392,7 +393,7 @@ class UserManagementTest extends TestCase
     public function can_filter_users_by_role(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('roleFilter', 'operator')
             ->assertSee($this->operator->name)
             ->assertDontSee($this->viewer->name);
@@ -404,7 +405,7 @@ class UserManagementTest extends TestCase
         $this->operator->update(['status' => 'inactive']);
 
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('statusFilter', 'inactive')
             ->assertSee($this->operator->name);
     }
@@ -569,7 +570,7 @@ class UserManagementTest extends TestCase
     public function admin_cannot_invite_super_admin(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'newsuperadmin@example.com')
             ->set('inviteName', 'New Super Admin')
             ->set('inviteRole', 'super_admin')
@@ -587,7 +588,7 @@ class UserManagementTest extends TestCase
         // Note: This test validates the logic, but in practice operators can't access user management
         // If an operator somehow bypassed the middleware, this validation would catch them
         Livewire::actingAs($this->operator)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->set('inviteEmail', 'newadmin@example.com')
             ->set('inviteName', 'New Admin')
             ->set('inviteRole', 'admin')
@@ -603,7 +604,7 @@ class UserManagementTest extends TestCase
     public function admin_cannot_assign_super_admin_role(): void
     {
         Livewire::actingAs($this->admin)
-            ->test(\App\Livewire\Settings\UserManagement::class)
+            ->test(UserManagement::class)
             ->call('editUser', $this->viewer->id)
             ->set('editName', $this->viewer->name)
             ->set('editEmail', $this->viewer->email)

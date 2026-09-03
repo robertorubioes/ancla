@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\TsaToken;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -326,7 +327,7 @@ class TsaService
      * Parse an RFC 3161 timestamp response.
      *
      * @param  string  $response  Binary response from TSA
-     * @return array{status: int, status_string: string, token: string, timestamp: \Carbon\Carbon}
+     * @return array{status: int, status_string: string, token: string, timestamp: Carbon}
      */
     private function parseTsaResponse(string $response): array
     {

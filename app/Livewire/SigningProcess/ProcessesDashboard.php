@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\SigningProcess;
 
 use App\Models\SigningProcess;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -123,8 +124,8 @@ class ProcessesDashboard extends Component
             session()->flash('message', __('Process sent successfully! Signers have been notified.'));
         } catch (\Exception $e) {
             session()->flash('error', __('Failed to send process. Please try again.'));
-            
-            \Illuminate\Support\Facades\Log::error('Failed to send process', [
+
+            Log::error('Failed to send process', [
                 'process_id' => $processId,
                 'error' => $e->getMessage(),
             ]);

@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\GeolocationRecord;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -329,7 +330,7 @@ class GeolocationService
     /**
      * Get geolocations for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return GeolocationRecord::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)
