@@ -120,7 +120,7 @@ class EvidenceDossierService
         ]);
 
         // Get TSA timestamp for the dossier
-        $tsaToken = $this->tsaService->getTimestamp($fileHash, $dossier);
+        $tsaToken = $this->tsaService->requestTimestamp($fileHash, $dossier->tenant_id);
         $dossier->update(['tsa_token_id' => $tsaToken->id]);
 
         // Log to audit trail

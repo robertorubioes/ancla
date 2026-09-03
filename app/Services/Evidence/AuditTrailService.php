@@ -61,7 +61,7 @@ class AuditTrailService
             $sequence = $lastEntry ? $lastEntry->sequence + 1 : 1;
 
             // Get previous hash (genesis hash if first entry)
-            $previousHash = $lastEntry?->hash ?? self::GENESIS_HASH;
+            $previousHash = $lastEntry->hash ?? self::GENESIS_HASH;
 
             // Prepare entry data
             $entryData = [
@@ -176,7 +176,7 @@ class AuditTrailService
             }
 
             // Verify previous_hash matches
-            $expectedPreviousHash = $previousEntry?->hash ?? self::GENESIS_HASH;
+            $expectedPreviousHash = $previousEntry->hash ?? self::GENESIS_HASH;
             if ($entry->previous_hash !== $expectedPreviousHash) {
                 $errors[] = "Entry {$entry->id}: Previous hash mismatch (chain broken)";
             }
@@ -328,6 +328,20 @@ class AuditTrailService
     public function getGenesisHash(): string
     {
         return self::GENESIS_HASH;
+    }
+
+    /**
+     * Get the hash at the head of a model's audit chain.
+     *
+     * Es el hash que sella el estado del rastro en este instante: sirve para
+     * anclar un paquete de evidencias a la cadena tal y como esta ahora.
+     *
+     * @param  Model  $auditable  The audited model
+     * @return string The last entry's hash, or the genesis hash if the chain is empty
+     */
+    public function getLatestHash(Model $auditable): string
+    {
+        return $this->getLastEntry($auditable)->hash ?? self::GENESIS_HASH;
     }
 
     /**

@@ -139,6 +139,8 @@ class Signer extends Model
 
     /**
      * Get the evidence package for the signature.
+     *
+     * @return BelongsTo<EvidencePackage, $this>
      */
     public function evidencePackage(): BelongsTo
     {

@@ -94,7 +94,7 @@ class ConsentCaptureService
 
         // Get TSA timestamp if required
         if (config('evidence.consent.tsa_required') && $action === 'accepted') {
-            $tsaToken = $this->tsaService->getTimestamp($verificationHash, $consent);
+            $tsaToken = $this->tsaService->requestTimestamp($verificationHash, $consent->tenant_id);
             $consent->update(['tsa_token_id' => $tsaToken->id]);
         }
 

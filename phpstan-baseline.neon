@@ -163,12 +163,6 @@ parameters:
 			path: app/Jobs/SendCancellationNotificationJob.php
 
 		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\AuditTrailService\:\:log\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Jobs/SendOtpCodeJob.php
-
-		-
 			message: '#^Method App\\Jobs\\SendSignedDocumentCopyJob\:\:tags\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2563,12 +2557,6 @@ parameters:
 			path: app/Services/Archive/TsaResealService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$uuid\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
 			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Cell\(\)\.$#'
 			identifier: method.notFound
 			count: 19
@@ -2701,12 +2689,6 @@ parameters:
 			path: app/Services/Evidence/AuditTrailService.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>hash" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Services/Evidence/AuditTrailService.php
-
-		-
 			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\AuditTrailEntry\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 2
@@ -2716,12 +2698,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 4
-			path: app/Services/Evidence/ConsentCaptureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\TsaService\:\:getTimestamp\(\)\.$#'
-			identifier: method.notFound
-			count: 1
 			path: app/Services/Evidence/ConsentCaptureService.php
 
 		-
@@ -2812,12 +2788,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 8
-			path: app/Services/Evidence/EvidenceDossierService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\TsaService\:\:getTimestamp\(\)\.$#'
-			identifier: method.notFound
-			count: 1
 			path: app/Services/Evidence/EvidenceDossierService.php
 
 		-
@@ -3225,42 +3195,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Services/Signing/SignatureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\AuditTrailService\:\:log\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/SignatureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\ConsentCaptureService\:\:captureConsent\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/SignatureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\DeviceFingerprintService\:\:captureFromRequest\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/SignatureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\GeolocationService\:\:captureFromRequest\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/SignatureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\IpResolutionService\:\:resolveFromRequest\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/SignatureService.php
-
-		-
-			message: '#^Call to an undefined method App\\Services\\Evidence\\TsaService\:\:timestamp\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: app/Services/Signing/SignatureService.php
 
@@ -3815,30 +3749,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: tests/Feature/Settings/UserManagementTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/Signing/SignatureCreationTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tenant_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/Feature/Signing/SignatureCreationTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/Signing/SignatureCreationTest.php
-
-		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: tests/Feature/Signing/SignatureCreationTest.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
