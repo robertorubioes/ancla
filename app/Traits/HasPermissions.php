@@ -17,12 +17,7 @@ trait HasPermissions
      */
     public function getRoleEnum(): UserRole
     {
-        // Handle both casted enum and string values
-        if ($this->role instanceof UserRole) {
-            return $this->role;
-        }
-
-        return UserRole::from($this->role);
+        return $this->role;
     }
 
     /**
@@ -189,7 +184,7 @@ trait HasPermissions
      */
     private function getRoleValue(): string
     {
-        return $this->role instanceof UserRole ? $this->role->value : $this->role;
+        return $this->role->value;
     }
 
     /**

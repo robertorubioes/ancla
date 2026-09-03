@@ -22,13 +22,9 @@ class EnsureSuperadmin
         }
 
         $user = auth()->user();
-        $role = $user->role;
-
-        // Handle both enum and string roles
-        $roleValue = $role instanceof UserRole ? $role->value : $role;
 
         // Check if user has superadmin role
-        if ($roleValue !== UserRole::SUPER_ADMIN->value) {
+        if ($user->role !== UserRole::SUPER_ADMIN) {
             abort(403, 'Access denied. Superadmin role required.');
         }
 
