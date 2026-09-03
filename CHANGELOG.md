@@ -24,7 +24,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 ### Anadido
 
 - Analisis estatico real: `larastan/larastan` en nivel 6, con la deuda
-  existente congelada en `phpstan-baseline.neon` (928 incidencias).
+  existente congelada en `phpstan-baseline.neon` (892 incidencias).
+- `brianium/paratest`, sin el cual el job de tests del CI no arrancaba.
+- `league/flysystem-aws-s3-v3`, sin el cual ningun disco S3 funcionaba.
 - Hooks locales (`scripts/install-hooks.sh`): `pre-commit` con Pint + PHPStan
   y `commit-msg` con prefijo convencional.
 - Backups scriptados y verificados: `scripts/backup.sh`,
@@ -41,6 +43,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Corregido
 
+- **La verificacion de cadenas TSA nunca funciono.**
+  `TsaResealService::verifyChain()` construia `ChainVerificationResult` con
+  cuatro parametros con nombre que el DTO no tiene, asi que siempre lanzaba
+  `Error`. Es la comprobacion de integridad que sostiene la promesa
+  probatoria del archivo a largo plazo.
+- **Ningun disco S3 funcionaba**: `league/flysystem-aws-s3-v3` no era
+  dependencia del proyecto, y `.env.production` fija `FILESYSTEM_DISK=s3`.
+  Ademas, los discos `s3-glacier` y `s3-deep-archive` que referencia
+  `config/archive.php` no estaban declarados en `config/filesystems.php`.
+- Once clases de test llamaban a `Mockery::close()` antes de
+  `parent::tearDown()`, impidiendo el rollback de `RefreshDatabase`. La
+  suite pasa de 594 fallos en serie a 93.
 - `SendCancellationNotificationJob.php` empezaba por `2<?php`, de modo que PHP
   emitia un `2` al output cada vez que se autocargaba la clase.
 - Los bloques con `DB::beginTransaction()` solo capturaban `\Exception`: un
@@ -69,6 +83,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Pendiente
 
-- La suite de tests esta en rojo: 121 de 657 en CI (69 errores, 52 fallos). Ver
+- La suite de tests esta en rojo: 93 de 657 (44 errores, 49 fallos). Ver
   [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
 - `Tests (PHP 8.2)` no es todavia check requerido de `main` por ese motivo.

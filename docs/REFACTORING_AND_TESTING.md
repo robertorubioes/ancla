@@ -11,95 +11,109 @@ Documento vivo. Se actualiza cada vez que se paga o se contrae deuda.
 | Pint (`composer pint:test`) | Verde |
 | PHPStan nivel 6 (`composer stan`) | Verde sobre baseline de 928 incidencias |
 | `composer audit --no-dev` | Verde, sin avisos |
-| PHPUnit (`composer test`) | **Rojo: 121 de 657 en CI (MySQL); 174 en local (SQLite)** |
+| PHPUnit (`composer test`) | **Rojo: 93 de 657 en local. Eran 594 en serie / 174 en paralelo.** |
 
 ## 1. Suite de tests en rojo (prioridad maxima)
 
-### 1.1 El job de CI nunca llego a ejecutar un test
+### 1.1 Tres causas transversales, ya resueltas
 
-`ci.yml` corria `php artisan test --parallel` sin que `brianium/paratest`
-estuviese instalado, asi que Collision abortaba antes de arrancar:
+El grueso del rojo no eran 174 problemas distintos, sino tres:
+
+**a) El job de CI nunca llego a ejecutar un test.** `ci.yml` corria
+`php artisan test --parallel` sin `brianium/paratest` instalado, asi que
+Collision abortaba antes de arrancar. El CI llevaba rojo al menos 8 commits
+por una dependencia que faltaba.
+
+**b) `Mockery::close()` antes de `parent::tearDown()`.** Once clases repetian
+este patron:
+
+```php
+protected function tearDown(): void
+{
+    Mockery::close();      // si un mock incumple una expectativa, lanza AQUI
+    parent::tearDown();    // no llega -> RefreshDatabase no deshace nada
+}
+```
+
+Laravel ya llama a `Mockery::close()` en `tearDownTheTestEnvironment()`,
+**despues** de `callBeforeApplicationDestroyedCallbacks()`, que es donde
+`RefreshDatabase` deshace su transaccion. Adelantarlo dejaba la transaccion
+abierta y todos los tests siguientes morian en `setUp` con
+`PDOException: There is already an active transaction`. En serie, 582 de 594
+fallos eran esa cascada.
+
+**c) Dos bugs de produccion que los tests detectaban correctamente**, ambos
+en el archivo a largo plazo: la construccion invalida de
+`ChainVerificationResult` y los discos de S3 sin declarar ni adaptador
+instalado. Ver seccion 1.4.
+
+Resultado acumulado:
 
 ```
-Running Collision 8.x artisan test command in parallel requires at least
-ParaTest (brianium/paratest) 7.x.
+serie     594 fallos -> 93
+paralelo  174 fallos -> 93
 ```
 
-El job llevaba en rojo al menos los ultimos 8 commits de `staging` **por una
-dependencia que faltaba, no por tests rotos**. Ya esta instalada.
+Que ambos modos coincidan es la senal de que ya no hay contaminacion entre
+tests: los 93 restantes son fallos reales, uno a uno.
 
-### 1.2 Ejecutar en paralelo, no en serie
+### 1.2 Ejecutar en paralelo
 
-En serie, la suite comparte una conexion SQLite `:memory:`. El primer test que
-falla deja una transaccion abierta y a partir de ahi todos los demas revientan
-en el `setUp` con `PDOException: There is already an active transaction`: 582
-de los 594 fallos son cascada y la salida es ilegible.
-
-Con `--parallel` cada proceso usa su propia base de datos y la cascada
-desaparece. **Mide siempre con `--parallel`.**
+`composer test` usa `--parallel`, igual que el CI. Cada proceso recibe su
+propia base de datos. Medir en serie ya no distorsiona, pero el paralelo es
+mucho mas rapido.
 
 ### 1.3 Estado real
 
-La cifra de referencia es la del CI, que corre sobre MySQL como produccion:
-
 ```
-CI    (MySQL)   657 tests · 69 errores · 52 fallos · 536 pasan
-local (SQLite)  657 tests · 125 errores · 49 fallos · 483 pasan
+657 tests - 44 errores - 49 fallos - 3 incompletos
 ```
 
-La diferencia entre ambos entornos es en si misma deuda: hay tests que
-dependen del motor de base de datos. Al arreglarlos, conviene que la BD local
-sea MySQL como la del CI.
-
-Reparto por fichero en local (numero de menciones en la salida, como orden de
-magnitud):
+Reparto por fichero (menciones en la salida, como orden de magnitud):
 
 | Fichero | Peso |
 |---|---|
-| `tests/Feature/Signing/SignatureCreationTest.php` | 21 |
 | `tests/Feature/SigningProcess/CreateSigningProcessTest.php` | 20 |
-| `tests/Unit/Evidence/IpResolutionServiceTest.php` | 15 |
 | `tests/Feature/Signing/SigningAccessTest.php` | 11 |
-| `tests/Unit/Verification/QrCodeServiceTest.php` | 10 |
-| `tests/Unit/Document/DocumentUploadServiceTest.php` | 10 |
-| `tests/Feature/Document/PromoterDownloadTest.php` | 9 |
+| `tests/Feature/Signing/SignatureCreationTest.php` | 10 |
+| `tests/Unit/Document/DocumentUploadServiceTest.php` | 7 |
 | `tests/Unit/Evidence/EvidenceDossierServiceTest.php` | 6 |
-| `tests/Unit/Archive/TsaResealServiceTest.php` | 6 |
 | `tests/Unit/Document/FinalDocumentServiceTest.php` | 5 |
 | `tests/Feature/Otp/OtpVerificationTest.php` | 5 |
-| `tests/Feature/Notification/DocumentDownloadTest.php` | 5 |
 | `tests/Feature/Document/FinalDocumentGenerationTest.php` | 5 |
+| `tests/Feature/Settings/UserManagementTest.php` | 3 |
+| `tests/Feature/AuditTrailIntegrationTest.php` | 3 |
 
-### 1.4 Causas identificadas
+### 1.4 Bugs de produccion destapados por la suite
 
-- **Discos no configurados en testing**: `Disk [s3-glacier] does not have a
-  configured driver` en `LongTermArchiveServiceTest`. Falta declarar los
-  discos de archivo en la configuracion de test.
-- **`ChainVerificationResult::$isValid` no existe**:
-  `LongTermArchiveService.php:214` lee una propiedad que el DTO no declara.
-  Es un bug de produccion, no del test.
-- **Mensajes de excepcion desalineados**: `FinalDocumentService` lanza
-  "Not all signers have completed signing" donde el test espera
-  "No signers found".
-- **Expectativas de Mockery desactualizadas** tras cambios de firma. Ya
-  corregidas las de `requestTimestamp`; quedan mas.
-- **698 avisos de deprecacion de PHPUnit**: la suite usa anotaciones
-  `@test` en docblock en lugar de atributos. No rompen, pero conviene migrar.
+| Bug | Efecto |
+|---|---|
+| `TsaResealService::verifyChain()` construia `ChainVerificationResult` con cuatro parametros con nombre inexistentes | La funcion **siempre lanzaba `Error`**. La verificacion de integridad de la cadena de sellos de tiempo, que sostiene la promesa probatoria, nunca funciono. |
+| `league/flysystem-aws-s3-v3` no era dependencia | `.env.production` fija `FILESYSTEM_DISK=s3`: **toda** lectura o escritura de documentos en produccion fallaba con "Class not found". |
+| Discos `s3-glacier` y `s3-deep-archive` sin declarar | Mover un documento a nivel frio o de archivo lanzaba excepcion. |
+| `SendCancellationNotificationJob.php` empezaba por `2<?php` | PHP emitia un `2` al output al autocargar la clase. |
+| `markAsError()` dentro de `DB::transaction()` en `DocumentUploadService:176` | El rollback lo deshace junto al `Document::create()`. Una subida fallida no deja **ni fila ni estado de error**, solo la linea de log. **Sin arreglar**: es un cambio de comportamiento que merece decision propia. |
 
-### Orden sugerido para pagarlo
+### 1.5 Desajustes de configuracion pendientes
 
-1. Configurar los discos de test que faltan: es transversal y desbloquea
-   varios ficheros de golpe.
-2. Arreglar `ChainVerificationResult::$isValid` — es un bug real de
-   produccion, no una molestia de test.
-3. Ir por la tabla de 1.3 de arriba abajo.
-4. Migrar las anotaciones `@test` a atributos de PHPUnit 11.
-5. Anadir `Tests (PHP 8.2)` a los checks requeridos de `main`
-   (ver seccion 3).
+`.env.production` usa `AWS_REGION`, `AWS_S3_KEY` y `AWS_S3_SECRET`, pero
+`config/filesystems.php` lee `AWS_DEFAULT_REGION`, `AWS_ACCESS_KEY_ID` y
+`AWS_SECRET_ACCESS_KEY`. **Los nombres no coinciden**, asi que aun con el
+adaptador instalado las credenciales no se recogen. Hay que alinearlos antes
+del proximo despliegue.
+
+### Orden sugerido para lo que queda
+
+1. `CreateSigningProcessTest` y los dos de `Signing/`: 41 de los 93.
+2. `DocumentUploadServiceTest` y `FinalDocumentServiceTest`.
+3. El resto, de arriba abajo por la tabla de 1.3.
+4. Migrar las 698 anotaciones `@test` a atributos de PHPUnit 11.
+5. Anadir `Tests (PHP 8.2)` a los checks requeridos de `main` (seccion 3).
 
 ## 2. Baseline de PHPStan
 
-`phpstan-baseline.neon` congela **928 incidencias** en nivel 6. Solo bloquean
+`phpstan-baseline.neon` congela **892 incidencias** en nivel 6 (eran 928;
+las 36 que faltan se han arreglado, no silenciado). Solo bloquean
 los errores nuevos. Reparto aproximado:
 
 | Tipo | Cantidad |
