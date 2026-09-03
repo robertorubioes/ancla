@@ -31,6 +31,7 @@ implementa.
 | [architecture/adr-008-tsa-strategy.md](architecture/adr-008-tsa-strategy.md) | Estrategia de sellado de tiempo (TSA). |
 | [architecture/adr-009-pades-signature-strategy.md](architecture/adr-009-pades-signature-strategy.md) | Estrategia de firma PAdES. |
 | [architecture/adr-010-encryption-at-rest.md](architecture/adr-010-encryption-at-rest.md) | Cifrado en reposo. |
+| [architecture/adr-011-plantillas-y-api-de-cumplimentacion.md](architecture/adr-011-plantillas-y-api-de-cumplimentacion.md) | Plantillas con campos posicionados y API de cumplimentacion. |
 
 ## Dominio
 
