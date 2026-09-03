@@ -57,12 +57,6 @@ class PublicVerificationServiceTest extends TestCase
         config(['verification.logging.enabled' => false]);
     }
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     /** @test */
     public function it_returns_invalid_code_for_short_codes(): void
     {

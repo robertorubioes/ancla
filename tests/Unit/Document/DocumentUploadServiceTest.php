@@ -439,10 +439,4 @@ endobj
             true
         );
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }

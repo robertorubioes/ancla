@@ -294,10 +294,4 @@ class IpResolutionServiceTest extends TestCase
 
         $this->assertEquals('Google LLC - AS15169', $record->network_info);
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }

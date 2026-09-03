@@ -299,10 +299,4 @@ class GeolocationServiceTest extends TestCase
         $ipFallback = $this->service->capture($request, $signable, null, 'prompt');
         $this->assertEquals('approximate', $ipFallback->precision_level);
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }

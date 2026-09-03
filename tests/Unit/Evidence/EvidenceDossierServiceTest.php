@@ -356,10 +356,4 @@ class EvidenceDossierServiceTest extends TestCase
         $isValid = $this->service->verifySignature($dossier);
         $this->assertFalse($isValid);
     }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
 }
