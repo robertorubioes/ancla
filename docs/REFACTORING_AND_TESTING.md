@@ -11,7 +11,7 @@ Documento vivo. Se actualiza cada vez que se paga o se contrae deuda.
 | Pint (`composer pint:test`) | Verde |
 | PHPStan nivel 6 (`composer stan`) | Verde sobre baseline de 928 incidencias |
 | `composer audit --no-dev` | Verde, sin avisos |
-| PHPUnit (`php artisan test --parallel`) | **Rojo: 174 de 657 (125 errores, 49 fallos)** |
+| PHPUnit (`composer test`) | **Rojo: 121 de 657 en CI (MySQL); 174 en local (SQLite)** |
 
 ## 1. Suite de tests en rojo (prioridad maxima)
 
@@ -40,11 +40,18 @@ desaparece. **Mide siempre con `--parallel`.**
 
 ### 1.3 Estado real
 
+La cifra de referencia es la del CI, que corre sobre MySQL como produccion:
+
 ```
-Tests: 657 · Errores: 125 · Fallos: 49 · Incompletos: 3 · Pasan: 483
+CI    (MySQL)   657 tests · 69 errores · 52 fallos · 536 pasan
+local (SQLite)  657 tests · 125 errores · 49 fallos · 483 pasan
 ```
 
-Reparto por fichero (numero de menciones en la salida, como orden de
+La diferencia entre ambos entornos es en si misma deuda: hay tests que
+dependen del motor de base de datos. Al arreglarlos, conviene que la BD local
+sea MySQL como la del CI.
+
+Reparto por fichero en local (numero de menciones en la salida, como orden de
 magnitud):
 
 | Fichero | Peso |
