@@ -119,8 +119,12 @@ class CreateSigningProcess extends Component
      */
     public function mount(?int $documentId = null, ?SigningProcess $signingProcess = null): void
     {
-        // Edit mode: load existing draft process
-        if ($signingProcess) {
+        // Edit mode: load existing draft process.
+        //
+        // Se comprueba exists() y no solo el nulo: cuando el parametro no
+        // viene de la ruta, Livewire lo resuelve del contenedor y entrega un
+        // modelo vacio, que es truthy pero no representa ningun proceso.
+        if ($signingProcess && $signingProcess->exists) {
             // Verify it's a draft and belongs to user's tenant
             if ($signingProcess->status !== SigningProcess::STATUS_DRAFT) {
                 abort(403, 'Only draft processes can be edited.');
@@ -291,30 +295,69 @@ class CreateSigningProcess extends Component
     /**
      * Validate signers array.
      */
-    protected function validateSigners(): void
+    /**
+     * Validate the whole form in a single pass.
+     *
+     * Se valida todo de una vez, y no campo a campo, para que el formulario
+     * muestre todos sus errores juntos en lugar de destaparlos de uno en uno.
+     *
+     * @throws ValidationException
+     */
+    protected function validateForm(): void
     {
-        // Validate each signer
-        foreach ($this->signers as $index => $signer) {
-            $this->validate([
-                "signers.{$index}.name" => 'required|string|min:2|max:255',
-                "signers.{$index}.email" => 'required|email|max:255',
-                "signers.{$index}.phone" => 'nullable|string|max:20',
-            ], [
-                "signers.{$index}.name.required" => 'Signer name is required',
-                "signers.{$index}.name.min" => 'Signer name must be at least 2 characters',
-                "signers.{$index}.email.required" => 'Signer email is required',
-                "signers.{$index}.email.email" => 'Signer email must be valid',
-            ]);
+        // Normaliza antes de validar: si no, un email con un espacio final
+        // se rechaza por la regla 'email' aunque luego se recorte al guardar.
+        $this->signers = array_map(fn (array $signer): array => [
+            'name' => trim($signer['name']),
+            'email' => trim(strtolower($signer['email'])),
+            'phone' => trim($signer['phone'] ?? ''),
+        ], $this->signers);
+
+        $rules = [
+            'documentId' => 'required|exists:documents,id',
+            'signatureOrder' => 'required|in:sequential,parallel',
+            'customMessage' => 'nullable|string|max:500',
+            'deadlineAt' => 'nullable|date|after:today',
+        ];
+
+        $messages = [
+            'documentId.required' => 'Please select or upload a document.',
+            'documentId.exists' => 'Please select or upload a document.',
+        ];
+
+        foreach (array_keys($this->signers) as $index) {
+            $rules["signers.{$index}.name"] = 'required|string|min:2|max:255';
+            $rules["signers.{$index}.email"] = 'required|email|max:255';
+            $rules["signers.{$index}.phone"] = 'nullable|string|max:20';
+
+            $messages["signers.{$index}.name.required"] = 'Signer name is required';
+            $messages["signers.{$index}.name.min"] = 'Signer name must be at least 2 characters';
+            $messages["signers.{$index}.email.required"] = 'Signer email is required';
+            $messages["signers.{$index}.email.email"] = 'Signer email must be valid';
         }
 
-        // Check for duplicate emails
+        $this->validate($rules, $messages);
+
+        // Reglas que no se expresan como reglas de campo
+        $extra = [];
+
+        if (count($this->signers) < 1) {
+            $extra['signers'][] = 'At least one signer is required.';
+        }
+
+        if (count($this->signers) > 10) {
+            $extra['signers'][] = 'Maximum 10 signers allowed.';
+        }
+
         $emails = array_column($this->signers, 'email');
         $duplicates = array_filter(array_count_values($emails), fn ($count) => $count > 1);
 
         if (! empty($duplicates)) {
-            throw ValidationException::withMessages([
-                'signers' => ['Duplicate email addresses are not allowed in the same process.'],
-            ]);
+            $extra['signers'][] = 'Duplicate email addresses are not allowed in the same process.';
+        }
+
+        if (! empty($extra)) {
+            throw ValidationException::withMessages($extra);
         }
     }
 
@@ -328,37 +371,7 @@ class CreateSigningProcess extends Component
         $this->success = null;
 
         try {
-            // Validate document is selected
-            if (! $this->documentId) {
-                throw ValidationException::withMessages([
-                    'documentId' => ['Please select or upload a document.'],
-                ]);
-            }
-
-            // Validate basic fields
-            $this->validate([
-                'documentId' => 'required|exists:documents,id',
-                'signatureOrder' => 'required|in:sequential,parallel',
-                'customMessage' => 'nullable|string|max:500',
-                'deadlineAt' => 'nullable|date|after:today',
-            ]);
-
-            // Validate signers
-            $this->validateSigners();
-
-            // Check minimum signers
-            if (count($this->signers) < 1) {
-                throw ValidationException::withMessages([
-                    'signers' => ['At least one signer is required.'],
-                ]);
-            }
-
-            // Check maximum signers
-            if (count($this->signers) > 10) {
-                throw ValidationException::withMessages([
-                    'signers' => ['Maximum 10 signers allowed.'],
-                ]);
-            }
+            $this->validateForm();
 
             // Get the document
             $document = Document::query()
@@ -411,10 +424,15 @@ class CreateSigningProcess extends Component
                     ]);
                 }
 
-                // Register in audit trail
-                $auditService->logEvent(
-                    eventType: $this->isEditing ? 'signing_process.updated' : 'signing_process.created',
-                    metadata: [
+                // Register in audit trail.
+                //
+                // record() y no logEvent(): logEvent solo escribe en
+                // laravel.log, que no es prueba. La creacion de un proceso de
+                // firma tiene que quedar en la cadena encadenada por hash.
+                $auditService->record(
+                    $process,
+                    $this->isEditing ? 'signing_process.updated' : 'signing_process.created',
+                    [
                         'process_id' => $process->id,
                         'process_uuid' => $process->uuid,
                         'document_id' => $document->id,
@@ -422,9 +440,7 @@ class CreateSigningProcess extends Component
                         'signers_count' => count($this->signers),
                         'signature_order' => $this->signatureOrder,
                         'has_deadline' => $this->deadlineAt !== null,
-                    ],
-                    userId: auth()->id(),
-                    tenantId: auth()->user()->tenant_id
+                    ]
                 );
 
                 DB::commit();
@@ -483,30 +499,7 @@ class CreateSigningProcess extends Component
         $this->success = null;
 
         try {
-            // Validate document is selected
-            if (! $this->documentId) {
-                throw ValidationException::withMessages([
-                    'documentId' => ['Please select or upload a document.'],
-                ]);
-            }
-
-            // Validate basic fields
-            $this->validate([
-                'documentId' => 'required|exists:documents,id',
-                'signatureOrder' => 'required|in:sequential,parallel',
-                'customMessage' => 'nullable|string|max:500',
-                'deadlineAt' => 'nullable|date|after:today',
-            ]);
-
-            // Validate signers
-            $this->validateSigners();
-
-            // Check minimum signers
-            if (count($this->signers) < 1) {
-                throw ValidationException::withMessages([
-                    'signers' => ['At least one signer is required.'],
-                ]);
-            }
+            $this->validateForm();
 
             // Get the document
             $document = Document::query()
@@ -559,19 +552,18 @@ class CreateSigningProcess extends Component
                     ]);
                 }
 
-                // Register in audit trail
-                $auditService->logEvent(
-                    eventType: $this->isEditing ? 'signing_process.draft_updated' : 'signing_process.draft_saved',
-                    metadata: [
+                // Register in audit trail (ver la nota en create()).
+                $auditService->record(
+                    $process,
+                    $this->isEditing ? 'signing_process.draft_updated' : 'signing_process.draft_saved',
+                    [
                         'process_id' => $process->id,
                         'process_uuid' => $process->uuid,
                         'document_id' => $document->id,
                         'document_name' => $document->original_filename,
                         'signers_count' => count($this->signers),
                         'signature_order' => $this->signatureOrder,
-                    ],
-                    userId: auth()->id(),
-                    tenantId: auth()->user()->tenant_id
+                    ]
                 );
 
                 DB::commit();
