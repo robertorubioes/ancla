@@ -322,7 +322,7 @@ use Aws\SecretsManager\SecretsManagerClient;
 
 $client = new SecretsManagerClient([...]);
 $result = $client->getSecretValue([
-    'SecretId' => 'ancla/encryption/master-key',
+    'SecretId' => 'firmalum/encryption/master-key',
 ]);
 $masterKey = json_decode($result['SecretString'])->key;
 ```
@@ -1011,7 +1011,7 @@ class EncryptionKeyProvider
         ]);
         
         $result = $client->getSecretValue([
-            'SecretId' => 'ancla/production/encryption-master-key',
+            'SecretId' => 'firmalum/production/encryption-master-key',
         ]);
         
         return json_decode($result['SecretString'])->key;
@@ -1026,7 +1026,7 @@ use Vault\Client;
 $client = new Client(env('VAULT_ADDR'));
 $client->setToken(env('VAULT_TOKEN'));
 
-$secret = $client->read('secret/data/ancla/master-key');
+$secret = $client->read('secret/data/firmalum/master-key');
 $masterKey = $secret['data']['key'];
 ```
 
@@ -1207,7 +1207,7 @@ Master key en .env es aceptable para MVP pero insuficiente para producción ente
 1. Crear secret en AWS Secrets Manager:
 ```bash
 aws secretsmanager create-secret \
-    --name ancla/production/encryption-master-key \
+    --name firmalum/production/encryption-master-key \
     --secret-string '{"key":"base64:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"}'
 ```
 

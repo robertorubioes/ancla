@@ -335,9 +335,9 @@ class PublicVerificationController extends Controller
      * @urlParam code string required The verification code. Example: ABCD-EFGH-IJKL
      *
      * @response 200 {
-     *   "url": "https://ancla.app/verify/ABCD-EFGH-IJKL",
-     *   "short_url": "https://ancla.app/v/ABCDEF",
-     *   "qr_code_url": "https://ancla.app/api/v1/public/verify/ABCD-EFGH-IJKL/qr"
+     *   "url": "https://app.firmalum.com/verify/ABCD-EFGH-IJKL",
+     *   "short_url": "https://app.firmalum.com/v/ABCDEF",
+     *   "qr_code_url": "https://app.firmalum.com/api/v1/public/verify/ABCD-EFGH-IJKL/qr"
      * }
      */
     public function getUrls(string $code): JsonResponse

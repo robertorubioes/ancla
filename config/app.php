@@ -61,11 +61,11 @@ return [
     |
     | This is the base domain used for tenant subdomain resolution.
     | Tenants will be accessible via {slug}.{base_domain}
-    | Example: empresa.ancla.app
+    | Example: empresa.firmalum.com
     |
     */
 
-    'base_domain' => env('APP_BASE_DOMAIN', 'ancla.app'),
+    'base_domain' => env('APP_BASE_DOMAIN', 'firmalum.com'),
 
     /*
     |--------------------------------------------------------------------------

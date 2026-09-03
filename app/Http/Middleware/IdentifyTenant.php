@@ -85,7 +85,7 @@ class IdentifyTenant
      */
     protected function extractSubdomain(string $host): ?string
     {
-        $baseDomain = config('app.base_domain', 'ancla.app');
+        $baseDomain = config('app.base_domain', 'firmalum.com');
 
         // Si estamos en localhost, extraer subdomain diferente
         if (str_contains($host, 'localhost')) {

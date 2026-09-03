@@ -240,7 +240,7 @@ La corrección demuestra:
 
 **Developer**: Excelente trabajo en la corrección. La solución es limpia, segura y bien documentada.
 
-**Calidad del Código**: Production-ready, cumple todos los estándares ANCLA.
+**Calidad del Código**: Production-ready, cumple todos los estándares Firmalum.
 
 ---
 

@@ -1,4 +1,4 @@
-# Product Backlog - ANCLA
+# Product Backlog - Firmalum
 
 > 📅 **Última actualización**: 2025-12-30 (Sprint 6 COMPLETADO ✅)
 > 🎯 **MVP Status**: 100% COMPLETO (28/28 historias) 🎉
@@ -6,11 +6,11 @@
 
 ## Visión del Producto
 
-**ANCLA** es una plataforma SaaS de firma electrónica avanzada conforme al Reglamento eIDAS, diseñada para operar como **marca blanca (multi-tenant)**. Su diferencial competitivo es la **generación, conservación y exportación de evidencias legales incontestables**, capaces de defenderse ante cualquier auditoría o procedimiento judicial.
+**Firmalum** es una plataforma SaaS de firma electrónica avanzada conforme al Reglamento eIDAS, diseñada para operar como **marca blanca (multi-tenant)**. Su diferencial competitivo es la **generación, conservación y exportación de evidencias legales incontestables**, capaces de defenderse ante cualquier auditoría o procedimiento judicial.
 
 ### Propuesta de Valor
 - **Para empresas** que necesitan enviar documentos a firmar de forma legal y segura
-- **ANCLA proporciona** una plataforma de firma electrónica avanzada con trazabilidad completa
+- **Firmalum proporciona** una plataforma de firma electrónica avanzada con trazabilidad completa
 - **Que se diferencia** por su sistema de evidencias legales blindado y verificación pública única
 - **Permitiendo** operar bajo marca propia (white-label) con total personalización
 

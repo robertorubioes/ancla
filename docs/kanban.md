@@ -1951,7 +1951,7 @@ composer require setasign/fpdi phpseclib/phpseclib smalot/pdfparser
 
 **Certificado X.509 (Development):**
 ```bash
-Subject: C=ES, ST=Madrid, L=Madrid, O=Firmalum Development, CN=ancla.local
+Subject: C=ES, ST=Madrid, L=Madrid, O=Firmalum Development, CN=firmalum.local
 Key: RSA 4096 bits
 Validity: 10 años (2025-12-30 a 2035-12-27)
 Key Usage: digitalSignature

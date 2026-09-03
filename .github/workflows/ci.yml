@@ -252,7 +252,7 @@ jobs:
     if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
     environment:
       name: staging
-      url: https://staging.ancla.app
+      url: https://staging.firmalum.com
 
     steps:
       - name: Deploy to Staging
@@ -280,7 +280,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: production
-      url: https://ancla.app
+      url: https://app.firmalum.com
 
     steps:
       - name: Deploy to Production

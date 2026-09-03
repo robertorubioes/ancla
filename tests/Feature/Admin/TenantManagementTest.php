@@ -28,6 +28,7 @@ class TenantManagementTest extends TestCase
         // Create superadmin tenant
         $this->superadminTenant = Tenant::create([
             'name' => 'Firmalum Admin',
+            // Slug historico del tenant interno (ver SuperadminSeeder).
             'slug' => 'ancla-admin',
             'subdomain' => 'admin',
             'plan' => 'enterprise',
@@ -38,7 +39,7 @@ class TenantManagementTest extends TestCase
         $this->superadmin = User::create([
             'tenant_id' => $this->superadminTenant->id,
             'name' => 'Super Admin',
-            'email' => 'superadmin@ancla.app',
+            'email' => 'superadmin@firmalum.com',
             'password' => Hash::make('password'),
             'role' => 'super_admin',
             'email_verified_at' => now(),

@@ -1,4 +1,4 @@
-# 🚀 DEPLOYMENT ANCLA - INSTRUCCIONES PASO A PASO
+# 🚀 DEPLOYMENT Firmalum - INSTRUCCIONES PASO A PASO
 
 **Ejecuta esto DIRECTAMENTE en tu servidor 159.65.201.32**
 
@@ -21,7 +21,7 @@ Copia y pega TODO este bloque:
 ```bash
 #!/bin/bash
 set -e
-echo "🚀 ANCLA Setup - Iniciando..."
+echo "🚀 Firmalum Setup - Iniciando..."
 
 # Actualizar sistema
 echo "📦 Actualizando sistema..."
@@ -128,16 +128,16 @@ echo ""
 
 ---
 
-## PASO 2: Clonar ANCLA
+## PASO 2: Clonar Firmalum
 
 ```bash
 # Crear directorio
-mkdir -p /var/www/ancla
+mkdir -p /var/www/firmalum
 cd /var/www
 
 # Clonar repositorio
-git clone -b staging https://github.com/robertorubioes/ancla.git ancla
-cd ancla
+git clone -b staging https://github.com/robertorubioes/ancla.git firmalum
+cd firmalum
 
 echo "✅ Código clonado!"
 ```
@@ -147,7 +147,7 @@ echo "✅ Código clonado!"
 ## PASO 3: Instalar Dependencias
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 
 # Composer (puede tardar 2-3 minutos)
 echo "📦 Instalando dependencias Composer..."
@@ -170,14 +170,14 @@ echo "✅ Dependencias instaladas!"
 ## PASO 4: Configurar .env
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 nano .env
 ```
 
 **BORRA TODO** el contenido y pega esto:
 
 ```env
-APP_NAME="ANCLA"
+APP_NAME="Firmalum"
 APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
@@ -275,7 +275,7 @@ VITE_APP_NAME="${APP_NAME}"
 ## PASO 5: Descargar CA Certificate y Generar Keys
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 
 # CA Certificate
 wget -q https://raw.githubusercontent.com/digitalocean/do-certs/main/ca-certificate.crt -O /root/ca-certificate.crt
@@ -318,7 +318,7 @@ echo "✅ Keys generadas!"
 ## PASO 6: Configurar Base de Datos
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 
 # Crear base de datos (usa tus credenciales de Managed Database)
 echo "🗄️ Creando base de datos..."
@@ -346,7 +346,7 @@ echo "✅ Base de datos lista!"
 ## PASO 7: Configurar Nginx
 
 ```bash
-nano /etc/nginx/sites-available/ancla
+nano /etc/nginx/sites-available/firmalum
 ```
 
 **PEGA TODO ESTO**:
@@ -366,7 +366,7 @@ server {
     listen [::]:443 ssl http2;
     server_name app.firmalum.com *.app.firmalum.com;
     
-    root /var/www/ancla/public;
+    root /var/www/firmalum/public;
     index index.php;
     
     ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
@@ -410,7 +410,7 @@ server {
 
 ```bash
 # Habilitar sitio
-ln -sf /etc/nginx/sites-available/ancla /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/firmalum /etc/nginx/sites-enabled/
 
 # Optimizar PHP
 nano /etc/php/8.2/fpm/php.ini
@@ -451,7 +451,7 @@ nano /etc/supervisor/conf.d/ancla-worker.conf
 ```ini
 [program:ancla-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/ancla/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+command=php /var/www/firmalum/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -459,7 +459,7 @@ killasgroup=true
 user=www-data
 numprocs=4
 redirect_stderr=true
-stdout_logfile=/var/www/ancla/storage/logs/worker.log
+stdout_logfile=/var/www/firmalum/storage/logs/worker.log
 stopwaitsecs=3600
 ```
 
@@ -486,7 +486,7 @@ crontab -e
 **AÑADE al final**:
 
 ```cron
-* * * * * cd /var/www/ancla && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /var/www/firmalum && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 **GUARDA**: `Ctrl+O`, `Enter`, `Ctrl+X`
@@ -496,7 +496,7 @@ crontab -e
 ## PASO 10: Optimizar Producción
 
 ```bash
-cd /var/www/ancla
+cd /var/www/firmalum
 
 php artisan config:cache
 php artisan route:cache
@@ -522,7 +522,7 @@ echo "Redis: $(redis-cli ping)"
 echo "Supervisor: $(supervisorctl status | grep ancla-worker)"
 
 # Test aplicación
-cd /var/www/ancla
+cd /var/www/firmalum
 php artisan tinker --execute="DB::connection()->getPdo(); echo 'DB: OK';"
 
 echo ""
@@ -595,7 +595,7 @@ Si todo va bien, certbot dirá: "Successfully received certificate"
 Ahora **actualiza nginx** con los certificados reales:
 
 ```bash
-nano /etc/nginx/sites-available/ancla
+nano /etc/nginx/sites-available/firmalum
 ```
 
 **BUSCA** estas dos líneas:
@@ -652,7 +652,7 @@ tail -f /var/log/nginx/ancla_error.log
 
 1. Abre navegador: https://app.firmalum.com
 2. Login con tus credenciales
-3. Deberías ver el dashboard de ANCLA
+3. Deberías ver el dashboard de Firmalum
 4. Ve a Admin → Tenants para crear tu primer tenant
 
 ---
@@ -661,7 +661,7 @@ tail -f /var/log/nginx/ancla_error.log
 
 ```bash
 # Ver logs Laravel
-tail -f /var/www/ancla/storage/logs/laravel.log
+tail -f /var/www/firmalum/storage/logs/laravel.log
 
 # Ver logs Nginx
 tail -f /var/log/nginx/ancla_error.log

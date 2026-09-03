@@ -407,7 +407,7 @@ class SigningNotificationTest extends TestCase
     }
 
     /** @test */
-    public function it_includes_ancla_branding_in_email(): void
+    public function it_includes_firmalum_branding_in_email(): void
     {
         Mail::fake();
 
