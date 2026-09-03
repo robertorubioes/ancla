@@ -1,0 +1,69 @@
+# Changelog
+
+Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
+
+## [No publicado]
+
+### Seguridad
+
+- Las credenciales del superadministrador salen del codigo. `SuperadminSeeder`
+  cableaba el correo real y la contrasena en claro, la imprimia por consola y
+  la repetia en la documentacion, en un repositorio publico. Ahora se leen de
+  `SUPERADMIN_EMAIL` / `SUPERADMIN_NAME` / `SUPERADMIN_PASSWORD`; en produccion
+  y staging el seeder aborta si falta la contrasena.
+- La clave privada de firma deja de estar versionada.
+  `storage/certificates/` esta ignorado y `scripts/generate-dev-certificate.sh`
+  genera el certificado de desarrollo.
+- Actualizadas las dependencias: 50 avisos de `composer audit` (14 de
+  severidad alta) reducidos a cero.
+- `composer audit --no-dev` pasa a bloquear el CI.
+
+> Tanto la contrasena como la clave siguen siendo recuperables del historico
+> de git. **Deben rotarse.**
+
+### Anadido
+
+- Analisis estatico real: `larastan/larastan` en nivel 6, con la deuda
+  existente congelada en `phpstan-baseline.neon` (928 incidencias).
+- Hooks locales (`scripts/install-hooks.sh`): `pre-commit` con Pint + PHPStan
+  y `commit-msg` con prefijo convencional.
+- Backups scriptados y verificados: `scripts/backup.sh`,
+  `scripts/backup-verify.sh` y `scripts/restore.sh`, con `.env` cifrado en
+  AES-256, manifiesto JSON, subida a S3 y retencion.
+- Proteccion de la rama `main`: PR obligatorio, historia lineal, sin force
+  push y con `Code Style & Linting` y `Static Analysis (PHPStan)` como checks
+  requeridos.
+- Documentacion: `docs/INDEX.md`, `docs/SYSTEM_OVERVIEW.md`,
+  `docs/BACKUPS.md`, `docs/REFACTORING_AND_TESTING.md`, `CHANGELOG.md` y un
+  `README.md` propio del proyecto.
+- Scripts de composer: `pint`, `pint:test`, `stan`, `stan:baseline` y
+  `quality`.
+
+### Corregido
+
+- `SendCancellationNotificationJob.php` empezaba por `2<?php`, de modo que PHP
+  emitia un `2` al output cada vez que se autocargaba la clase.
+- Los bloques con `DB::beginTransaction()` solo capturaban `\Exception`: un
+  `\Error` escapaba sin `rollBack()` y dejaba la transaccion abierta.
+- Las expectativas de Mockery sobre `requestTimestamp` esperaban un solo
+  argumento desde que se anadio `tenant_id`.
+- El pipeline de CI dejaba pasar todo: PHPStan corria con `continue-on-error`
+  y sin estar instalado, `composer audit` era decorativo, y los PR contra
+  `staging` (la rama de trabajo real) no disparaban nada.
+
+### Cambiado
+
+- Renombrado ANCLA a **Firmalum** en codigo y documentacion. `base_domain`
+  por defecto pasa de `ancla.app` a `firmalum.com`.
+- `config/evidence.php`: `include_ancla_logo` -> `include_firmalum_logo`.
+- Reformateado todo el codigo con Pint 1.30.
+
+> Siguen con el nombre antiguo, por tocar datos o infraestructura desplegada:
+> el slug `ancla-admin` del tenant interno, la BD `ancla_production`, el
+> supervisor `ancla-worker`, las rutas `/var/www/ancla` y el repositorio.
+
+### Pendiente
+
+- La suite de tests esta en rojo (~100 de 657). Ver
+  [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
+- `Tests (PHP 8.2)` no es todavia check requerido de `main` por ese motivo.
