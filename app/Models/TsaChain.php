@@ -152,6 +152,8 @@ class TsaChain extends Model
 
     /**
      * Get all entries in this chain.
+     *
+     * @return HasMany<TsaChainEntry, $this>
      */
     public function entries(): HasMany
     {

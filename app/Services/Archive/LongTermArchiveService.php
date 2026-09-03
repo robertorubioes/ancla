@@ -211,10 +211,10 @@ class LongTermArchiveService
         // 2. Verify TSA chain
         if ($archived->tsaChain) {
             $chainResult = $this->resealService->verifyChain($archived->tsaChain);
-            if (! $chainResult->isValid) {
+            if (! $chainResult->isValid()) {
                 $errors = array_merge($errors, $chainResult->errors);
             }
-            $warnings = array_merge($warnings, $chainResult->warnings ?? []);
+            $warnings = array_merge($warnings, $chainResult->warnings);
         } else {
             $warnings[] = 'No TSA chain found for verification';
         }
