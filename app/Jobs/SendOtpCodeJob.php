@@ -63,11 +63,10 @@ class SendOtpCodeJob implements ShouldQueue
             $this->otpCode->markAsSent();
 
             // Log successful send
-            $auditTrailService->log(
-                action: 'otp.sent',
-                entityType: 'signer',
-                entityId: $this->signer->id,
-                metadata: [
+            $auditTrailService->record(
+                $this->signer,
+                'otp.sent',
+                [
                     'otp_code_id' => $this->otpCode->id,
                     'signer_email' => $this->signer->email,
                     'signing_process_id' => $this->signer->signing_process_id,
@@ -76,11 +75,10 @@ class SendOtpCodeJob implements ShouldQueue
             );
         } catch (Throwable $e) {
             // Log failure
-            $auditTrailService->log(
-                action: 'otp.send_failed',
-                entityType: 'signer',
-                entityId: $this->signer->id,
-                metadata: [
+            $auditTrailService->record(
+                $this->signer,
+                'otp.send_failed',
+                [
                     'otp_code_id' => $this->otpCode->id,
                     'signer_email' => $this->signer->email,
                     'error' => $e->getMessage(),
@@ -100,11 +98,10 @@ class SendOtpCodeJob implements ShouldQueue
     {
         $auditTrailService = app(AuditTrailService::class);
 
-        $auditTrailService->log(
-            action: 'otp.send_permanently_failed',
-            entityType: 'signer',
-            entityId: $this->signer->id,
-            metadata: [
+        $auditTrailService->record(
+            $this->signer,
+            'otp.send_permanently_failed',
+            [
                 'otp_code_id' => $this->otpCode->id,
                 'signer_email' => $this->signer->email,
                 'error' => $exception?->getMessage(),
