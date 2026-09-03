@@ -11,31 +11,59 @@ Documento vivo. Se actualiza cada vez que se paga o se contrae deuda.
 | Pint (`composer pint:test`) | Verde |
 | PHPStan nivel 6 (`composer stan`) | Verde sobre baseline de 928 incidencias |
 | `composer audit --no-dev` | Verde, sin avisos |
-| PHPUnit (`composer test`) | **Rojo: ~100 tests fallando de 657** |
+| PHPUnit (`php artisan test --parallel`) | **Rojo: 174 de 657 (125 errores, 49 fallos)** |
 
 ## 1. Suite de tests en rojo (prioridad maxima)
 
-El CI lleva rojo al menos desde los ultimos 8 commits de `staging`. No es un
-fallo aislado: la suite arrastra dos problemas distintos.
+### 1.1 El job de CI nunca llego a ejecutar un test
 
-### 1.1 Fallos reales
+`ci.yml` corria `php artisan test --parallel` sin que `brianium/paratest`
+estuviese instalado, asi que Collision abortaba antes de arrancar:
 
-Ejecutando fichero a fichero (para evitar la contaminacion descrita abajo),
-22 de los 45 ficheros de test tienen fallos o errores propios. Los mas
-gruesos:
+```
+Running Collision 8.x artisan test command in parallel requires at least
+ParaTest (brianium/paratest) 7.x.
+```
 
-| Fichero | Estado |
+El job llevaba en rojo al menos los ultimos 8 commits de `staging` **por una
+dependencia que faltaba, no por tests rotos**. Ya esta instalada.
+
+### 1.2 Ejecutar en paralelo, no en serie
+
+En serie, la suite comparte una conexion SQLite `:memory:`. El primer test que
+falla deja una transaccion abierta y a partir de ahi todos los demas revientan
+en el `setUp` con `PDOException: There is already an active transaction`: 582
+de los 594 fallos son cascada y la salida es ilegible.
+
+Con `--parallel` cada proceso usa su propia base de datos y la cascada
+desaparece. **Mide siempre con `--parallel`.**
+
+### 1.3 Estado real
+
+```
+Tests: 657 · Errores: 125 · Fallos: 49 · Incompletos: 3 · Pasan: 483
+```
+
+Reparto por fichero (numero de menciones en la salida, como orden de
+magnitud):
+
+| Fichero | Peso |
 |---|---|
-| `tests/Feature/SigningProcess/CreateSigningProcessTest.php` | 18 errores, 2 fallos de 20 |
-| `tests/Feature/Signing/SignatureCreationTest.php` | 8 errores, 7 fallos de 21 |
-| `tests/Unit/Document/DocumentUploadServiceTest.php` | 7 errores, 2 fallos de 13 |
-| `tests/Feature/Signing/SigningAccessTest.php` | 10 fallos de 21 |
-| `tests/Unit/Evidence/EvidenceDossierServiceTest.php` | 3 errores, 3 fallos de 17 |
-| `tests/Feature/Otp/OtpVerificationTest.php` | 5 fallos de 20 |
-| `tests/Unit/Archive/TsaResealServiceTest.php` | 4 errores de 6 |
-| `tests/Unit/Document/FinalDocumentServiceTest.php` | 5 errores, 1 fallo de 16 |
+| `tests/Feature/Signing/SignatureCreationTest.php` | 21 |
+| `tests/Feature/SigningProcess/CreateSigningProcessTest.php` | 20 |
+| `tests/Unit/Evidence/IpResolutionServiceTest.php` | 15 |
+| `tests/Feature/Signing/SigningAccessTest.php` | 11 |
+| `tests/Unit/Verification/QrCodeServiceTest.php` | 10 |
+| `tests/Unit/Document/DocumentUploadServiceTest.php` | 10 |
+| `tests/Feature/Document/PromoterDownloadTest.php` | 9 |
+| `tests/Unit/Evidence/EvidenceDossierServiceTest.php` | 6 |
+| `tests/Unit/Archive/TsaResealServiceTest.php` | 6 |
+| `tests/Unit/Document/FinalDocumentServiceTest.php` | 5 |
+| `tests/Feature/Otp/OtpVerificationTest.php` | 5 |
+| `tests/Feature/Notification/DocumentDownloadTest.php` | 5 |
+| `tests/Feature/Document/FinalDocumentGenerationTest.php` | 5 |
 
-Causas identificadas hasta ahora:
+### 1.4 Causas identificadas
 
 - **Discos no configurados en testing**: `Disk [s3-glacier] does not have a
   configured driver` en `LongTermArchiveServiceTest`. Falta declarar los
@@ -47,30 +75,18 @@ Causas identificadas hasta ahora:
   "Not all signers have completed signing" donde el test espera
   "No signers found".
 - **Expectativas de Mockery desactualizadas** tras cambios de firma. Ya
-  corregidas las de `requestTimestamp`; pueden quedar mas.
-
-### 1.2 Contaminacion entre tests
-
-Ejecutando la suite completa, **582 de los 594 fallos son cascada** de un
-unico `PDOException: There is already an active transaction`. El primer test
-que falla deja abierta una transaccion sobre la conexion SQLite `:memory:`
-compartida, y a partir de ahi todos los demas revientan en el `setUp`.
-
-Esto hace que la salida de `php artisan test` sea ilegible: no se puede saber
-que esta roto de verdad sin ejecutar fichero a fichero.
-
-Ya se ha endurecido el manejo de transacciones manuales (capturar `\Throwable`
-en lugar de `\Exception`, commit `2cb6e62`), pero **no basta**: la fuga sigue
-apareciendo a partir de `tests/Unit/Document/`. Queda por localizar el punto
-exacto.
+  corregidas las de `requestTimestamp`; quedan mas.
+- **698 avisos de deprecacion de PHPUnit**: la suite usa anotaciones
+  `@test` en docblock en lugar de atributos. No rompen, pero conviene migrar.
 
 ### Orden sugerido para pagarlo
 
-1. Localizar y cerrar la fuga de transaccion (1.2). Sin esto no se puede
-   medir el progreso.
-2. Configurar los discos de test que faltan.
-3. Arreglar `ChainVerificationResult::$isValid` — es un bug real.
-4. Ir fichero a fichero por la tabla de 1.1.
+1. Configurar los discos de test que faltan: es transversal y desbloquea
+   varios ficheros de golpe.
+2. Arreglar `ChainVerificationResult::$isValid` — es un bug real de
+   produccion, no una molestia de test.
+3. Ir por la tabla de 1.3 de arriba abajo.
+4. Migrar las anotaciones `@test` a atributos de PHPUnit 11.
 5. Anadir `Tests (PHP 8.2)` a los checks requeridos de `main`
    (ver seccion 3).
 

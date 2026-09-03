@@ -50,6 +50,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - El pipeline de CI dejaba pasar todo: PHPStan corria con `continue-on-error`
   y sin estar instalado, `composer audit` era decorativo, y los PR contra
   `staging` (la rama de trabajo real) no disparaban nada.
+- El job de tests **nunca llego a ejecutar un test**: corria
+  `php artisan test --parallel` sin `brianium/paratest` instalado, y Collision
+  abortaba antes de arrancar. Ya esta instalado.
+- `config.platform.php` fijado a 8.2.0: el lock se resolvia contra la version
+  de PHP del desarrollador y no era instalable en el CI.
 
 ### Cambiado
 
@@ -64,6 +69,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Pendiente
 
-- La suite de tests esta en rojo (~100 de 657). Ver
+- La suite de tests esta en rojo: 174 de 657 (125 errores, 49 fallos). Ver
   [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
 - `Tests (PHP 8.2)` no es todavia check requerido de `main` por ese motivo.
