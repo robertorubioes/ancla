@@ -57,7 +57,7 @@ class TsaResealServiceTest extends TestCase
         $this->tsaService
             ->shouldReceive('requestTimestamp')
             ->once()
-            ->with($document->content_hash)
+            ->with($document->content_hash, $document->tenant_id)
             ->andReturn($tsaToken);
 
         $chain = $this->service->initializeChain($document);

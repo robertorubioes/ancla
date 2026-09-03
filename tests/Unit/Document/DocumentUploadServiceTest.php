@@ -104,7 +104,7 @@ class DocumentUploadServiceTest extends TestCase
 
         $this->tsaService->shouldReceive('requestTimestamp')
             ->once()
-            ->with($hash)
+            ->with($hash, $this->tenant->id)
             ->andReturn($tsaToken);
 
         $this->auditService->shouldReceive('record')
