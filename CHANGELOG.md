@@ -43,6 +43,17 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Corregido
 
+- **La captura de evidencias al firmar nunca se ejecuto.**
+  `SignatureService::captureSignatureEvidences()` llamaba a seis metodos que
+  no existen y escribia en cinco columnas que tampoco: `EvidencePackage` es
+  polimorfico, `document_hash` y `audit_trail_hash` son NOT NULL, y los
+  estados `active`/`sealed` no estan en el enum. Ninguna firma llego nunca a
+  producir un paquete de evidencias.
+- `AuditTrailService::log()` no existe y se llamaba desde `SendOtpCodeJob` en
+  sus tres caminos, incluido `failed()`.
+- `AuditTrailService::logEvent()` solo escribe en `laravel.log`: no esta
+  encadenado por hash ni sellado por TSA, y no entra en el dossier. La
+  creacion de un proceso de firma pasa a registrarse con `record()`.
 - **La verificacion de cadenas TSA nunca funciono.**
   `TsaResealService::verifyChain()` construia `ChainVerificationResult` con
   cuatro parametros con nombre que el DTO no tiene, asi que siempre lanzaba
@@ -83,6 +94,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Pendiente
 
-- La suite de tests esta en rojo: 93 de 657 (44 errores, 49 fallos). Ver
+- La suite de tests esta en rojo: 71 de 657 (30 errores, 41 fallos). Ver
   [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
 - `Tests (PHP 8.2)` no es todavia check requerido de `main` por ese motivo.

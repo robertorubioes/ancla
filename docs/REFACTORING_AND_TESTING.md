@@ -11,7 +11,7 @@ Documento vivo. Se actualiza cada vez que se paga o se contrae deuda.
 | Pint (`composer pint:test`) | Verde |
 | PHPStan nivel 6 (`composer stan`) | Verde sobre baseline de 928 incidencias |
 | `composer audit --no-dev` | Verde, sin avisos |
-| PHPUnit (`composer test`) | **Rojo: 93 de 657 en local. Eran 594 en serie / 174 en paralelo.** |
+| PHPUnit (`composer test`) | **Rojo: 71 de 657 en local. Eran 594 en serie / 174 en paralelo.** |
 
 ## 1. Suite de tests en rojo (prioridad maxima)
 
@@ -108,6 +108,9 @@ Reparto por fichero (menciones en la salida, como orden de magnitud):
 | Discos `s3-glacier` y `s3-deep-archive` sin declarar | Mover un documento a nivel frio o de archivo lanzaba excepcion. |
 | `SendCancellationNotificationJob.php` empezaba por `2<?php` | PHP emitia un `2` al output al autocargar la clase. |
 | `markAsError()` dentro de `DB::transaction()` en `DocumentUploadService:176` | El rollback lo deshace junto al `Document::create()`. Una subida fallida no deja **ni fila ni estado de error**, solo la linea de log. **Sin arreglar**: es un cambio de comportamiento que merece decision propia. |
+| `SignatureService::captureSignatureEvidences()` estaba escrito contra una API inexistente | Seis metodos con nombres que no existen y cinco columnas que tampoco. **La captura de evidencias al firmar nunca se ejecuto.** Arreglado. |
+| `AuditTrailService::log()` no existe; se llamaba desde `SendOtpCodeJob` en sus tres caminos | El envio de OTP fallaba al registrar. Arreglado. |
+| `AuditTrailService::logEvent()` solo escribe en `laravel.log` | No es prueba: no esta encadenado por hash ni sellado por TSA, y no entra en el dossier. Lo usan los cinco servicios de la capa de evidencias (consentimiento, IP, geolocalizacion, huella, dossier). Arreglados los dos call sites de `CreateSigningProcess`; **los otros cinco siguen pendientes** porque no todos tienen un modelo auditable a mano. |
 
 ### 1.5 Desajustes de configuracion pendientes
 

@@ -61,7 +61,7 @@ errores **nuevos**. Para reducirla, arregla y regenera con
 `composer stan:baseline`. Nunca regeneres el baseline para tapar un error
 nuevo.
 
-> **La suite de tests esta actualmente en rojo**: 93 de 657. Ejecutala
+> **La suite de tests esta actualmente en rojo**: 71 de 657. Ejecutala
 > siempre con `--parallel`; en serie una fuga de transaccion contamina el
 > resto y la salida es ilegible. El detalle, las causas y el orden en que se
 > paga estan en
