@@ -69,6 +69,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Pendiente
 
-- La suite de tests esta en rojo: 174 de 657 (125 errores, 49 fallos). Ver
+- La suite de tests esta en rojo: 121 de 657 en CI (69 errores, 52 fallos). Ver
   [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
 - `Tests (PHP 8.2)` no es todavia check requerido de `main` por ese motivo.
