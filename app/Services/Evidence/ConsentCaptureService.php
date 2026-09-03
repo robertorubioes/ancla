@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\ConsentRecord;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -343,7 +344,7 @@ class ConsentCaptureService
     /**
      * Get consents for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return ConsentRecord::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)
@@ -354,7 +355,7 @@ class ConsentCaptureService
     /**
      * Get consents for a signer.
      */
-    public function getForSigner(string $signerEmail): \Illuminate\Database\Eloquent\Collection
+    public function getForSigner(string $signerEmail): Collection
     {
         return ConsentRecord::bySigner($signerEmail)
             ->orderBy('action_timestamp', 'desc')

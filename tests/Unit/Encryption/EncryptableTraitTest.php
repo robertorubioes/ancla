@@ -14,7 +14,7 @@ use Tests\TestCase;
 /**
  * Unit tests for Encryptable trait.
  *
- * @see \App\Traits\Encryptable
+ * @see Encryptable
  */
 class EncryptableTraitTest extends TestCase
 {

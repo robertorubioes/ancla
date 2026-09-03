@@ -9,6 +9,7 @@ use App\Models\Document;
 use App\Models\RetentionPolicy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Service for managing document retention policies.
@@ -212,7 +213,7 @@ class RetentionPolicyService
         }
 
         return RetentionPolicy::create([
-            'uuid' => \Illuminate\Support\Str::uuid()->toString(),
+            'uuid' => Str::uuid()->toString(),
             'tenant_id' => $data['tenant_id'] ?? null,
             'name' => $data['name'],
             'description' => $data['description'] ?? null,

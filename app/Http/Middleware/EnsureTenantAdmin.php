@@ -14,7 +14,7 @@ class EnsureTenantAdmin
      *
      * Ensures that the authenticated user is a tenant admin with manage_users permission.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {

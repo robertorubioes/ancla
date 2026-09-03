@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -30,7 +32,7 @@ use Illuminate\Support\Str;
  * @property string|null $previous_hash
  * @property int $sequence
  * @property int|null $tsa_token_id
- * @property \Carbon\Carbon $created_at
+ * @property Carbon $created_at
  */
 class AuditTrailEntry extends Model
 {
@@ -228,8 +230,8 @@ class AuditTrailEntry extends Model
     /**
      * Scope to filter by event type.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>
+     * @param  Builder<AuditTrailEntry>  $query
+     * @return Builder<AuditTrailEntry>
      */
     public function scopeOfType($query, string $eventType)
     {
@@ -239,8 +241,8 @@ class AuditTrailEntry extends Model
     /**
      * Scope to filter by event category.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>
+     * @param  Builder<AuditTrailEntry>  $query
+     * @return Builder<AuditTrailEntry>
      */
     public function scopeInCategory($query, string $category)
     {
@@ -250,8 +252,8 @@ class AuditTrailEntry extends Model
     /**
      * Scope to filter entries with TSA timestamps.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>
+     * @param  Builder<AuditTrailEntry>  $query
+     * @return Builder<AuditTrailEntry>
      */
     public function scopeWithTsa($query)
     {
@@ -261,8 +263,8 @@ class AuditTrailEntry extends Model
     /**
      * Scope to get entries for a specific auditable model.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<AuditTrailEntry>
+     * @param  Builder<AuditTrailEntry>  $query
+     * @return Builder<AuditTrailEntry>
      */
     public function scopeForModel($query, Model $model)
     {

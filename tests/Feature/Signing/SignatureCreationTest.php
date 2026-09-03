@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Signing;
 
+use App\Livewire\Signing\SigningPage;
 use App\Models\Document;
 use App\Models\OtpCode;
 use App\Models\Signer;
@@ -12,6 +13,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Signing\SignatureException;
 use App\Services\Signing\SignatureService;
+use App\Services\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -38,7 +40,7 @@ class SignatureCreationTest extends TestCase
         $this->tenant = Tenant::factory()->create();
 
         // Set tenant context
-        app(\App\Services\TenantContext::class)->set($this->tenant);
+        app(TenantContext::class)->set($this->tenant);
 
         // Create test user
         $this->user = User::factory()->create([
@@ -77,7 +79,7 @@ class SignatureCreationTest extends TestCase
     /** @test */
     public function it_renders_signature_type_tabs(): void
     {
-        $component = Livewire::test(\App\Livewire\Signing\SigningPage::class, ['token' => $this->signer->token])
+        $component = Livewire::test(SigningPage::class, ['token' => $this->signer->token])
             ->assertSee('Draw')
             ->assertSee('Type')
             ->assertSee('Upload');
@@ -88,7 +90,7 @@ class SignatureCreationTest extends TestCase
     /** @test */
     public function it_can_switch_signature_types(): void
     {
-        Livewire::test(\App\Livewire\Signing\SigningPage::class, ['token' => $this->signer->token])
+        Livewire::test(SigningPage::class, ['token' => $this->signer->token])
             ->call('setSignatureType', 'draw')
             ->assertSet('signatureType', 'draw')
             ->call('setSignatureType', 'type')
@@ -100,7 +102,7 @@ class SignatureCreationTest extends TestCase
     /** @test */
     public function it_can_clear_signature_data(): void
     {
-        Livewire::test(\App\Livewire\Signing\SigningPage::class, ['token' => $this->signer->token])
+        Livewire::test(SigningPage::class, ['token' => $this->signer->token])
             ->set('signatureData', 'some-data')
             ->set('typedSignature', 'John Doe')
             ->call('clearSignature')
@@ -442,7 +444,7 @@ class SignatureCreationTest extends TestCase
     /** @test */
     public function livewire_component_sign_button_is_disabled_without_consent(): void
     {
-        Livewire::test(\App\Livewire\Signing\SigningPage::class, ['token' => $this->signer->token])
+        Livewire::test(SigningPage::class, ['token' => $this->signer->token])
             ->set('signatureData', $this->createValidCanvasSignature())
             ->set('consentGiven', false)
             ->assertSee('disabled');
@@ -451,7 +453,7 @@ class SignatureCreationTest extends TestCase
     /** @test */
     public function livewire_component_sign_button_is_disabled_without_signature(): void
     {
-        Livewire::test(\App\Livewire\Signing\SigningPage::class, ['token' => $this->signer->token])
+        Livewire::test(SigningPage::class, ['token' => $this->signer->token])
             ->set('signatureData', null)
             ->set('consentGiven', true)
             ->assertSee('disabled');
@@ -460,7 +462,7 @@ class SignatureCreationTest extends TestCase
     /** @test */
     public function livewire_component_can_sign_document_successfully(): void
     {
-        Livewire::test(\App\Livewire\Signing\SigningPage::class, ['token' => $this->signer->token])
+        Livewire::test(SigningPage::class, ['token' => $this->signer->token])
             ->set('signatureType', 'draw')
             ->set('signatureData', $this->createValidCanvasSignature())
             ->set('consentGiven', true)

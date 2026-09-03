@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Log;
  * - Prevents double encryption/decryption
  * - Logs encryption errors
  *
- * @see \App\Services\Document\DocumentEncryptionService
+ * @see DocumentEncryptionService
  * @see docs/architecture/adr-010-encryption-at-rest.md
  */
 trait Encryptable

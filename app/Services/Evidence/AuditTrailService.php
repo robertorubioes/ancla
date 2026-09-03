@@ -6,6 +6,7 @@ use App\Models\AuditTrailEntry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -125,7 +126,7 @@ class AuditTrailService
         ?int $userId = null,
         ?int $tenantId = null
     ): void {
-        \Illuminate\Support\Facades\Log::info("Audit: {$eventType}", [
+        Log::info("Audit: {$eventType}", [
             'event_type' => $eventType,
             'metadata' => $metadata,
             'user_id' => $userId ?? auth()->id(),

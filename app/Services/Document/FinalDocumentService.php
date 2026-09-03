@@ -6,6 +6,7 @@ namespace App\Services\Document;
 
 use App\Models\SignedDocument;
 use App\Models\SigningProcess;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -123,7 +124,7 @@ class FinalDocumentService
     /**
      * Merge multiple signed PDF documents into one.
      *
-     * @param  \Illuminate\Support\Collection<SignedDocument>  $signedDocuments
+     * @param  Collection<SignedDocument>  $signedDocuments
      */
     private function mergeSignedDocuments($signedDocuments): string
     {

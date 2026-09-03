@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\VerificationCode;
+use App\Services\Evidence\EvidenceDossierService;
 use App\Services\Verification\PublicVerificationService;
 use App\Services\Verification\QrCodeService;
 use Illuminate\Http\JsonResponse;
@@ -219,7 +221,7 @@ class PublicVerificationController extends Controller
      */
     public function getQrCode(string $code): Response|JsonResponse
     {
-        $verificationCode = \App\Models\VerificationCode::byCode($code)->first();
+        $verificationCode = VerificationCode::byCode($code)->first();
 
         if (! $verificationCode) {
             return response()->json([
@@ -300,7 +302,7 @@ class PublicVerificationController extends Controller
         // Try to generate evidence dossier
         // This requires the EvidenceDossierService
         try {
-            $dossierService = app(\App\Services\Evidence\EvidenceDossierService::class);
+            $dossierService = app(EvidenceDossierService::class);
 
             $dossier = $dossierService->generateForDocument(
                 $result->document,
@@ -340,7 +342,7 @@ class PublicVerificationController extends Controller
      */
     public function getUrls(string $code): JsonResponse
     {
-        $verificationCode = \App\Models\VerificationCode::byCode($code)->first();
+        $verificationCode = VerificationCode::byCode($code)->first();
 
         if (! $verificationCode) {
             return response()->json([

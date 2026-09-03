@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,15 +25,15 @@ use Illuminate\Support\Str;
  * @property int $order
  * @property string $status
  * @property string $token
- * @property \Carbon\Carbon|null $sent_at
- * @property \Carbon\Carbon|null $viewed_at
- * @property \Carbon\Carbon|null $signed_at
- * @property \Carbon\Carbon|null $rejected_at
+ * @property Carbon|null $sent_at
+ * @property Carbon|null $viewed_at
+ * @property Carbon|null $signed_at
+ * @property Carbon|null $rejected_at
  * @property string|null $rejection_reason
  * @property array|null $metadata
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read SigningProcess $signingProcess
  */
 class Signer extends Model

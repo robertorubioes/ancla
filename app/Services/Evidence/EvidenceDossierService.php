@@ -9,6 +9,7 @@ use App\Models\EvidenceDossier;
 use App\Models\GeolocationRecord;
 use App\Models\IpResolutionRecord;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -377,7 +378,7 @@ class EvidenceDossierService
     /**
      * Get dossiers for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return EvidenceDossier::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)
