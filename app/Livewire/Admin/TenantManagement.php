@@ -176,7 +176,7 @@ class TenantManagement extends Component
             DB::commit();
             $this->closeModal();
             session()->flash('message', $this->editMode ? 'Tenant updated successfully.' : 'Tenant created successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Tenant creation/update failed', [
                 'error' => $e->getMessage(),
