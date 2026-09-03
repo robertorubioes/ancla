@@ -12,6 +12,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
+/**
+ * @property UserRole $role Casteado por casts(); la columna es un enum de texto.
+ */
 class User extends Authenticatable
 {
     use BelongsToTenant;
@@ -171,7 +174,6 @@ class User extends Authenticatable
             UserRole::ADMIN => 'red',
             UserRole::OPERATOR => 'blue',
             UserRole::VIEWER => 'gray',
-            default => 'gray',
         };
     }
 

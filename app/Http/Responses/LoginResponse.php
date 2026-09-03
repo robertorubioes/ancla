@@ -20,7 +20,7 @@ class LoginResponse implements LoginResponseContract
         $user = auth()->user();
 
         // Superadmin goes to admin panel
-        if ($user->role === UserRole::SUPER_ADMIN || $user->role?->value === 'super_admin') {
+        if ($user->role === UserRole::SUPER_ADMIN) {
             return redirect()->intended('/admin/tenants');
         }
 
