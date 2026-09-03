@@ -52,7 +52,7 @@ reescribe. Reformatear es trabajo del hook local.
 composer pint          # formatea
 composer pint:test     # verifica formato (lo que corre el CI)
 composer stan          # PHPStan nivel 6 sobre baseline
-composer test          # PHPUnit
+composer test          # PHPUnit (usa --parallel para medir de verdad)
 composer quality       # las tres seguidas
 ```
 
@@ -61,8 +61,10 @@ errores **nuevos**. Para reducirla, arregla y regenera con
 `composer stan:baseline`. Nunca regeneres el baseline para tapar un error
 nuevo.
 
-> **La suite de tests esta actualmente en rojo** (~100 de 657). El detalle,
-> las causas y el orden en que se paga estan en
+> **La suite de tests esta actualmente en rojo**: 174 de 657. Ejecutala
+> siempre con `--parallel`; en serie una fuga de transaccion contamina el
+> resto y la salida es ilegible. El detalle, las causas y el orden en que se
+> paga estan en
 > [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
 
 ## Flujo de trabajo
