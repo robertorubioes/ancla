@@ -51,9 +51,9 @@ class CreateSigningProcessTest extends TestCase
             ->test(CreateSigningProcess::class)
             ->assertOk()
             ->assertSee('Create Signing Process')
-            ->assertSee('Select Document')
-            ->assertSee('Add Signers')
-            ->assertSee('Configure Process');
+            ->assertSee('1. Select or Upload Document')
+            ->assertSee('2. Add Signers')
+            ->assertSee('3. Configure Process');
     }
 
     /** @test */
@@ -192,7 +192,10 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals($this->document->id, $process->document_id);
         $this->assertEquals($this->tenant->id, $process->tenant_id);
         $this->assertEquals($this->user->id, $process->created_by);
-        $this->assertEquals(SigningProcess::STATUS_DRAFT, $process->status);
+        // create() envia las notificaciones acto seguido, de modo que el
+        // proceso nace en draft y queda en sent. Para dejarlo en draft esta
+        // saveAsDraft().
+        $this->assertEquals(SigningProcess::STATUS_SENT, $process->status);
         $this->assertEquals(SigningProcess::ORDER_PARALLEL, $process->signature_order);
         $this->assertEquals('Please sign this document', $process->custom_message);
 
@@ -202,7 +205,8 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals('John Doe', $signers[0]->name);
         $this->assertEquals('john@example.com', $signers[0]->email);
         $this->assertEquals(0, $signers[0]->order);
-        $this->assertEquals(Signer::STATUS_PENDING, $signers[0]->status);
+        // create() envia las notificaciones, de modo que el firmante queda en sent.
+        $this->assertEquals(Signer::STATUS_SENT, $signers[0]->status);
         $this->assertNotEmpty($signers[0]->token);
 
         $this->assertEquals('Jane Smith', $signers[1]->name);
@@ -397,7 +401,8 @@ class CreateSigningProcessTest extends TestCase
 
         $this->assertDatabaseHas('audit_trail_entries', [
             'event_type' => 'signing_process.created',
-            'user_id' => $this->user->id,
+            // La tabla guarda actor_id/actor_type, no user_id.
+            'actor_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
         ]);
     }

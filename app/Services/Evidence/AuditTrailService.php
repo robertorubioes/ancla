@@ -112,13 +112,19 @@ class AuditTrailService
     }
 
     /**
-     * Log an event without requiring a specific model.
-     * This is a convenience method for logging events that may not have a direct model association.
+     * Registra un evento SOLO en el log de aplicacion.
      *
-     * @param  string  $eventType  Event type (e.g., 'signing_process.created')
-     * @param  array<string, mixed>  $metadata  Additional event data
-     * @param  int|null  $userId  The user ID performing the action
-     * @param  int|null  $tenantId  The tenant ID
+     * ATENCION: este metodo NO escribe en la cadena de audit trail. No es
+     * prueba: laravel.log no esta encadenado por hash ni sellado por la TSA,
+     * y no entra en el dossier probatorio.
+     *
+     * Para cualquier evento que deba sostenerse ante una auditoria, usa
+     * record(), que si persiste la entrada encadenada.
+     *
+     * @param  string  $eventType  Event type identifier
+     * @param  array<string, mixed>  $metadata  Additional context
+     * @param  int|null  $userId  Acting user
+     * @param  int|null  $tenantId  Tenant the event belongs to
      */
     public function logEvent(
         string $eventType,
