@@ -15,9 +15,20 @@ class IdentifyTenant
      *
      * @var array<string>
      */
+    /**
+     * Subdominios que son de la plataforma, no de un tenant.
+     *
+     * 'app' es el host principal donde entra todo el mundo
+     * (app.firmalum.test en local, app.firmalum.com en produccion). Sin
+     * excluirlo se buscaria un tenant con subdominio "app" y la aplicacion
+     * respondia 404 en su propia portada.
+     *
+     * @var list<string>
+     */
     protected array $excludedSubdomains = [
         'admin',
         'api',
+        'app',
         'www',
     ];
 
@@ -75,6 +86,13 @@ class IdentifyTenant
         // 3. Fallback a header (para testing/APIs)
         if ($tenantId = $request->header('X-Tenant-ID')) {
             return $this->findTenantById($tenantId);
+        }
+
+        // 4. En el host principal de la plataforma no hay subdominio de
+        // tenant: quien entra por ahi ya se ha identificado, y su tenant es
+        // el suyo.
+        if (($user = $request->user()) !== null && $user->tenant_id !== null) {
+            return $this->findTenantById((string) $user->tenant_id);
         }
 
         return null;

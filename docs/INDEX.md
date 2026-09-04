@@ -48,6 +48,7 @@ implementa.
 
 | Documento | Para que |
 |---|---|
+| [ENTORNOS.md](ENTORNOS.md) | Los tres entornos, sus dominios y como montar el local. |
 | [BACKUPS.md](BACKUPS.md) | Backup, verificacion y restore. |
 | [deployment/DEPLOY-NOW.md](deployment/DEPLOY-NOW.md) | Despliegue paso a paso. |
 | [deployment/production-deployment-digitalocean.md](deployment/production-deployment-digitalocean.md) | Produccion en DigitalOcean. |
