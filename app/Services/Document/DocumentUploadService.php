@@ -359,8 +359,12 @@ class DocumentUploadService
      */
     public function getDecryptedContent(Document $document): string
     {
-        $fullPath = $document->storage_path.'/'.$document->stored_filename;
-        $content = Storage::disk($document->storage_disk)->get($fullPath);
+        // storage_path YA incluye el nombre del fichero: es lo que devuelve
+        // encryptAndStore() y lo que usa Document::fileExists(). Concatenarle
+        // stored_filename producia una ruta que no existe, de modo que ni la
+        // previsualizacion, ni la descarga, ni la verificacion de integridad
+        // podian leer un documento subido de verdad.
+        $content = Storage::disk($document->storage_disk)->get($document->storage_path);
 
         if ($content === null) {
             throw new DocumentUploadException('Document file not found in storage');
@@ -439,9 +443,8 @@ class DocumentUploadService
     public function forceDelete(Document $document): bool
     {
         // Delete the stored file
-        if ($document->storage_path && $document->stored_filename) {
-            $fullPath = $document->storage_path.'/'.$document->stored_filename;
-            Storage::disk($document->storage_disk)->delete($fullPath);
+        if ($document->storage_path) {
+            Storage::disk($document->storage_disk)->delete($document->storage_path);
         }
 
         // Delete thumbnail if exists
