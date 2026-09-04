@@ -117,18 +117,20 @@ class TemplateLifecycleTest extends TestCase
         $this->assertTrue($template->isUsable());
     }
 
-    public function test_no_se_habilita_sin_firmantes_previstos(): void
+    public function test_se_habilita_sin_firmantes_previstos(): void
     {
+        // Una plantilla no es un proceso de firma: es un documento con
+        // variables. Los roles son opcionales, y quien firma se decide al
+        // usarla.
         $template = $this->service->createFromDocument($this->document, $this->author, 'Contrato');
         DocumentTemplateField::factory()->create([
             'tenant_id' => $this->tenant->id,
             'document_template_version_id' => $template->versions()->first()->id,
         ]);
 
-        $this->expectException(TemplateException::class);
-        $this->expectExceptionMessage('al menos un firmante');
-
         $this->service->publish($template, $this->author);
+
+        $this->assertTrue($template->refresh()->isUsable());
     }
 
     public function test_no_se_habilita_sin_campos(): void

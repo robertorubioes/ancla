@@ -26,11 +26,14 @@ class TemplateException extends RuntimeException
         return new self('No hay ninguna version en borrador que habilitar.');
     }
 
-    public static function needsSignerRoles(): self
+    public static function needsAtLeastOneSigner(): self
     {
-        return new self(
-            'La plantilla necesita al menos un firmante previsto: sin el no puede generar un proceso de firma.'
-        );
+        return new self('Indica al menos un firmante.');
+    }
+
+    public static function incompleteSigner(): self
+    {
+        return new self('Cada firmante necesita nombre y correo.');
     }
 
     public static function needsFields(): self
@@ -50,6 +53,9 @@ class TemplateException extends RuntimeException
         return new self('Esta plantilla no esta habilitada todavia.');
     }
 
+    /**
+     * La plantilla fija ese rol y no se ha cubierto.
+     */
     public static function missingSigner(string $label): self
     {
         return new self("Falta asignar el firmante '{$label}'.");

@@ -3,14 +3,12 @@
 namespace App\Livewire\Template;
 
 use App\Models\DocumentTemplate;
-use App\Models\DocumentTemplateSigner;
 use App\Models\DocumentTemplateVersion;
 use App\Models\SigningProcess;
 use App\Services\Template\TemplateException;
 use App\Services\Template\TemplateProcessService;
 use App\Services\Template\TemplateRenderException;
 use App\Services\Template\TemplateSchema;
-use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -40,9 +38,13 @@ class TemplateFill extends Component
     public array $values = [];
 
     /**
-     * Firmantes asignados a cada rol previsto.
+     * Firmantes del proceso.
      *
-     * @var array<string, array{name: string, email: string, phone: string}>
+     * Si la plantilla fija roles, hay una entrada por rol y su clave 'role'
+     * viene rellena. Si no los fija, es una lista libre a la que se anaden y
+     * quitan filas: quien firma se decide al usar la plantilla.
+     *
+     * @var list<array{name: string, email: string, phone: string, role: string|null, label: string}>
      */
     public array $signers = [];
 
@@ -69,27 +71,61 @@ class TemplateFill extends Component
 
         $this->values = $this->schema()->defaults();
 
-        foreach ($this->version->signerRoles as $role) {
-            $this->signers[$role->role_key] = ['name' => '', 'email' => '', 'phone' => ''];
+        $roles = $this->version->signerRoles;
+
+        if ($roles->isEmpty()) {
+            $this->addSigner();
+
+            return;
         }
+
+        foreach ($roles as $role) {
+            $this->signers[] = [
+                'name' => '',
+                'email' => '',
+                'phone' => '',
+                'role' => $role->role_key,
+                'label' => $role->label,
+            ];
+        }
+    }
+
+    /**
+     * La plantilla no fija roles, asi que los firmantes son libres.
+     */
+    public function hasFixedRoles(): bool
+    {
+        return $this->version->signerRoles()->exists();
+    }
+
+    public function addSigner(): void
+    {
+        if ($this->hasFixedRoles()) {
+            return;
+        }
+
+        $this->signers[] = [
+            'name' => '',
+            'email' => '',
+            'phone' => '',
+            'role' => null,
+            'label' => 'Firmante '.(count($this->signers) + 1),
+        ];
+    }
+
+    public function removeSigner(int $index): void
+    {
+        if ($this->hasFixedRoles() || count($this->signers) <= 1 || ! isset($this->signers[$index])) {
+            return;
+        }
+
+        unset($this->signers[$index]);
+        $this->signers = array_values($this->signers);
     }
 
     public function schema(): TemplateSchema
     {
         return TemplateSchema::for($this->version);
-    }
-
-    /**
-     * Roles de firmante previstos por la plantilla.
-     *
-     * Metodo normal y no propiedad computada de Livewire: la vista los recibe
-     * desde render(), asi que la magia no aporta nada y oscurece el tipo.
-     *
-     * @return Collection<int, DocumentTemplateSigner>
-     */
-    public function signerRoles(): Collection
-    {
-        return $this->version->signerRoles()->get();
     }
 
     /**
@@ -102,10 +138,10 @@ class TemplateFill extends Component
     {
         $rules = $this->schema()->rules('values');
 
-        foreach (array_keys($this->signers) as $roleKey) {
-            $rules["signers.{$roleKey}.name"] = ['required', 'string', 'max:255'];
-            $rules["signers.{$roleKey}.email"] = ['required', 'email', 'max:255'];
-            $rules["signers.{$roleKey}.phone"] = ['nullable', 'string', 'max:20'];
+        foreach (array_keys($this->signers) as $index) {
+            $rules["signers.{$index}.name"] = ['required', 'string', 'max:255'];
+            $rules["signers.{$index}.email"] = ['required', 'email', 'max:255'];
+            $rules["signers.{$index}.phone"] = ['nullable', 'string', 'max:20'];
         }
 
         $rules['customMessage'] = ['nullable', 'string', 'max:500'];
@@ -122,9 +158,10 @@ class TemplateFill extends Component
     {
         $attributes = $this->schema()->attributes('values');
 
-        foreach ($this->signerRoles() as $role) {
-            $attributes["signers.{$role->role_key}.name"] = "nombre de {$role->label}";
-            $attributes["signers.{$role->role_key}.email"] = "correo de {$role->label}";
+        foreach ($this->signers as $index => $signer) {
+            $etiqueta = $signer['label'] ?: 'firmante '.($index + 1);
+            $attributes["signers.{$index}.name"] = "nombre de {$etiqueta}";
+            $attributes["signers.{$index}.email"] = "correo de {$etiqueta}";
         }
 
         return $attributes;
@@ -177,7 +214,7 @@ class TemplateFill extends Component
     {
         return view('livewire.template.template-fill', [
             'fields' => $this->schema()->inputFields(),
-            'roles' => $this->signerRoles(),
+            'fixedRoles' => $this->hasFixedRoles(),
         ]);
     }
 }

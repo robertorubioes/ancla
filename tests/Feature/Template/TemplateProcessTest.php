@@ -63,7 +63,7 @@ class TemplateProcessTest extends TestCase
         return $pdf->Output('S');
     }
 
-    private function publishedTemplate(): DocumentTemplate
+    private function publishedTemplate(bool $conRoles = true): DocumentTemplate
     {
         $path = 'documents/test';
         $filename = Str::uuid().'.pdf';
@@ -74,7 +74,7 @@ class TemplateProcessTest extends TestCase
             'user_id' => $this->author->id,
             'status' => Document::STATUS_READY,
             'storage_disk' => 'local',
-            'storage_path' => $path,
+            'storage_path' => "{$path}/{$filename}",
             'stored_filename' => $filename,
             'is_encrypted' => false,
         ]);
@@ -101,12 +101,14 @@ class TemplateProcessTest extends TestCase
             'y' => 60.0,
         ]);
 
-        DocumentTemplateSigner::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'document_template_version_id' => $draft->id,
-            'role_key' => 'inquilino',
-            'label' => 'Inquilino',
-        ]);
+        if ($conRoles) {
+            DocumentTemplateSigner::factory()->create([
+                'tenant_id' => $this->tenant->id,
+                'document_template_version_id' => $draft->id,
+                'role_key' => 'inquilino',
+                'label' => 'Inquilino',
+            ]);
+        }
 
         $versions->publish($template, $this->author);
 
@@ -114,11 +116,11 @@ class TemplateProcessTest extends TestCase
     }
 
     /**
-     * @return array<string, array{name: string, email: string}>
+     * @return list<array{name: string, email: string, role: string}>
      */
     private function firmantes(): array
     {
-        return ['inquilino' => ['name' => 'Ana Ruiz', 'email' => 'ana@ejemplo.com']];
+        return [['name' => 'Ana Ruiz', 'email' => 'ana@ejemplo.com', 'role' => 'inquilino']];
     }
 
     public function test_genera_un_proceso_con_el_documento_relleno(): void
@@ -138,8 +140,8 @@ class TemplateProcessTest extends TestCase
         );
 
         $document = $process->document;
-        $contenido = Storage::disk($document->storage_disk)
-            ->get($document->storage_path.'/'.$document->stored_filename);
+        // storage_path es la ruta completa, no una carpeta.
+        $contenido = Storage::disk($document->storage_disk)->get($document->storage_path);
 
         $texto = (new Parser)->parseContent($contenido)->getText();
 
@@ -235,7 +237,7 @@ class TemplateProcessTest extends TestCase
         );
     }
 
-    public function test_rechaza_si_falta_asignar_un_firmante(): void
+    public function test_rechaza_si_falta_un_rol_que_la_plantilla_si_fija(): void
     {
         $this->expectException(TemplateException::class);
         $this->expectExceptionMessage('Inquilino');
@@ -244,7 +246,54 @@ class TemplateProcessTest extends TestCase
             $this->template,
             $this->author,
             ['arrendatario' => 'Ana', 'renta' => 100],
+            [['name' => 'Otro', 'email' => 'otro@ejemplo.com', 'role' => 'desconocido']],
+        );
+    }
+
+    public function test_una_plantilla_sin_roles_acepta_firmantes_libres(): void
+    {
+        // Una plantilla no es un proceso de firma: es un documento con
+        // variables. Quien firma se decide al usarla.
+        $sinRoles = $this->publishedTemplate(conRoles: false);
+
+        $process = $this->service->createProcess(
+            $sinRoles,
+            $this->author,
+            ['arrendatario' => 'Ana', 'renta' => 100],
+            [
+                ['name' => 'Ana Ruiz', 'email' => 'ana@ejemplo.com'],
+                ['name' => 'Luis Diaz', 'email' => 'luis@ejemplo.com'],
+            ],
+        );
+
+        $this->assertCount(2, $process->signers()->get());
+    }
+
+    public function test_una_plantilla_sin_roles_exige_al_menos_un_firmante(): void
+    {
+        $sinRoles = $this->publishedTemplate(conRoles: false);
+
+        $this->expectException(TemplateException::class);
+        $this->expectExceptionMessage('al menos un firmante');
+
+        $this->service->createProcess(
+            $sinRoles,
+            $this->author,
+            ['arrendatario' => 'Ana', 'renta' => 100],
             [],
+        );
+    }
+
+    public function test_un_firmante_sin_correo_se_rechaza(): void
+    {
+        $this->expectException(TemplateException::class);
+        $this->expectExceptionMessage('nombre y correo');
+
+        $this->service->createProcess(
+            $this->template,
+            $this->author,
+            ['arrendatario' => 'Ana', 'renta' => 100],
+            [['name' => 'Ana', 'email' => '', 'role' => 'inquilino']],
         );
     }
 

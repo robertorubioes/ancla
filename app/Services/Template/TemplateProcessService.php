@@ -38,7 +38,7 @@ class TemplateProcessService
 
     /**
      * @param  array<string, mixed>  $values  Sin validar: se validan aqui
-     * @param  array<string, array{name: string, email: string, phone?: string|null}>  $signers  Por role_key
+     * @param  list<array{name: string, email: string, phone?: string|null, role?: string|null}>  $signers
      *
      * @throws TemplateException
      * @throws TemplateRenderException
@@ -64,9 +64,9 @@ class TemplateProcessService
         // la plataforma acepta por un lado lo que rechaza por el otro.
         $clean = TemplateSchema::for($version)->validate($values);
 
-        $this->assertEverySignerRoleIsFilled($version, $signers);
+        $this->assertSignersMatchTemplate($version, $signers);
 
-        $pdf = $this->renderer->render($version, $clean, $signers);
+        $pdf = $this->renderer->render($version, $clean, $this->signersByRole($signers));
 
         return DB::transaction(function () use (
             $template, $version, $author, $clean, $signers, $pdf,
@@ -87,17 +87,14 @@ class TemplateProcessService
                 'deadline_at' => $deadlineAt !== null ? now()->parse($deadlineAt) : null,
             ]);
 
-            $order = 0;
-            foreach ($version->signerRoles as $role) {
-                $data = $signers[$role->role_key];
-
+            foreach ($signers as $order => $data) {
                 Signer::create([
                     'uuid' => (string) Str::uuid(),
                     'signing_process_id' => $process->id,
                     'name' => trim($data['name']),
                     'email' => trim(strtolower($data['email'])),
                     'phone' => ! empty($data['phone']) ? trim((string) $data['phone']) : null,
-                    'order' => $order++,
+                    'order' => $order,
                     'status' => Signer::STATUS_PENDING,
                     'token' => Str::random(32),
                 ]);
@@ -126,10 +123,12 @@ class TemplateProcessService
     ): Document {
         $uuid = (string) Str::uuid();
         $disk = config('documents.storage_disk', 'local');
-        $path = 'documents/'.now()->format('Y/m');
         $filename = $uuid.'.pdf';
+        // storage_path guarda la ruta COMPLETA, incluido el nombre: es la
+        // convencion de DocumentUploadService::encryptAndStore().
+        $path = 'documents/'.now()->format('Y/m').'/'.$filename;
 
-        Storage::disk($disk)->put("{$path}/{$filename}", $pdf);
+        Storage::disk($disk)->put($path, $pdf);
 
         return Document::create([
             'uuid' => $uuid,
@@ -160,20 +159,63 @@ class TemplateProcessService
     }
 
     /**
-     * Todos los roles previstos por la plantilla tienen que venir asignados.
+     * Comprueba los firmantes recibidos.
      *
-     * @param  array<string, array<string, mixed>>  $signers
+     * Una plantilla puede fijar roles ("arrendador", "arrendatario") o no
+     * fijar ninguno. Si los fija, hay que cubrirlos todos. Si no, vale
+     * cualquier lista, como en un proceso de firma normal: quien firma se
+     * decide al usar la plantilla, no al definirla.
+     *
+     * @param  list<array<string, mixed>>  $signers
      *
      * @throws TemplateException
      */
-    private function assertEverySignerRoleIsFilled(DocumentTemplateVersion $version, array $signers): void
+    private function assertSignersMatchTemplate(DocumentTemplateVersion $version, array $signers): void
     {
-        foreach ($version->signerRoles as $role) {
-            $data = $signers[$role->role_key] ?? null;
+        foreach ($signers as $data) {
+            if (blank($data['name'] ?? null) || blank($data['email'] ?? null)) {
+                throw TemplateException::incompleteSigner();
+            }
+        }
 
-            if ($data === null || blank($data['name'] ?? null) || blank($data['email'] ?? null)) {
+        $roles = $version->signerRoles;
+
+        if ($roles->isEmpty()) {
+            if ($signers === []) {
+                throw TemplateException::needsAtLeastOneSigner();
+            }
+
+            return;
+        }
+
+        $asignados = array_filter(array_column($signers, 'role'));
+
+        foreach ($roles as $role) {
+            if (! in_array($role->role_key, $asignados, true)) {
                 throw TemplateException::missingSigner($role->label);
             }
         }
+    }
+
+    /**
+     * Firmantes indexados por rol, para los campos calculados y la posicion
+     * de firma. Los que no traen rol no aparecen aqui.
+     *
+     * @param  list<array<string, mixed>>  $signers
+     * @return array<string, array<string, mixed>>
+     */
+    private function signersByRole(array $signers): array
+    {
+        $byRole = [];
+
+        foreach ($signers as $data) {
+            $role = $data['role'] ?? null;
+
+            if (is_string($role) && $role !== '') {
+                $byRole[$role] = $data;
+            }
+        }
+
+        return $byRole;
     }
 }
