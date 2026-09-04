@@ -15,6 +15,8 @@ use App\Models\DocumentTemplateVersion;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -42,7 +44,24 @@ class TemplateEditorTest extends TestCase
             'role' => UserRole::ADMIN,
         ]);
 
-        $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
+        // Un PDF de verdad: el editor mide sus paginas para colocar las cajas.
+        Storage::fake('local');
+
+        $pdf = new \FPDF;
+        $pdf->AddPage();
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Cell(0, 10, 'BASE', 0, 1);
+
+        $stored = Str::uuid().'.pdf';
+        Storage::disk('local')->put("documents/test/{$stored}", $pdf->Output('S'));
+
+        $document = Document::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'storage_disk' => 'local',
+            'storage_path' => "documents/test/{$stored}",
+            'stored_filename' => $stored,
+            'is_encrypted' => false,
+        ]);
 
         $this->template = DocumentTemplate::factory()->create([
             'tenant_id' => $this->tenant->id,
@@ -248,6 +267,48 @@ class TemplateEditorTest extends TestCase
             ->set('signerRoles.1.role_key', 'parte')
             ->call('save')
             ->assertHasErrors('signerRoles');
+    }
+
+    public function test_mide_las_paginas_del_pdf_en_milimetros(): void
+    {
+        // El servidor las mide para que la vista coloque las cajas en
+        // porcentaje: asi no dependen de la escala del navegador.
+        $component = $this->editor();
+        $pages = $component->instance()->pages();
+
+        $this->assertCount(1, $pages);
+        $this->assertSame(1, $pages[0]['number']);
+        $this->assertEqualsWithDelta(210.0, $pages[0]['width'], 0.5);
+        $this->assertEqualsWithDelta(297.0, $pages[0]['height'], 0.5);
+    }
+
+    public function test_dibuja_un_contenedor_y_un_canvas_por_pagina(): void
+    {
+        $html = $this->editor()->html();
+
+        $this->assertStringContainsString('tpl-canvas-1', $html);
+        $this->assertStringContainsString('class="tpl-page', $html);
+        $this->assertStringContainsString('data-mm-width=', $html);
+    }
+
+    public function test_las_cajas_se_colocan_en_porcentaje(): void
+    {
+        DocumentTemplateField::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_version_id' => $this->version->id,
+            'key' => 'medido',
+            'page' => 1,
+            'x' => 21.0,
+            'y' => 29.7,
+            'width' => 84.0,
+            'height' => 8.0,
+        ]);
+
+        $html = $this->editor()->html();
+
+        // 21 mm sobre una A4 de 210 mm son el 10 %.
+        $this->assertMatchesRegularExpression('/left:\s*10(\.0+)?%/', $html);
+        $this->assertStringContainsString('data-field-index', $html);
     }
 
     public function test_no_se_edita_una_version_ya_publicada(): void

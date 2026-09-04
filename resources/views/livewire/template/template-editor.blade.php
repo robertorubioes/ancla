@@ -45,50 +45,58 @@
                 {{ __('Haz doble clic sobre la pagina para anadir un campo. Arrastra para moverlo, y la esquina inferior derecha para redimensionarlo.') }}
             </p>
 
-            <template x-if="loading">
-                <p class="text-sm text-gray-500 py-12 text-center">{{ __('Cargando el documento...') }}</p>
-            </template>
-
             <template x-if="loadError">
-                <p class="text-sm text-red-700 py-12 text-center" x-text="loadError"></p>
+                <p class="text-sm text-red-700 py-6 text-center" x-text="loadError"></p>
             </template>
 
-            <div x-ref="pageContainer">
-                <template x-for="page in pages" :key="page.number">
-                    <div
-                        class="relative mx-auto mb-8 bg-white shadow-sm ring-1 ring-gray-200"
-                        :id="`page-holder-${page.number}`"
-                        :data-page="page.number"
-                        @dblclick="addFieldAt($event, page.number)"
-                    >
-                        <canvas :x-ref="`canvas${page.number}`"></canvas>
+            @forelse ($pages as $page)
+                <div
+                    class="tpl-page relative mx-auto mb-8 bg-white shadow-sm ring-1 ring-gray-200"
+                    data-page="{{ $page['number'] }}"
+                    data-mm-width="{{ $page['width'] }}"
+                    data-mm-height="{{ $page['height'] }}"
+                    style="width: 100%; max-width: 760px; aspect-ratio: {{ $page['width'] }} / {{ $page['height'] }}"
+                    @dblclick="addFieldAt($event, {{ $page['number'] }})"
+                >
+                    <canvas
+                        id="tpl-canvas-{{ $page['number'] }}"
+                        class="absolute inset-0 w-full h-full"
+                    ></canvas>
 
-                        {{-- Cajas de campo de esta pagina --}}
-                        @foreach ($fields as $index => $field)
-                            <div
-                                x-show="page.number === {{ $field['page'] }}"
-                                data-field-index="{{ $index }}"
-                                :style="boxStyle(@js($field))"
-                                @pointerdown="startDrag($event, {{ $index }}, @js($field), 'move')"
-                                class="absolute border-2 rounded cursor-move flex items-center px-1 overflow-hidden
-                                    {{ $selectedField === $index
-                                        ? 'border-blue-600 bg-blue-100/70'
-                                        : 'border-blue-400 bg-blue-50/60 hover:bg-blue-100/60' }}"
-                            >
-                                <span class="text-[10px] font-medium text-blue-900 truncate pointer-events-none">
-                                    {{ $field['label'] }}
-                                </span>
+                    {{-- Cajas de esta pagina. En PORCENTAJE: asi no dependen
+                         de la escala a la que pinte el navegador. --}}
+                    @foreach ($fields as $index => $field)
+                        @continue($field['page'] !== $page['number'])
+                        <div
+                            data-field-index="{{ $index }}"
+                            style="
+                                left: {{ 100 * $field['x'] / $page['width'] }}%;
+                                top: {{ 100 * $field['y'] / $page['height'] }}%;
+                                width: {{ 100 * $field['width'] / $page['width'] }}%;
+                                height: {{ 100 * $field['height'] / $page['height'] }}%;
+                            "
+                            @pointerdown="startDrag($event, {{ $index }}, 'move')"
+                            class="absolute border-2 rounded cursor-move flex items-center px-1 overflow-hidden
+                                {{ $selectedField === $index
+                                    ? 'border-blue-600 bg-blue-100/70'
+                                    : 'border-blue-400 bg-blue-50/60 hover:bg-blue-100/60' }}"
+                        >
+                            <span class="text-[10px] font-medium text-blue-900 truncate pointer-events-none">
+                                {{ $field['label'] }}
+                            </span>
 
-                                {{-- Tirador de redimensionado --}}
-                                <span
-                                    @pointerdown.stop="startDrag($event, {{ $index }}, @js($field), 'resize')"
-                                    class="absolute -right-1 -bottom-1 w-3 h-3 bg-blue-600 rounded-sm cursor-se-resize"
-                                ></span>
-                            </div>
-                        @endforeach
-                    </div>
-                </template>
-            </div>
+                            <span
+                                @pointerdown.stop="startDrag($event, {{ $index }}, 'resize')"
+                                class="absolute -right-1 -bottom-1 w-3 h-3 bg-blue-600 rounded-sm cursor-se-resize"
+                            ></span>
+                        </div>
+                    @endforeach
+                </div>
+            @empty
+                <p class="text-sm text-gray-500 py-12 text-center">
+                    {{ __('No se pudieron leer las paginas del documento.') }}
+                </p>
+            @endforelse
         </div>
 
         {{-- Panel lateral --}}
