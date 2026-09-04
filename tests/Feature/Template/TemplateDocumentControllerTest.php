@@ -51,7 +51,7 @@ class TemplateDocumentControllerTest extends TestCase
         $document = Document::factory()->create([
             'tenant_id' => $tenant->id,
             'storage_disk' => 'local',
-            'storage_path' => $path,
+            'storage_path' => "{$path}/{$filename}",
             'stored_filename' => $filename,
             'is_encrypted' => false,
         ]);

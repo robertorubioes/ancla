@@ -127,9 +127,13 @@ class TemplateVersionService
     /**
      * Habilita la plantilla: publica su borrador y lo deja como vigente.
      *
-     * Es la decision que convierte una plantilla en utilizable. Antes de
-     * habilitarla hay que comprobar que tiene sentido: sin firmantes no puede
-     * generar un proceso, y sin campos no aporta nada sobre subir el PDF.
+     * Es la decision que convierte una plantilla en utilizable.
+     *
+     * NO se exigen firmantes previstos. Una plantilla no es un proceso de
+     * firma: es un documento con variables. Quien firma se decide al usarla.
+     * Los roles son opcionales y sirven para dos cosas, cuando se conocen de
+     * antemano: fijar donde firma cada uno, y rellenar solos los campos
+     * signer_name y signer_email.
      *
      * @throws TemplateException
      */
@@ -139,10 +143,6 @@ class TemplateVersionService
 
         if ($draft === null) {
             throw TemplateException::noDraftToPublish();
-        }
-
-        if ($draft->signerRoles()->count() === 0) {
-            throw TemplateException::needsSignerRoles();
         }
 
         if ($draft->fields()->count() === 0) {

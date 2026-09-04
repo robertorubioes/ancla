@@ -83,27 +83,48 @@
 
         {{-- Firmantes --}}
         <div class="bg-white rounded-xl border border-gray-200 p-5">
-            <h2 class="text-sm font-semibold text-gray-900 mb-4">{{ __('Firmantes') }}</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-gray-900">{{ __('Firmantes') }}</h2>
+                @unless ($fixedRoles)
+                    <button type="button" wire:click="addSigner"
+                        class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                        + {{ __('Anadir firmante') }}
+                    </button>
+                @endunless
+            </div>
 
-            @foreach ($roles as $role)
+            @if ($fixedRoles)
+                <p class="text-xs text-gray-500 mb-4">
+                    {{ __('Esta plantilla tiene los firmantes previstos. Indica quien ocupa cada papel.') }}
+                </p>
+            @endif
+
+            @foreach ($signers as $i => $signer)
                 <div class="mb-4 pb-4 border-b border-gray-100 last:border-0 last:mb-0 last:pb-0">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                        {{ $role->label }}
-                    </p>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            {{ ($signer['label'] ?? '') ?: __('Firmante') . ' ' . ($i + 1) }}
+                        </p>
+                        @if (! $fixedRoles && count($signers) > 1)
+                            <button type="button" wire:click="removeSigner({{ $i }})"
+                                class="text-xs text-red-600 hover:text-red-800">{{ __('Quitar') }}</button>
+                        @endif
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <input type="text" placeholder="{{ __('Nombre completo') }}"
-                                wire:model.blur="signers.{{ $role->role_key }}.name"
+                                wire:model.blur="signers.{{ $i }}.name"
                                 class="w-full rounded-md border-gray-300 text-sm">
-                            @error("signers.{$role->role_key}.name")
+                            @error("signers.{$i}.name")
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
                             <input type="email" placeholder="{{ __('Correo') }}"
-                                wire:model.blur="signers.{{ $role->role_key }}.email"
+                                wire:model.blur="signers.{{ $i }}.email"
                                 class="w-full rounded-md border-gray-300 text-sm">
-                            @error("signers.{$role->role_key}.email")
+                            @error("signers.{$i}.email")
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>

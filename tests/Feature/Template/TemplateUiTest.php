@@ -64,7 +64,7 @@ class TemplateUiTest extends TestCase
             'status' => Document::STATUS_READY,
             'original_filename' => $filename,
             'storage_disk' => 'local',
-            'storage_path' => $path,
+            'storage_path' => "{$path}/{$stored}",
             'stored_filename' => $stored,
             'is_encrypted' => false,
         ]);
@@ -241,8 +241,8 @@ class TemplateUiTest extends TestCase
         Livewire::actingAs($this->admin)
             ->test(TemplateFill::class, ['template' => $template])
             ->set('values.arrendatario', 'Ana Ruiz')
-            ->set('signers.inquilino.name', 'Ana Ruiz')
-            ->set('signers.inquilino.email', 'ana@ejemplo.com')
+            ->set('signers.0.name', 'Ana Ruiz')
+            ->set('signers.0.email', 'ana@ejemplo.com')
             ->set('sendNow', false)
             ->call('generate')
             ->assertHasNoErrors()
@@ -263,8 +263,8 @@ class TemplateUiTest extends TestCase
         Livewire::actingAs($this->admin)
             ->test(TemplateFill::class, ['template' => $template])
             ->set('values.arrendatario', '')
-            ->set('signers.inquilino.name', 'Ana')
-            ->set('signers.inquilino.email', 'ana@ejemplo.com')
+            ->set('signers.0.name', 'Ana')
+            ->set('signers.0.email', 'ana@ejemplo.com')
             ->call('generate')
             ->assertHasErrors('values.arrendatario');
 
@@ -278,10 +278,10 @@ class TemplateUiTest extends TestCase
         Livewire::actingAs($this->admin)
             ->test(TemplateFill::class, ['template' => $template])
             ->set('values.arrendatario', 'Ana')
-            ->set('signers.inquilino.name', '')
-            ->set('signers.inquilino.email', '')
+            ->set('signers.0.name', '')
+            ->set('signers.0.email', '')
             ->call('generate')
-            ->assertHasErrors(['signers.inquilino.name', 'signers.inquilino.email']);
+            ->assertHasErrors(['signers.0.name', 'signers.0.email']);
 
         $this->assertSame(0, SigningProcess::count());
     }
