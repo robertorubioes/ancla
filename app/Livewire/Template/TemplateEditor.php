@@ -3,16 +3,20 @@
 namespace App\Livewire\Template;
 
 use App\Enums\TemplateFieldType;
+use App\Models\Document;
 use App\Models\DocumentTemplate;
 use App\Models\DocumentTemplateField;
 use App\Models\DocumentTemplateSigner;
 use App\Models\DocumentTemplateVersion;
+use App\Services\Document\DocumentUploadService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Smalot\PdfParser\Parser;
 
 /**
  * Editor visual de una plantilla.
@@ -386,6 +390,71 @@ class TemplateEditor extends Component
     }
 
     /**
+     * Dimensiones de cada pagina, en milimetros.
+     *
+     * Se calculan en el servidor para que la vista pueda colocar las cajas en
+     * PORCENTAJES. Asi las posiciones no dependen de la escala a la que
+     * pinte el navegador, y sobreviven a cada re-render de Livewire sin que
+     * el JavaScript tenga que recolocarlas.
+     *
+     * @return list<array{number: int, width: float, height: float}>
+     */
+    public function pages(): array
+    {
+        $document = $this->version->document;
+
+        if ($document === null) {
+            return [];
+        }
+
+        return Cache::remember(
+            "template-pages:{$document->id}",
+            now()->addHours(6),
+            fn (): array => $this->measurePages($document),
+        );
+    }
+
+    /**
+     * @return list<array{number: int, width: float, height: float}>
+     */
+    private function measurePages(Document $document): array
+    {
+        $mmPerPoint = 25.4 / 72;
+
+        try {
+            $content = app(DocumentUploadService::class)->getDecryptedContent($document);
+            $parsed = (new Parser)->parseContent($content);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return [];
+        }
+
+        $pages = [];
+
+        foreach ($parsed->getPages() as $index => $page) {
+            $box = $page->getDetails()['MediaBox'] ?? null;
+
+            // Sin MediaBox se asume A4 vertical, que es lo habitual.
+            $width = 210.0;
+            $height = 297.0;
+
+            if (is_array($box) && count($box) === 4) {
+                $width = round((((float) $box[2]) - ((float) $box[0])) * $mmPerPoint, 2);
+                $height = round((((float) $box[3]) - ((float) $box[1])) * $mmPerPoint, 2);
+            }
+
+            $pages[] = [
+                'number' => $index + 1,
+                'width' => $width > 0 ? $width : 210.0,
+                'height' => $height > 0 ? $height : 297.0,
+            ];
+        }
+
+        return $pages;
+    }
+
+    /**
      * @return array<string, string>
      */
     public function getFieldTypesProperty(): array
@@ -400,6 +469,8 @@ class TemplateEditor extends Component
 
     public function render(): View
     {
-        return view('livewire.template.template-editor');
+        return view('livewire.template.template-editor', [
+            'pages' => $this->pages(),
+        ]);
     }
 }

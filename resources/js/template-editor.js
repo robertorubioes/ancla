@@ -1,17 +1,19 @@
 /**
  * Editor visual de plantillas.
  *
- * Pinta las paginas del PDF con PDF.js y superpone las cajas de campo. Todo
- * lo que sale de aqui hacia Livewire va en MILIMETROS desde arriba a la
- * izquierda, la misma convencion que usa el servidor al estampar y que ya
- * usaba config/signing.php para la firma.
+ * Reparto de responsabilidades:
  *
- * El navegador solo mueve cajas: la validacion y la persistencia son del
- * servidor, que no se fia de estas coordenadas.
+ *   servidor  mide las paginas en milimetros y dibuja las cajas ya colocadas,
+ *             en porcentaje sobre la pagina
+ *   este JS   pinta el PDF sobre cada canvas y traduce el arrastre a
+ *             milimetros para devolverselos a Livewire
+ *
+ * Que las cajas vayan en porcentaje desde el servidor es lo que hace que
+ * sobrevivan a cada re-render de Livewire y a cualquier escala de pantalla,
+ * sin que este fichero tenga que recolocarlas.
  *
  * PDF.js se carga bajo demanda: pesa mas de 200 KB comprimido y solo hace
- * falta en esta pantalla, asi que no debe viajar en el bundle de todas las
- * paginas.
+ * falta en esta pantalla.
  */
 let pdfjsPromise = null;
 
@@ -34,135 +36,117 @@ export default function templateEditor({ pdfUrl }) {
     return {
         pdfUrl,
 
-        /** Paginas renderizadas: { number, widthMm, heightMm, scale } */
-        pages: [],
-
         loading: true,
         loadError: '',
 
         /** Arrastre en curso */
         drag: null,
 
-        /** Milimetros por pulgada, para pasar de puntos PDF a mm */
-        MM_PER_POINT: 25.4 / 72,
-
         async init() {
             try {
-                await this.renderPdf();
+                await this.paintPages();
             } catch (error) {
-                this.loadError = 'No se pudo cargar el PDF de la plantilla.';
+                this.loadError = this.describe(error);
                 console.error('[template-editor]', error);
             } finally {
                 this.loading = false;
             }
         },
 
-        async renderPdf() {
+        describe(error) {
+            const detalle = error?.message ? ` (${error.message})` : '';
+
+            return `No se pudo cargar el PDF de la plantilla${detalle}.`;
+        },
+
+        /**
+         * Pinta cada pagina sobre el canvas que el servidor ya dejo puesto.
+         */
+        async paintPages() {
             const pdfjsLib = await loadPdfJs();
             const doc = await pdfjsLib.getDocument({ url: this.pdfUrl }).promise;
-            const pages = [];
 
             for (let number = 1; number <= doc.numPages; number++) {
+                const canvas = document.getElementById(`tpl-canvas-${number}`);
+
+                // El servidor pudo no medir alguna pagina; se ignora en vez
+                // de abortar el resto.
+                if (!canvas) {
+                    continue;
+                }
+
                 const page = await doc.getPage(number);
-
-                // viewport a escala 1 = puntos PDF, que es lo que hay que
-                // convertir a milimetros para el servidor
                 const base = page.getViewport({ scale: 1 });
-                const widthMm = base.width * this.MM_PER_POINT;
-                const heightMm = base.height * this.MM_PER_POINT;
 
-                // Se pinta a un ancho fijo para que la pagina quepa en pantalla
-                const targetWidth = 760;
-                const scale = targetWidth / base.width;
-                const viewport = page.getViewport({ scale });
+                // Se pinta al ancho real del hueco, con el limite del
+                // dispositivo, para que no salga borroso en pantallas HiDPI.
+                const cssWidth = canvas.clientWidth || 760;
+                const ratio = Math.min(window.devicePixelRatio || 1, 2);
+                const viewport = page.getViewport({ scale: (cssWidth * ratio) / base.width });
 
-                const canvas = this.$refs[`canvas${number}`] ?? this.makeCanvas(number);
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                canvas.style.width = `${viewport.width}px`;
-                canvas.style.height = `${viewport.height}px`;
+                canvas.width = Math.round(viewport.width);
+                canvas.height = Math.round(viewport.height);
 
                 await page.render({
                     canvasContext: canvas.getContext('2d'),
                     viewport,
                 }).promise;
-
-                pages.push({
-                    number,
-                    widthMm,
-                    heightMm,
-                    pixelWidth: viewport.width,
-                    pixelHeight: viewport.height,
-                });
             }
-
-            this.pages = pages;
         },
 
-        makeCanvas(number) {
-            const holder = document.getElementById(`page-holder-${number}`);
-            if (holder) {
-                return holder.querySelector('canvas');
+        /** El contenedor de la pagina, con sus dimensiones en mm */
+        pageOf(element) {
+            const holder = element.closest('.tpl-page');
+
+            if (!holder) {
+                return null;
             }
-
-            // Las paginas se crean sobre la marcha la primera vez
-            const wrapper = document.createElement('div');
-            wrapper.id = `page-holder-${number}`;
-            wrapper.className = 'relative mx-auto mb-8 shadow-sm ring-1 ring-gray-200';
-            wrapper.dataset.page = String(number);
-
-            const canvas = document.createElement('canvas');
-            wrapper.appendChild(canvas);
-
-            this.$refs.pageContainer.appendChild(wrapper);
-
-            return canvas;
-        },
-
-        /** Pixeles por milimetro en la pagina indicada */
-        pxPerMm(pageNumber) {
-            const page = this.pages.find((p) => p.number === pageNumber);
-
-            return page ? page.pixelWidth / page.widthMm : 1;
-        },
-
-        /** Estilo de una caja de campo, en pixeles de pantalla */
-        boxStyle(field) {
-            const ratio = this.pxPerMm(field.page);
 
             return {
-                left: `${field.x * ratio}px`,
-                top: `${field.y * ratio}px`,
-                width: `${field.width * ratio}px`,
-                height: `${field.height * ratio}px`,
+                holder,
+                number: Number(holder.dataset.page),
+                mmWidth: Number(holder.dataset.mmWidth),
+                mmHeight: Number(holder.dataset.mmHeight),
+                rect: holder.getBoundingClientRect(),
             };
         },
 
         /** Anade un campo donde se ha hecho doble clic */
         addFieldAt(event, pageNumber) {
-            const rect = event.currentTarget.getBoundingClientRect();
-            const ratio = this.pxPerMm(pageNumber);
+            const page = this.pageOf(event.currentTarget);
 
-            const x = (event.clientX - rect.left) / ratio;
-            const y = (event.clientY - rect.top) / ratio;
+            if (!page) {
+                return;
+            }
+
+            const x = ((event.clientX - page.rect.left) / page.rect.width) * page.mmWidth;
+            const y = ((event.clientY - page.rect.top) / page.rect.height) * page.mmHeight;
 
             this.$wire.addField(pageNumber, this.round(x), this.round(y));
         },
 
-        startDrag(event, index, field, mode = 'move') {
+        startDrag(event, index, mode = 'move') {
+            const box = event.currentTarget.closest('[data-field-index]');
+            const page = this.pageOf(box);
+
+            if (!page) {
+                return;
+            }
+
             event.preventDefault();
             event.stopPropagation();
 
             this.drag = {
                 index,
                 mode,
-                page: field.page,
+                page,
+                box,
                 startX: event.clientX,
                 startY: event.clientY,
-                originX: field.x,
-                originY: field.y,
-                originWidth: field.width,
-                originHeight: field.height,
+                originLeft: box.offsetLeft,
+                originTop: box.offsetTop,
+                originWidth: box.offsetWidth,
+                originHeight: box.offsetHeight,
             };
 
             this.$wire.selectField(index);
@@ -178,61 +162,57 @@ export default function templateEditor({ pdfUrl }) {
             window.addEventListener('pointerup', onUp);
         },
 
+        /**
+         * Mientras dura el arrastre solo se mueve la caja: no tiene sentido ir
+         * al servidor en cada pixel.
+         */
         onDrag(event) {
             if (!this.drag) {
                 return;
             }
 
-            const ratio = this.pxPerMm(this.drag.page);
-            const dx = (event.clientX - this.drag.startX) / ratio;
-            const dy = (event.clientY - this.drag.startY) / ratio;
+            const { box, mode, startX, startY } = this.drag;
+            const dx = event.clientX - startX;
+            const dy = event.clientY - startY;
 
-            const box = document.querySelector(`[data-field-index="${this.drag.index}"]`);
-            if (!box) {
-                return;
-            }
-
-            // Se mueve solo la caja mientras dura el arrastre: no tiene
-            // sentido ir al servidor en cada pixel.
-            if (this.drag.mode === 'move') {
-                box.style.left = `${Math.max(0, this.drag.originX + dx) * ratio}px`;
-                box.style.top = `${Math.max(0, this.drag.originY + dy) * ratio}px`;
+            if (mode === 'move') {
+                box.style.left = `${Math.max(0, this.drag.originLeft + dx)}px`;
+                box.style.top = `${Math.max(0, this.drag.originTop + dy)}px`;
 
                 return;
             }
 
-            box.style.width = `${Math.max(5, this.drag.originWidth + dx) * ratio}px`;
-            box.style.height = `${Math.max(4, this.drag.originHeight + dy) * ratio}px`;
+            box.style.width = `${Math.max(12, this.drag.originWidth + dx)}px`;
+            box.style.height = `${Math.max(10, this.drag.originHeight + dy)}px`;
         },
 
-        endDrag(event) {
+        endDrag() {
             if (!this.drag) {
                 return;
             }
 
-            const ratio = this.pxPerMm(this.drag.page);
-            const dx = (event.clientX - this.drag.startX) / ratio;
-            const dy = (event.clientY - this.drag.startY) / ratio;
-
-            const drag = this.drag;
+            const { index, mode, page, box } = this.drag;
             this.drag = null;
 
-            if (drag.mode === 'move') {
+            const toMmX = (px) => (px / page.rect.width) * page.mmWidth;
+            const toMmY = (px) => (px / page.rect.height) * page.mmHeight;
+
+            if (mode === 'move') {
                 this.$wire.moveField(
-                    drag.index,
-                    this.round(Math.max(0, drag.originX + dx)),
-                    this.round(Math.max(0, drag.originY + dy)),
+                    index,
+                    this.round(toMmX(box.offsetLeft)),
+                    this.round(toMmY(box.offsetTop)),
                 );
 
                 return;
             }
 
             this.$wire.moveField(
-                drag.index,
-                drag.originX,
-                drag.originY,
-                this.round(Math.max(5, drag.originWidth + dx)),
-                this.round(Math.max(4, drag.originHeight + dy)),
+                index,
+                this.round(toMmX(box.offsetLeft)),
+                this.round(toMmY(box.offsetTop)),
+                this.round(toMmX(box.offsetWidth)),
+                this.round(toMmY(box.offsetHeight)),
             );
         },
 
