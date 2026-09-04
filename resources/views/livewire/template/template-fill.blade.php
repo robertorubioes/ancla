@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto py-6 px-4">
+<div class="max-w-[1400px] mx-auto py-6 px-4">
     <div class="mb-6">
         <a href="{{ route('templates.index') }}" wire:navigate
            class="text-sm text-gray-500 hover:text-gray-700">&larr; {{ __('Plantillas') }}</a>
@@ -13,6 +13,8 @@
             {{ $error }}
         </div>
     @endif
+
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,720px)] gap-6 items-start">
 
     <form wire:submit="generate" class="space-y-6">
 
@@ -179,4 +181,44 @@
             </button>
         </div>
     </form>
+
+    {{-- Vista previa --}}
+    <div class="xl:sticky xl:top-6">
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-900">{{ __('Vista previa') }}</h2>
+                <button type="button" wire:click="preview" wire:loading.attr="disabled"
+                    class="px-3 py-1.5 rounded-md border border-gray-300 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                    <span wire:loading.remove wire:target="preview">
+                        {{ $previewKey ? __('Actualizar') : __('Ver documento') }}
+                    </span>
+                    <span wire:loading wire:target="preview">{{ __('Generando...') }}</span>
+                </button>
+            </div>
+
+            @if ($previewError)
+                <div class="m-4 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
+                    {{ $previewError }}
+                </div>
+            @elseif ($previewKey)
+                <iframe
+                    src="{{ route('templates.preview', ['key' => $previewKey]) }}"
+                    class="w-full"
+                    style="height: 70vh; border: 0"
+                    title="{{ __('Vista previa del documento') }}"
+                ></iframe>
+            @else
+                <div class="px-4 py-16 text-center">
+                    <p class="text-sm text-gray-500">
+                        {{ __('Mira como queda el documento antes de enviarlo.') }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        {{ __('No hace falta rellenarlo todo: los campos vacios se dejan en blanco.') }}
+                    </p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    </div>
 </div>

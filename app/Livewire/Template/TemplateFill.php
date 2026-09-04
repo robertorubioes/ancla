@@ -8,7 +8,10 @@ use App\Models\SigningProcess;
 use App\Services\Template\TemplateException;
 use App\Services\Template\TemplateProcessService;
 use App\Services\Template\TemplateRenderException;
+use App\Services\Template\TemplateRenderService;
 use App\Services\Template\TemplateSchema;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -59,6 +62,14 @@ class TemplateFill extends Component
     public bool $generating = false;
 
     public string $error = '';
+
+    /**
+     * Clave en cache del PDF de vista previa. Nunca se persiste en disco:
+     * es un borrador que caduca solo.
+     */
+    public ?string $previewKey = null;
+
+    public string $previewError = '';
 
     public function mount(DocumentTemplate $template): void
     {
@@ -165,6 +176,71 @@ class TemplateFill extends Component
         }
 
         return $attributes;
+    }
+
+    /**
+     * Genera una vista previa con lo que haya escrito hasta ahora.
+     *
+     * NO se valida: el formulario puede estar a medias y la gracia es ver el
+     * documento mientras se rellena. Los campos vacios simplemente no se
+     * estampan.
+     *
+     * Si un valor no cabe en su caja, el renderizador lanza; aqui eso no es
+     * un fallo sino justo lo que hay que enseñar, antes de mandar un contrato
+     * con el importe cortado.
+     */
+    public function preview(TemplateRenderService $renderer): void
+    {
+        $this->previewError = '';
+        $this->error = '';
+
+        $signersByRole = [];
+        foreach ($this->signers as $signer) {
+            if (filled($signer['role'] ?? null)) {
+                $signersByRole[$signer['role']] = $signer;
+            }
+        }
+
+        try {
+            $pdf = $renderer->render($this->version, $this->values, $signersByRole);
+        } catch (TemplateRenderException $e) {
+            $this->previewKey = null;
+            $this->previewError = $e->getMessage();
+
+            return;
+        } catch (\Throwable $e) {
+            report($e);
+            $this->previewKey = null;
+            $this->previewError = 'No se pudo generar la vista previa.';
+
+            return;
+        }
+
+        $key = Str::random(40);
+
+        Cache::put(
+            self::previewCacheKey($key),
+            ['user_id' => auth()->id(), 'pdf' => $pdf],
+            now()->addMinutes(10),
+        );
+
+        $this->previewKey = $key;
+    }
+
+    public static function previewCacheKey(string $key): string
+    {
+        return 'template-preview:'.$key;
+    }
+
+    /**
+     * Cualquier cambio invalida la vista previa: mejor sin ella que
+     * enseñando una que ya no corresponde con lo escrito.
+     */
+    public function updated(string $property): void
+    {
+        if (str_starts_with($property, 'values.') || str_starts_with($property, 'signers.')) {
+            $this->previewKey = null;
+        }
     }
 
     public function generate(TemplateProcessService $processes): void

@@ -297,4 +297,8 @@ Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])
         // PDF base, para que el editor lo pinte
         Route::get('/versions/{version}/pdf', [TemplateDocumentController::class, 'show'])
             ->name('templates.pdf');
+
+        // Vista previa de lo que se esta rellenando. Vive en cache, no en disco.
+        Route::get('/preview/{key}', [TemplateDocumentController::class, 'preview'])
+            ->name('templates.preview');
     });
