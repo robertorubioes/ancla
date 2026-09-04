@@ -187,7 +187,8 @@ class DocumentEncryptionServiceTest extends TestCase
     /** @test */
     public function it_throws_exception_when_master_key_missing(): void
     {
-        Config::set('app.encryption_key', null);
+        // La clave vive en config/encryption.php, no en config/app.php.
+        Config::set('encryption.master_key', null);
 
         $this->expectException(EncryptionException::class);
         $this->expectExceptionMessage('Master encryption key not configured');

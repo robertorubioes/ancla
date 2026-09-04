@@ -72,10 +72,12 @@ trait Encryptable
      *
      * Models using this trait should define this property:
      * protected array $encryptable = ['attribute1', 'attribute2'];
+     *
+     * @return list<string>
      */
     public function getEncryptableAttributes(): array
     {
-        return $this->encryptable ?? [];
+        return $this->encryptable;
     }
 
     /**
@@ -259,7 +261,7 @@ trait Encryptable
      * Get encryption metadata for an attribute.
      *
      * @param  string  $attribute  Attribute name
-     * @return array Metadata including encryption status, algorithm, sizes
+     * @return array<string, mixed> Metadata including encryption status, algorithm, sizes
      */
     public function getAttributeEncryptionMetadata(string $attribute): array
     {

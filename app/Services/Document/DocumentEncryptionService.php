@@ -206,16 +206,28 @@ class DocumentEncryptionService
             return $cached;
         }
 
-        // Get master key from config
-        $masterKeyEncoded = config('app.encryption_key');
+        // La clave maestra vive en config/encryption.php, el fichero dedicado
+        // de ADR-010. Antes se leia config('app.encryption_key'), una ruta que
+        // no existe: el cifrado en reposo no podia funcionar.
+        $masterKeyEncoded = config('encryption.master_key');
         if (! $masterKeyEncoded) {
             throw EncryptionException::missingMasterKey();
         }
 
-        // Decode master key from base64
-        $masterKey = base64_decode(substr($masterKeyEncoded, 7)); // Remove 'base64:' prefix
-        if (strlen($masterKey) !== 32) {
-            throw EncryptionException::encryptionFailed('Invalid master key length');
+        // El prefijo 'base64:' es opcional. Recortarlo a ciegas corrompia la
+        // clave cuando venia sin el.
+        $masterKey = base64_decode(
+            str_starts_with((string) $masterKeyEncoded, 'base64:')
+                ? substr((string) $masterKeyEncoded, 7)
+                : (string) $masterKeyEncoded,
+            true
+        );
+
+        if ($masterKey === false || strlen($masterKey) !== 32) {
+            throw EncryptionException::encryptionFailed(
+                'La clave maestra debe ser 32 bytes en base64. Genera una con: '
+                .'php -r "echo \'base64:\'.base64_encode(random_bytes(32));"'
+            );
         }
 
         // Derive tenant-specific key using HKDF
