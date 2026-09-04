@@ -115,12 +115,6 @@ parameters:
 			path: app/Http/Controllers/InvitationController.php
 
 		-
-			message: '#^Parameter \#2 \$tenant of class App\\Mail\\UserWelcomeMail constructor expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/InvitationController.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Support\\Carbon\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -541,12 +535,6 @@ parameters:
 			path: app/Livewire/Document/DocumentUpload.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/Settings/UserManagement.php
-
-		-
 			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:editRules\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -574,12 +562,6 @@ parameters:
 			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:render\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: app/Livewire/Settings/UserManagement.php
-
-		-
-			message: '#^Parameter \#2 \$tenant of class App\\Mail\\UserInvitationMail constructor expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
-			identifier: argument.type
-			count: 2
 			path: app/Livewire/Settings/UserManagement.php
 
 		-
@@ -889,18 +871,6 @@ parameters:
 			path: app/Models/ArchivedDocument.php
 
 		-
-			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/ArchivedDocument.php
-
-		-
-			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/ArchivedDocument.php
-
-		-
 			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeInTier\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -937,18 +907,6 @@ parameters:
 			path: app/Models/ArchivedDocument.php
 
 		-
-			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/ArchivedDocument.php
-
-		-
-			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/ArchivedDocument.php
-
-		-
 			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ArchivedDocument\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
 			identifier: property.phpDocType
 			count: 1
@@ -969,30 +927,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\AuditTrailEntry\:\:auditable\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\AuditTrailEntry\)\>\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Models/AuditTrailEntry.php
-
-		-
-			message: '#^Method App\\Models\\AuditTrailEntry\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/AuditTrailEntry.php
-
-		-
-			message: '#^Method App\\Models\\AuditTrailEntry\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/AuditTrailEntry.php
-
-		-
-			message: '#^Method App\\Models\\AuditTrailEntry\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/AuditTrailEntry.php
-
-		-
-			message: '#^Method App\\Models\\AuditTrailEntry\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/AuditTrailEntry.php
 
@@ -1052,18 +986,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\ConsentRecord\:\:scopeForSignature\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/ConsentRecord.php
-
-		-
-			message: '#^Method App\\Models\\ConsentRecord\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/ConsentRecord.php
-
-		-
-			message: '#^Method App\\Models\\ConsentRecord\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/ConsentRecord.php
@@ -1129,18 +1051,6 @@ parameters:
 			path: app/Models/ConsentRecord.php
 
 		-
-			message: '#^Method App\\Models\\ConsentRecord\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/ConsentRecord.php
-
-		-
-			message: '#^Method App\\Models\\ConsentRecord\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/ConsentRecord.php
-
-		-
 			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeByHash\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -1177,18 +1087,6 @@ parameters:
 			path: app/Models/DeviceFingerprint.php
 
 		-
-			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/DeviceFingerprint.php
-
-		-
-			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/DeviceFingerprint.php
-
-		-
 			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeMobile\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -1196,18 +1094,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeMobile\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/DeviceFingerprint.php
-
-		-
-			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/DeviceFingerprint.php
-
-		-
-			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/DeviceFingerprint.php
@@ -1221,30 +1107,6 @@ parameters:
 		-
 			message: '#^Class App\\Models\\Document has PHPDoc tag @property for property \$pdf_metadata with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Models/Document.php
-
-		-
-			message: '#^Method App\\Models\\Document\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Document.php
-
-		-
-			message: '#^Method App\\Models\\Document\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/Document.php
-
-		-
-			message: '#^Method App\\Models\\Document\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/Document.php
-
-		-
-			message: '#^Method App\\Models\\Document\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/Document.php
 
@@ -1280,18 +1142,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeByVerificationCode\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/EvidenceDossier.php
-
-		-
-			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/EvidenceDossier.php
-
-		-
-			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/EvidenceDossier.php
@@ -1345,44 +1195,8 @@ parameters:
 			path: app/Models/EvidenceDossier.php
 
 		-
-			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/EvidenceDossier.php
-
-		-
-			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/EvidenceDossier.php
-
-		-
 			message: '#^Method App\\Models\\EvidencePackage\:\:packagable\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, App\\Models\\EvidencePackage\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\EvidencePackage\)\>\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Models/EvidencePackage.php
-
-		-
-			message: '#^Method App\\Models\\EvidencePackage\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/EvidencePackage.php
-
-		-
-			message: '#^Method App\\Models\\EvidencePackage\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/EvidencePackage.php
-
-		-
-			message: '#^Method App\\Models\\EvidencePackage\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/EvidencePackage.php
-
-		-
-			message: '#^Method App\\Models\\EvidencePackage\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/EvidencePackage.php
 
@@ -1401,18 +1215,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\GeolocationRecord\:\:getEffectiveLongitudeAttribute\(\) should return float\|null but returns string\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Models/GeolocationRecord.php
-
-		-
-			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/GeolocationRecord.php
-
-		-
-			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/GeolocationRecord.php
 
@@ -1465,18 +1267,6 @@ parameters:
 			path: app/Models/GeolocationRecord.php
 
 		-
-			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/GeolocationRecord.php
-
-		-
-			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/GeolocationRecord.php
-
-		-
 			message: '#^Method App\\Models\\GeolocationRecord\:\:signer\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -1508,18 +1298,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeClean\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/IpResolutionRecord.php
-
-		-
-			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/IpResolutionRecord.php
-
-		-
-			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/IpResolutionRecord.php
@@ -1580,18 +1358,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithVpn\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/IpResolutionRecord.php
-
-		-
-			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/IpResolutionRecord.php
-
-		-
-			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/IpResolutionRecord.php
@@ -1729,18 +1495,6 @@ parameters:
 			path: app/Models/SignedDocument.php
 
 		-
-			message: '#^Method App\\Models\\SignedDocument\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SignedDocument.php
-
-		-
-			message: '#^Method App\\Models\\SignedDocument\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SignedDocument.php
-
-		-
 			message: '#^Method App\\Models\\SignedDocument\:\:scopeSigned\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -1772,18 +1526,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithStatus\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SignedDocument.php
-
-		-
-			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SignedDocument.php
-
-		-
-			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/SignedDocument.php
@@ -1833,30 +1575,6 @@ parameters:
 		-
 			message: '#^Method App\\Models\\SigningProcess\:\:getNextSigner\(\) should return App\\Models\\Signer\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: app/Models/SigningProcess.php
-
-		-
-			message: '#^Method App\\Models\\SigningProcess\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SigningProcess.php
-
-		-
-			message: '#^Method App\\Models\\SigningProcess\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/SigningProcess.php
-
-		-
-			message: '#^Method App\\Models\\SigningProcess\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/SigningProcess.php
-
-		-
-			message: '#^Method App\\Models\\SigningProcess\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: app/Models/SigningProcess.php
 
@@ -1963,18 +1681,6 @@ parameters:
 			path: app/Models/TsaChain.php
 
 		-
-			message: '#^Method App\\Models\\TsaChain\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/TsaChain.php
-
-		-
-			message: '#^Method App\\Models\\TsaChain\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/TsaChain.php
-
-		-
 			message: '#^Method App\\Models\\TsaChain\:\:scopeInvalid\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2006,18 +1712,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\TsaChain\:\:scopeOfType\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/TsaChain.php
-
-		-
-			message: '#^Method App\\Models\\TsaChain\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/TsaChain.php
-
-		-
-			message: '#^Method App\\Models\\TsaChain\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/TsaChain.php
@@ -2119,30 +1813,6 @@ parameters:
 			path: app/Models/TsaToken.php
 
 		-
-			message: '#^Method App\\Models\\TsaToken\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/TsaToken.php
-
-		-
-			message: '#^Method App\\Models\\TsaToken\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/TsaToken.php
-
-		-
-			message: '#^Method App\\Models\\TsaToken\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/TsaToken.php
-
-		-
-			message: '#^Method App\\Models\\TsaToken\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/TsaToken.php
-
-		-
 			message: '#^Match arm comparison between ''invited'' and ''invited'' is always true\.$#'
 			identifier: match.alwaysTrue
 			count: 1
@@ -2180,18 +1850,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\User\:\:scopeAdmins\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/User.php
@@ -2240,18 +1898,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\User\:\:scopeViewers\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/User.php
@@ -2311,18 +1957,6 @@ parameters:
 			path: app/Models/UserInvitation.php
 
 		-
-			message: '#^Method App\\Models\\UserInvitation\:\:scopeForTenant\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/UserInvitation.php
-
-		-
-			message: '#^Method App\\Models\\UserInvitation\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/UserInvitation.php
-
-		-
 			message: '#^Method App\\Models\\UserInvitation\:\:scopePending\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2330,18 +1964,6 @@ parameters:
 
 		-
 			message: '#^Method App\\Models\\UserInvitation\:\:scopePending\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Models/UserInvitation.php
-
-		-
-			message: '#^Method App\\Models\\UserInvitation\:\:scopeWithoutTenantScope\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Models/UserInvitation.php
-
-		-
-			message: '#^Method App\\Models\\UserInvitation\:\:scopeWithoutTenantScope\(\) has parameter \$query with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: app/Models/UserInvitation.php
@@ -2491,81 +2113,9 @@ parameters:
 			path: app/Services/Archive/TsaResealService.php
 
 		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Cell\(\)\.$#'
-			identifier: method.notFound
-			count: 19
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
 			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Circle\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:GetX\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:GetY\(\)\.$#'
-			identifier: method.notFound
-			count: 7
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Line\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Ln\(\)\.$#'
-			identifier: method.notFound
-			count: 11
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:MultiCell\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Output\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Rect\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetTextColor\(\)\.$#'
-			identifier: method.notFound
-			count: 18
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetX\(\)\.$#'
-			identifier: method.notFound
-			count: 5
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetXY\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Services/Document/CertificationPageBuilder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetY\(\)\.$#'
-			identifier: method.notFound
-			count: 2
 			path: app/Services/Document/CertificationPageBuilder.php
 
 		-
@@ -2584,12 +2134,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Services/Document/FinalDocumentService.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Output\(\)\.$#'
-			identifier: method.notFound
-			count: 2
 			path: app/Services/Document/FinalDocumentService.php
 
 		-
@@ -2927,66 +2471,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/Signing/CertificateService.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Cell\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Image\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Output\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:Rect\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetCreator\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetKeywords\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetSubject\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetTextColor\(\)\.$#'
-			identifier: method.notFound
-			count: 4
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetX\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/PdfEmbedder.php
-
-		-
-			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:SetXY\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: app/Services/Signing/PdfEmbedder.php
 
 		-
 			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:getNumPages\(\)\.$#'
@@ -3527,12 +3011,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: tests/Feature/Admin/TenantManagementTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/AuditTrailIntegrationTest.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
