@@ -81,11 +81,13 @@ nuevo.
 |---|---|
 | `scripts/install-hooks.sh` | Instala los hooks locales de git. |
 | `scripts/generate-dev-certificate.sh` | Genera el certificado de firma de desarrollo. |
+| `scripts/clone-prod-to-test.sh` | Clon nocturno de produccion a testing, anonimizado. |
 | `scripts/backup.sh` | Backup verificado de la BD + `.env` cifrado + manifiesto. |
 | `scripts/backup-verify.sh` | Verifica un backup. Un backup no verificado no existe. |
 | `scripts/restore.sh` | Restaura un backup, verificandolo antes. |
 | `bin/deploy-production.sh` | Despliegue en produccion (anterior al estandar de la casa). |
 
+Entornos: [`docs/ENTORNOS.md`](docs/ENTORNOS.md).
 Backups: [`docs/BACKUPS.md`](docs/BACKUPS.md).
 Despliegue: [`docs/deployment/`](docs/deployment/).
 

@@ -30,6 +30,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   `AWS_SES_REGION`, con respaldo a las compartidas: antes SES y el disco s3
   se peleaban por las mismas tres variables.
 - `docs/admin/rotacion-de-credenciales.md`.
+- `docs/ENTORNOS.md` y `scripts/clone-prod-to-test.sh`: los tres entornos
+  (local en `.test`, testing bajo `test.<dominio>`, produccion) y el clon
+  nocturno anonimizado de produccion a testing.
 - Analisis estatico real: `larastan/larastan` en nivel 6, con la deuda
   existente congelada en `phpstan-baseline.neon` (892 incidencias).
 - `brianium/paratest`, sin el cual el job de tests del CI no arrancaba.
@@ -50,6 +53,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Corregido
 
+- **El host principal respondia 404.** `IdentifyTenant` trataba `app` como
+  subdominio de tenant, de modo que `app.firmalum.test` (y `app.firmalum.com`
+  en cuanto se fijase `APP_BASE_DOMAIN`) buscaba un tenant llamado "app" y no
+  lo encontraba. Ahora `app` es subdominio de plataforma y en el host
+  principal el tenant se resuelve por el usuario autenticado.
 - **La captura de evidencias al firmar nunca se ejecuto.**
   `SignatureService::captureSignatureEvidences()` llamaba a seis metodos que
   no existen y escribia en cinco columnas que tampoco: `EvidencePackage` es
