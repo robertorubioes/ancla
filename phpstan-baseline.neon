@@ -691,24 +691,6 @@ parameters:
 			path: app/Livewire/Signing/SigningPage.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/SigningProcess/CreateSigningProcess.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/SigningProcess/CreateSigningProcess.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$phone\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/SigningProcess/CreateSigningProcess.php
-
-		-
 			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:availableDocuments\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -745,20 +727,8 @@ parameters:
 			path: app/Livewire/SigningProcess/CreateSigningProcess.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Livewire/SigningProcess/CreateSigningProcess.php
-
-		-
 			message: '#^Property App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:\$uploadedFile has no type specified\.$#'
 			identifier: missingType.property
-			count: 1
-			path: app/Livewire/SigningProcess/CreateSigningProcess.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
 			count: 1
 			path: app/Livewire/SigningProcess/CreateSigningProcess.php
 
@@ -1537,12 +1507,6 @@ parameters:
 			path: app/Models/SignedDocument.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasSigned\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/Signer.php
-
-		-
 			message: '#^Class App\\Models\\Signer has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1553,12 +1517,6 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/Signer.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/SigningProcess.php
 
 		-
 			message: '#^Call to static method error\(\) on an unknown class App\\Models\\Log\.$#'
@@ -1573,20 +1531,8 @@ parameters:
 			path: app/Models/SigningProcess.php
 
 		-
-			message: '#^Method App\\Models\\SigningProcess\:\:getNextSigner\(\) should return App\\Models\\Signer\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/SigningProcess.php
-
-		-
 			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\SigningProcess\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
 			identifier: property.phpDocType
-			count: 1
-			path: app/Models/SigningProcess.php
-
-		-
-			message: '#^Parameter \#2 \$signer of job class App\\Jobs\\SendCancellationNotificationJob constructor expects App\\Models\\Signer in App\\Jobs\\SendCancellationNotificationJob\:\:dispatch\(\), Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Models/SigningProcess.php
 
@@ -2431,30 +2377,6 @@ parameters:
 			path: app/Services/Notification/CompletionNotificationResult.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/Notification/CompletionNotificationService.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Services/Notification/CompletionNotificationService.php
-
-		-
-			message: '#^Parameter \#2 \$signer of method App\\Services\\Notification\\CompletionNotificationService\:\:sendCopyToSigner\(\) expects App\\Models\\Signer, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Notification/CompletionNotificationService.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:inOrder\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Notification/SigningNotificationService.php
-
-		-
 			message: '#^Method App\\Services\\Signing\\CertificateService\:\:getCertificateInfo\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2677,18 +2599,6 @@ parameters:
 			path: app/Services/Signing/SignatureValidationResult.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Signing/SigningAccessService.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasSigned\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/Signing/SigningAccessService.php
-
-		-
 			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:formatDN\(\) has parameter \$dn with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2807,12 +2717,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 3
 			path: app/Services/Verification/VerificationResult.php
-
-		-
-			message: '#^Property Tests\\Unit\\Encryption\\EncryptableTestModel\:\:\$encryptable \(array\) on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.property
-			count: 1
-			path: app/Traits/Encryptable.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
@@ -3165,36 +3069,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
 			identifier: property.notFound
-			count: 2
-			path: tests/Feature/SigningProcess/CreateSigningProcessTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/Feature/SigningProcess/CreateSigningProcessTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/Feature/SigningProcess/CreateSigningProcessTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/SigningProcess/CreateSigningProcessTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$token\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/SigningProcess/CreateSigningProcessTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
 			count: 1
 			path: tests/Feature/SigningProcess/ProcessCancellationTest.php
 
@@ -3202,12 +3076,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
-			path: tests/Feature/SigningProcess/ProcessCancellationTest.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
-			identifier: property.notFound
-			count: 3
 			path: tests/Feature/SigningProcess/ProcessCancellationTest.php
 
 		-
@@ -3327,18 +3195,6 @@ parameters:
 		-
 			message: '#^Cannot access property \$secret_data on array\<mixed\>\|object\.$#'
 			identifier: property.nonObject
-			count: 1
-			path: tests/Unit/Encryption/EncryptableTraitTest.php
-
-		-
-			message: '#^Method Tests\\Unit\\Encryption\\EncryptableTestModel\:\:getAttributeEncryptionMetadata\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/Unit/Encryption/EncryptableTraitTest.php
-
-		-
-			message: '#^Method Tests\\Unit\\Encryption\\EncryptableTestModel\:\:getEncryptableAttributes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: tests/Unit/Encryption/EncryptableTraitTest.php
 
