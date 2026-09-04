@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\PublicVerificationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentDownloadController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\TemplateDocumentController;
 use App\Http\Middleware\EnsureSuperadmin;
 use App\Http\Middleware\EnsureTenantAdmin;
 use App\Livewire\Admin\TenantManagement;
@@ -11,6 +12,7 @@ use App\Livewire\Settings\UserManagement;
 use App\Livewire\Signing\SigningPage;
 use App\Livewire\SigningProcess\CreateSigningProcess;
 use App\Livewire\SigningProcess\ProcessesDashboard;
+use App\Livewire\Template\TemplateEditor;
 use App\Livewire\Verification\VerificationPage;
 use Illuminate\Support\Facades\Route;
 
@@ -262,3 +264,27 @@ Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])->prefix
     Route::get('/users', UserManagement::class)
         ->name('settings.users');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Document Template Routes
+|--------------------------------------------------------------------------
+|
+| Editor visual de plantillas. Solo administradores del tenant: definir donde
+| se estampa cada dato de un contrato no es tarea de cualquier usuario.
+|
+| @see docs/architecture/adr-011-plantillas-y-api-de-cumplimentacion.md
+|
+*/
+
+Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])
+    ->prefix('templates')
+    ->group(function () {
+        // Editor de campos y firmantes
+        Route::get('/{template}/editor', TemplateEditor::class)
+            ->name('templates.editor');
+
+        // PDF base, para que el editor lo pinte
+        Route::get('/versions/{version}/pdf', [TemplateDocumentController::class, 'show'])
+            ->name('templates.pdf');
+    });
