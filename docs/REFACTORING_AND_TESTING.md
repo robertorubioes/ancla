@@ -108,6 +108,10 @@ Reparto por fichero (menciones en la salida, como orden de magnitud):
 | Discos `s3-glacier` y `s3-deep-archive` sin declarar | Mover un documento a nivel frio o de archivo lanzaba excepcion. |
 | `SendCancellationNotificationJob.php` empezaba por `2<?php` | PHP emitia un `2` al output al autocargar la clase. |
 | `markAsError()` dentro de `DB::transaction()` en `DocumentUploadService:176` | El rollback lo deshace junto al `Document::create()`. Una subida fallida no deja **ni fila ni estado de error**, solo la linea de log. **Sin arreglar**: es un cambio de comportamiento que merece decision propia. |
+| `setasign/fpdf` no era dependencia, y `Fpdi` la extiende | **Toda generacion de PDF terminaba en un fatal** `Class "FPDF" not found`. Afectaba a `FinalDocumentService`, que si esta conectado (al completarse un proceso y en la descarga del promotor). 87 entradas del baseline eran supresiones de ese mismo agujero. Arreglado. |
+| `PdfSignatureService` no tiene ningun llamador | El orquestador de la firma PAdES no esta conectado a ningun flujo. **Sin resolver**: completar el cableado es una decision de producto, no una correccion. |
+| `PdfEmbedder` escribe UTF-8 en fuentes core de FPDF | Las fuentes core son Latin-1: cualquier tilde o eñe en el nombre de un firmante sale como mojibake en la apariencia de la firma. `TemplateRenderService` ya convierte; `PdfEmbedder` **sigue sin arreglar**. |
+| `PdfEmbedder::importPdf()` importa todo como A4 vertical | Usa `AddPage()` sin argumentos, de modo que un PDF apaisado o en otro tamano se deforma al firmarlo. **Sin arreglar.** |
 | `SignatureService::captureSignatureEvidences()` estaba escrito contra una API inexistente | Seis metodos con nombres que no existen y cinco columnas que tampoco. **La captura de evidencias al firmar nunca se ejecuto.** Arreglado. |
 | `AuditTrailService::log()` no existe; se llamaba desde `SendOtpCodeJob` en sus tres caminos | El envio de OTP fallaba al registrar. Arreglado. |
 | `AuditTrailService::logEvent()` solo escribe en `laravel.log` | No es prueba: no esta encadenado por hash ni sellado por TSA, y no entra en el dossier. Lo usan los cinco servicios de la capa de evidencias (consentimiento, IP, geolocalizacion, huella, dossier). Arreglados los dos call sites de `CreateSigningProcess`; **los otros cinco siguen pendientes** porque no todos tienen un modelo auditable a mano. |
@@ -134,8 +138,9 @@ nombres antiguos. Ver
 
 ## 2. Baseline de PHPStan
 
-`phpstan-baseline.neon` congela **892 incidencias** en nivel 6 (eran 928;
-las 36 que faltan se han arreglado, no silenciado). Solo bloquean
+`phpstan-baseline.neon` congela **691 incidencias** en nivel 6 (eran 928).
+La mayor bajada vino de instalar FPDF: 87 entradas eran supresiones de
+metodos que PHPStan no encontraba porque la libreria no estaba. Solo bloquean
 los errores nuevos. Reparto aproximado:
 
 | Tipo | Cantidad |
