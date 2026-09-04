@@ -15,6 +15,7 @@ use App\Services\Notification\SigningNotificationException;
 use App\Services\Notification\SigningNotificationResult;
 use App\Services\Notification\SigningNotificationService;
 use App\Traits\BelongsToTenant;
+use App\Traits\Encryptable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SigningProcess extends Model
 {
     use BelongsToTenant;
+    use Encryptable;
     use HasFactory;
     use SoftDeletes;
 
@@ -61,6 +63,8 @@ class SigningProcess extends Model
         'uuid',
         'tenant_id',
         'document_id',
+        'document_template_version_id',
+        'template_values',
         'created_by',
         'status',
         'signature_order',
@@ -84,7 +88,18 @@ class SigningProcess extends Model
      *
      * @var array<string, string>
      */
+    /**
+     * Los valores con que se relleno una plantilla son datos personales
+     * -nombres, DNI, importes- y merecen el mismo trato que el documento.
+     *
+     * @var list<string>
+     */
+    protected array $encryptable = [
+        'template_values',
+    ];
+
     protected $casts = [
+        'template_values' => 'array',
         'deadline_at' => 'datetime',
         'completed_at' => 'datetime',
         'metadata' => 'array',
@@ -93,6 +108,21 @@ class SigningProcess extends Model
         'final_document_pages' => 'integer',
         'cancelled_at' => 'datetime',
     ];
+
+    /**
+     * Version de plantilla con la que se genero, si vino de una.
+     *
+     * @return BelongsTo<DocumentTemplateVersion, $this>
+     */
+    public function templateVersion(): BelongsTo
+    {
+        return $this->belongsTo(DocumentTemplateVersion::class, 'document_template_version_id');
+    }
+
+    public function cameFromTemplate(): bool
+    {
+        return $this->document_template_version_id !== null;
+    }
 
     /**
      * Status constants.
@@ -142,6 +172,8 @@ class SigningProcess extends Model
 
     /**
      * Get the signers for this process.
+     *
+     * @return HasMany<Signer, $this>
      */
     public function signers(): HasMany
     {
