@@ -66,11 +66,6 @@
                                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                     </div>
                                     <span class="font-medium">{{ auth()->user()->name }}</span>
-                                    @if(auth()->user()->role->value === 'super_admin')
-                                        <span class="px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full">Superadmin</span>
-                                    @elseif(auth()->user()->role->value === 'admin')
-                                        <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">Admin</span>
-                                    @endif
                                     <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
@@ -86,9 +81,23 @@
                                      x-transition:leave-end="transform opacity-0 scale-95"
                                      class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                                     
-                                    <div class="px-4 py-2 border-b border-gray-100">
-                                        <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
+                                    <div class="px-4 py-3 border-b border-gray-100">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->name }}</p>
                                         <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+
+                                        {{-- El rol vive aqui y no en el boton: en la barra quitaba
+                                             ancho a la navegacion, y aqui cabe para los cuatro roles.
+                                             Las clases van literales porque Tailwind no ve las
+                                             construidas por interpolacion. --}}
+                                        <span class="inline-flex mt-2 px-2 py-0.5 text-xs font-semibold rounded-full
+                                            @switch(auth()->user()->role)
+                                                @case(\App\Enums\UserRole::SUPER_ADMIN) bg-purple-100 text-purple-800 @break
+                                                @case(\App\Enums\UserRole::ADMIN) bg-red-100 text-red-800 @break
+                                                @case(\App\Enums\UserRole::OPERATOR) bg-blue-100 text-blue-800 @break
+                                                @default bg-gray-100 text-gray-700
+                                            @endswitch">
+                                            {{ auth()->user()->role->label() }}
+                                        </span>
                                     </div>
                                     
                                     <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
