@@ -35,6 +35,12 @@
                                 <a href="{{ route('signing-processes.index') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
                                     Procesos de firma
                                 </a>
+
+                                @if(in_array(auth()->user()->role->value, ['admin', 'super_admin'], true))
+                                    <a href="{{ route('templates.index') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">
+                                        Plantillas
+                                    </a>
+                                @endif
                                 
                                 @if(auth()->user()->role->value === 'admin' && auth()->user()->tenant_id)
                                     <a href="{{ route('settings.users') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium">

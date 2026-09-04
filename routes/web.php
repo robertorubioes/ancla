@@ -13,6 +13,8 @@ use App\Livewire\Signing\SigningPage;
 use App\Livewire\SigningProcess\CreateSigningProcess;
 use App\Livewire\SigningProcess\ProcessesDashboard;
 use App\Livewire\Template\TemplateEditor;
+use App\Livewire\Template\TemplateFill;
+use App\Livewire\Template\TemplateIndex;
 use App\Livewire\Verification\VerificationPage;
 use Illuminate\Support\Facades\Route;
 
@@ -280,9 +282,17 @@ Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])->prefix
 Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])
     ->prefix('templates')
     ->group(function () {
+        // Listado y ciclo de vida
+        Route::get('/', TemplateIndex::class)
+            ->name('templates.index');
+
         // Editor de campos y firmantes
         Route::get('/{template}/editor', TemplateEditor::class)
             ->name('templates.editor');
+
+        // Rellenar y generar el proceso
+        Route::get('/{template}/usar', TemplateFill::class)
+            ->name('templates.fill');
 
         // PDF base, para que el editor lo pinte
         Route::get('/versions/{version}/pdf', [TemplateDocumentController::class, 'show'])
