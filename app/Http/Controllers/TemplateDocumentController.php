@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Livewire\Template\TemplateFill;
 use App\Models\DocumentTemplateVersion;
 use App\Services\Document\DocumentUploadService;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -43,6 +45,33 @@ class TemplateDocumentController extends Controller
             'Content-Disposition' => 'inline; filename="plantilla.pdf"',
             // El editor lo recarga al cambiar de version; no interesa cachear
             // un PDF que el usuario acaba de sustituir.
+            'Cache-Control' => 'private, no-store',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
+    /**
+     * Sirve una vista previa recien generada.
+     *
+     * El PDF vive en cache y caduca solo: es un borrador de lo que se esta
+     * rellenando, no un documento del sistema. La clave es aleatoria y ademas
+     * se comprueba de quien es, para que no baste con adivinarla.
+     */
+    public function preview(string $key): Response
+    {
+        $entry = Cache::get(TemplateFill::previewCacheKey($key));
+
+        if (! is_array($entry) || ! isset($entry['pdf'], $entry['user_id'])) {
+            abort(404, 'La vista previa ha caducado. Vuelve a generarla.');
+        }
+
+        if ($entry['user_id'] !== auth()->id()) {
+            abort(403);
+        }
+
+        return response((string) $entry['pdf'], 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="vista-previa.pdf"',
             'Cache-Control' => 'private, no-store',
             'X-Content-Type-Options' => 'nosniff',
         ]);
