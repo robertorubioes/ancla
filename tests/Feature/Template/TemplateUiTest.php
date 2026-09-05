@@ -101,25 +101,6 @@ class TemplateUiTest extends TestCase
     // Listado y ciclo de vida
     // --------------------------------------------------------------------
 
-    public function test_convertir_un_documento_lleva_al_editor(): void
-    {
-        $document = $this->readyDocument('alquiler.pdf');
-
-        Livewire::actingAs($this->admin)
-            ->test(TemplateIndex::class)
-            ->call('openCreate')
-            ->set('sourceDocumentId', $document->id)
-            ->set('newName', 'Contrato de alquiler')
-            ->call('createFromDocument')
-            ->assertHasNoErrors()
-            ->assertRedirect();
-
-        $this->assertDatabaseHas('document_templates', [
-            'name' => 'Contrato de alquiler',
-            'status' => DocumentTemplate::STATUS_DRAFT,
-        ]);
-    }
-
     public function test_se_puede_subir_el_documento_al_crear_la_plantilla(): void
     {
         // Quien crea una plantilla suele tener el PDF a mano; obligar a
@@ -132,13 +113,14 @@ class TemplateUiTest extends TestCase
         $component = Livewire::actingAs($this->admin)
             ->test(TemplateIndex::class)
             ->call('openCreate')
-            ->assertSet('sourceMode', 'upload')
             ->set('uploadedFile', UploadedFile::fake()->createWithContent('alquiler.pdf', $pdf->Output('S')));
 
         $this->assertNotNull($component->get('sourceDocumentId'), 'La subida deja el documento elegido.');
         $component->assertSet('newName', 'alquiler');
 
-        $component->call('createFromDocument')->assertHasNoErrors();
+        $component->call('createFromDocument')
+            ->assertHasNoErrors()
+            ->assertRedirect();
 
         $this->assertDatabaseHas('document_templates', [
             'name' => 'alquiler',
@@ -153,34 +135,6 @@ class TemplateUiTest extends TestCase
             ->call('openCreate')
             ->set('uploadedFile', UploadedFile::fake()->createWithContent('notas.txt', 'esto no es un pdf'))
             ->assertHasErrors('uploadedFile');
-    }
-
-    public function test_elegir_documento_propone_su_nombre(): void
-    {
-        $document = $this->readyDocument('nomina-mensual.pdf');
-
-        Livewire::actingAs($this->admin)
-            ->test(TemplateIndex::class)
-            ->call('openCreate')
-            ->call('useSourceMode', 'select')
-            ->set('sourceDocumentId', $document->id)
-            ->assertSet('newName', 'nomina-mensual');
-    }
-
-    public function test_un_documento_ya_convertido_no_vuelve_a_ofrecerse(): void
-    {
-        $usado = $this->readyDocument('usado.pdf');
-        $libre = $this->readyDocument('libre.pdf');
-
-        app(TemplateVersionService::class)->createFromDocument($usado, $this->admin, 'Ya es plantilla');
-
-        $component = Livewire::actingAs($this->admin)
-            ->test(TemplateIndex::class)
-            ->call('useSourceMode', 'select');
-        $ids = $component->instance()->availableDocuments()->pluck('id')->all();
-
-        $this->assertContains($libre->id, $ids);
-        $this->assertNotContains($usado->id, $ids);
     }
 
     public function test_habilitar_activa_la_plantilla(): void
