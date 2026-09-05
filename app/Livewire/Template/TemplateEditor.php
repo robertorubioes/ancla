@@ -469,8 +469,15 @@ class TemplateEditor extends Component
 
     public function render(): View
     {
+        $fieldsPerPage = [];
+        foreach ($this->fields as $field) {
+            $page = (int) $field['page'];
+            $fieldsPerPage[$page] = ($fieldsPerPage[$page] ?? 0) + 1;
+        }
+
         return view('livewire.template.template-editor', [
             'pages' => $this->pages(),
+            'fieldsPerPage' => $fieldsPerPage,
         ]);
     }
 }

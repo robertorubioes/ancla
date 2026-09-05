@@ -291,6 +291,35 @@ class TemplateEditorTest extends TestCase
         $this->assertStringContainsString('data-mm-width=', $html);
     }
 
+    public function test_el_canvas_queda_fuera_del_alcance_de_livewire(): void
+    {
+        // Lo pintado en un canvas no vive en el HTML: sin wire:ignore, cada
+        // vez que Livewire rehace el DOM las paginas se quedan en blanco.
+        $html = $this->editor()->html();
+
+        $this->assertMatchesRegularExpression(
+            '/wire:ignore[^>]*>\s*<canvas/s',
+            $html,
+            'El canvas debe ir dentro de un contenedor con wire:ignore.'
+        );
+    }
+
+    public function test_cada_pagina_y_cada_caja_llevan_su_clave(): void
+    {
+        // Sin wire:key, Livewire recrea los elementos al reordenar y se lleva
+        // por delante los canvas ya pintados.
+        DocumentTemplateField::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_version_id' => $this->version->id,
+            'page' => 1,
+        ]);
+
+        $html = $this->editor()->html();
+
+        $this->assertStringContainsString('wire:key="tpl-page-1"', $html);
+        $this->assertStringContainsString('wire:key="tpl-field-0"', $html);
+    }
+
     public function test_las_cajas_se_colocan_en_porcentaje(): void
     {
         DocumentTemplateField::factory()->create([

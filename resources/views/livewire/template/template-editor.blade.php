@@ -41,9 +41,28 @@
 
         {{-- Lienzo: paginas del PDF con las cajas encima --}}
         <div class="bg-gray-100 rounded-xl p-6 overflow-auto">
-            <p class="text-xs text-gray-500 mb-4">
-                {{ __('Haz doble clic sobre la pagina para anadir un campo. Arrastra para moverlo, y la esquina inferior derecha para redimensionarlo.') }}
-            </p>
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <p class="text-xs text-gray-500">
+                    {{ __('Haz doble clic sobre la pagina para anadir un campo. Arrastra para moverlo, y la esquina inferior derecha para redimensionarlo.') }}
+                </p>
+
+                @if (count($pages) > 1)
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-xs text-gray-500">{{ __('Ir a la pagina') }}</span>
+                        <select
+                            @change="goToPage($event.target.value)"
+                            class="rounded-md border-gray-300 text-xs py-1 pr-7"
+                        >
+                            @foreach ($pages as $page)
+                                <option value="{{ $page['number'] }}">
+                                    {{ $page['number'] }}@if ($fieldsPerPage[$page['number']] ?? false) · {{ $fieldsPerPage[$page['number']] }} {{ __('campos') }}@endif
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="text-xs text-gray-400">{{ __('de') }} {{ count($pages) }}</span>
+                    </div>
+                @endif
+            </div>
 
             <template x-if="loadError">
                 <p class="text-sm text-red-700 py-6 text-center" x-text="loadError"></p>
@@ -51,6 +70,7 @@
 
             @forelse ($pages as $page)
                 <div
+                    wire:key="tpl-page-{{ $page['number'] }}"
                     class="tpl-page relative mx-auto mb-8 bg-white shadow-sm ring-1 ring-gray-200"
                     data-page="{{ $page['number'] }}"
                     data-mm-width="{{ $page['width'] }}"
@@ -58,16 +78,27 @@
                     style="width: 100%; max-width: 760px; aspect-ratio: {{ $page['width'] }} / {{ $page['height'] }}"
                     @dblclick="addFieldAt($event, {{ $page['number'] }})"
                 >
-                    <canvas
-                        id="tpl-canvas-{{ $page['number'] }}"
-                        class="absolute inset-0 w-full h-full"
-                    ></canvas>
+                    {{-- El canvas queda fuera del alcance de Livewire.
+                         Lo pintado no vive en el HTML, asi que cada vez que
+                         Livewire rehacia el DOM -al anadir un campo, por
+                         ejemplo- las paginas se quedaban en blanco. --}}
+                    <div wire:ignore class="absolute inset-0">
+                        <canvas
+                            id="tpl-canvas-{{ $page['number'] }}"
+                            class="w-full h-full"
+                        ></canvas>
+                    </div>
+
+                    <span
+                        class="tpl-page-badge absolute -top-3 left-2 z-10 px-2 py-0.5 rounded-full bg-gray-800/80 text-white text-[11px] font-medium"
+                    >{{ $page['number'] }}</span>
 
                     {{-- Cajas de esta pagina. En PORCENTAJE: asi no dependen
                          de la escala a la que pinte el navegador. --}}
                     @foreach ($fields as $index => $field)
                         @continue($field['page'] !== $page['number'])
                         <div
+                            wire:key="tpl-field-{{ $index }}"
                             data-field-index="{{ $index }}"
                             style="
                                 left: {{ 100 * $field['x'] / $page['width'] }}%;

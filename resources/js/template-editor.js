@@ -50,9 +50,36 @@ export default function templateEditor({ pdfUrl }) {
         /** Arrastre en curso */
         drag: null,
 
+        /** Documento de PDF.js, una vez abierto */
+        doc: null,
+
+        /** Observa que paginas entran en pantalla, para pintarlas entonces */
+        observer: null,
+
+        /**
+         * Paginas ya pintadas.
+         *
+         * Se lleva aqui y no en un data- del DOM: Livewire rehace el HTML al
+         * anadir o mover un campo, y se llevaria por delante cualquier marca
+         * que hubiesemos dejado en los elementos.
+         */
+        painted: new Set(),
+
         async init() {
             try {
-                await this.paintPages();
+                const pdfjsLib = await loadPdfJs();
+                this.doc = await pdfjsLib.getDocument({ url: this.pdfUrl }).promise;
+
+                this.watchPages();
+
+                // Al anadir o mover un campo, Livewire rehace el HTML de las
+                // cajas. Los canvas sobreviven -van en wire:ignore- pero hay
+                // que volver a observar por si algun contenedor es nuevo.
+                window.Livewire?.hook('morph.updated', ({ el }) => {
+                    if (this.$root?.contains(el)) {
+                        this.watchPages();
+                    }
+                });
             } catch (error) {
                 this.loadError = this.describe(error);
                 console.error('[template-editor]', error);
@@ -68,26 +95,57 @@ export default function templateEditor({ pdfUrl }) {
         },
 
         /**
-         * Pinta cada pagina sobre el canvas que el servidor ya dejo puesto.
+         * Pinta cada pagina cuando esta a punto de verse, y no antes.
+         *
+         * Un contrato de cincuenta paginas tardaba una eternidad en abrirse
+         * porque se pintaban todas de golpe. Con esto solo se pinta lo que se
+         * mira, y el resto queda en blanco hasta que hace falta.
          */
-        async paintPages() {
-            const pdfjsLib = await loadPdfJs();
-            const doc = await pdfjsLib.getDocument({ url: this.pdfUrl }).promise;
+        watchPages() {
+            this.observer?.disconnect();
 
-            for (let number = 1; number <= doc.numPages; number++) {
-                const canvas = document.getElementById(`tpl-canvas-${number}`);
+            this.observer = new IntersectionObserver(
+                (entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting) {
+                            this.paintPage(entry.target);
+                        }
+                    }
+                },
+                // Con margen, para que este pintada antes de llegar a ella
+                { rootMargin: '600px 0px' },
+            );
 
-                // El servidor pudo no medir alguna pagina; se ignora en vez
-                // de abortar el resto.
-                if (!canvas) {
-                    continue;
+            for (const holder of document.querySelectorAll('.tpl-page')) {
+                this.observer.observe(holder);
+
+                // Un canvas que Livewire haya recreado se queda vacio aunque
+                // la pagina figure como pintada: se repinta.
+                const canvas = holder.querySelector('canvas');
+                if (canvas && canvas.width === 0) {
+                    this.painted.delete(Number(holder.dataset.page));
                 }
+            }
+        },
 
-                const page = await doc.getPage(number);
+        async paintPage(holder) {
+            const number = Number(holder.dataset.page);
+            const canvas = holder.querySelector('canvas');
+
+            if (!canvas || !this.doc || this.painted.has(number)) {
+                return;
+            }
+
+            // Se marca antes de empezar: pintar es asincrono y el observador
+            // puede volver a disparar mientras tanto.
+            this.painted.add(number);
+
+            try {
+                const page = await this.doc.getPage(number);
                 const base = page.getViewport({ scale: 1 });
 
-                // Se pinta al ancho real del hueco, con el limite del
-                // dispositivo, para que no salga borroso en pantallas HiDPI.
+                // Al ancho real del hueco y con el ratio del dispositivo, para
+                // que no salga borroso en pantallas HiDPI.
                 const cssWidth = canvas.clientWidth || 760;
                 const ratio = Math.min(window.devicePixelRatio || 1, 2);
                 const viewport = page.getViewport({ scale: (cssWidth * ratio) / base.width });
@@ -99,7 +157,16 @@ export default function templateEditor({ pdfUrl }) {
                     canvasContext: canvas.getContext('2d'),
                     viewport,
                 }).promise;
+            } catch (error) {
+                this.painted.delete(number);
+                console.error('[template-editor] pagina', number, error);
             }
+        },
+
+        goToPage(number) {
+            document
+                .querySelector(`.tpl-page[data-page="${number}"]`)
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
         /** El contenedor de la pagina, con sus dimensiones en mm */
