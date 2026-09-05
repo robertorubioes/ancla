@@ -22,8 +22,8 @@
 
     <div class="flex gap-3 mb-4">
         <input type="search" wire:model.live.debounce.300ms="search" placeholder="{{ __('Buscar...') }}"
-            class="flex-1 rounded-md border-gray-300 text-sm">
-        <select wire:model.live="statusFilter" class="rounded-md border-gray-300 text-sm">
+            class="flex-1 rounded-md border border-gray-300 text-sm">
+        <select wire:model.live="statusFilter" class="rounded-md border border-gray-300 text-sm">
             <option value="">{{ __('Todas') }}</option>
             <option value="draft">{{ __('En borrador') }}</option>
             <option value="active">{{ __('Habilitadas') }}</option>
@@ -151,7 +151,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Nombre') }}</label>
-                        <input type="text" wire:model="newName" class="w-full rounded-md border-gray-300 text-sm">
+                        <input type="text" wire:model="newName" class="w-full rounded-md border border-gray-300 text-sm">
                         @error('newName')
                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
@@ -162,7 +162,7 @@
                             {{ __('Descripcion') }} <span class="text-gray-400 font-normal">({{ __('opcional') }})</span>
                         </label>
                         <textarea rows="2" wire:model="newDescription"
-                            class="w-full rounded-md border-gray-300 text-sm"></textarea>
+                            class="w-full rounded-md border border-gray-300 text-sm"></textarea>
                     </div>
                 </div>
 

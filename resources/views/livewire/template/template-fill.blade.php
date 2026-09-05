@@ -26,20 +26,22 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         {{ $field->label }}
-                        @unless ($field->required)
-                            <span class="text-gray-400 font-normal">({{ __('opcional') }})</span>
-                        @endunless
+                        @if ($field->required)
+                            <span class="text-red-500">*</span>
+                        @else
+                            <span class="text-gray-400 font-normal text-xs">{{ __('(opcional)') }}</span>
+                        @endif
                     </label>
 
                     @switch ($field->type->value)
                         @case ('textarea')
-                            <textarea rows="3" wire:model.blur="values.{{ $field->key }}"
-                                class="w-full rounded-md border-gray-300 text-sm"></textarea>
+                            <textarea rows="3" wire:model.live.debounce.500ms="values.{{ $field->key }}"
+                                class="w-full rounded-md border border-gray-300 text-sm"></textarea>
                             @break
 
                         @case ('select')
-                            <select wire:model.blur="values.{{ $field->key }}"
-                                class="w-full rounded-md border-gray-300 text-sm">
+                            <select wire:model.live.debounce.500ms="values.{{ $field->key }}"
+                                class="w-full rounded-md border border-gray-300 text-sm">
                                 <option value="">{{ __('-- Elige --') }}</option>
                                 @foreach ($field->optionMap() as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
@@ -49,25 +51,25 @@
 
                         @case ('checkbox')
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" wire:model.blur="values.{{ $field->key }}"
-                                    class="rounded border-gray-300">
+                                <input type="checkbox" wire:model.live.debounce.500ms="values.{{ $field->key }}"
+                                    class="rounded border border-gray-300">
                                 {{ $field->help_text ?: __('Si') }}
                             </label>
                             @break
 
                         @case ('number')
-                            <input type="number" step="any" wire:model.blur="values.{{ $field->key }}"
-                                class="w-full rounded-md border-gray-300 text-sm">
+                            <input type="number" step="any" wire:model.live.debounce.500ms="values.{{ $field->key }}"
+                                class="w-full rounded-md border border-gray-300 text-sm">
                             @break
 
                         @case ('date')
-                            <input type="date" wire:model.blur="values.{{ $field->key }}"
-                                class="w-full rounded-md border-gray-300 text-sm">
+                            <input type="date" wire:model.live.debounce.500ms="values.{{ $field->key }}"
+                                class="w-full rounded-md border border-gray-300 text-sm">
                             @break
 
                         @default
-                            <input type="text" wire:model.blur="values.{{ $field->key }}"
-                                class="w-full rounded-md border-gray-300 text-sm">
+                            <input type="text" wire:model.live.debounce.500ms="values.{{ $field->key }}"
+                                class="w-full rounded-md border border-gray-300 text-sm">
                     @endswitch
 
                     @if ($field->help_text && $field->type->value !== 'checkbox')
@@ -116,16 +118,16 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <input type="text" placeholder="{{ __('Nombre completo') }}"
-                                wire:model.blur="signers.{{ $i }}.name"
-                                class="w-full rounded-md border-gray-300 text-sm">
+                                wire:model.live.debounce.500ms="signers.{{ $i }}.name"
+                                class="w-full rounded-md border border-gray-300 text-sm">
                             @error("signers.{$i}.name")
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
                             <input type="email" placeholder="{{ __('Correo') }}"
-                                wire:model.blur="signers.{{ $i }}.email"
-                                class="w-full rounded-md border-gray-300 text-sm">
+                                wire:model.live.debounce.500ms="signers.{{ $i }}.email"
+                                class="w-full rounded-md border border-gray-300 text-sm">
                             @error("signers.{$i}.email")
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -142,7 +144,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Orden de firma') }}</label>
-                    <select wire:model="signatureOrder" class="w-full rounded-md border-gray-300 text-sm">
+                    <select wire:model="signatureOrder" class="w-full rounded-md border border-gray-300 text-sm">
                         <option value="parallel">{{ __('Todos a la vez') }}</option>
                         <option value="sequential">{{ __('Uno detras de otro') }}</option>
                     </select>
@@ -150,7 +152,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Fecha limite') }}</label>
                     <input type="date" wire:model.blur="deadlineAt"
-                        class="w-full rounded-md border-gray-300 text-sm">
+                        class="w-full rounded-md border border-gray-300 text-sm">
                     @error('deadlineAt')
                         <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -160,11 +162,11 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Mensaje para los firmantes') }}</label>
                 <textarea rows="2" wire:model.blur="customMessage"
-                    class="w-full rounded-md border-gray-300 text-sm"></textarea>
+                    class="w-full rounded-md border border-gray-300 text-sm"></textarea>
             </div>
 
             <label class="flex items-center gap-2 text-sm text-gray-700">
-                <input type="checkbox" wire:model="sendNow" class="rounded border-gray-300">
+                <input type="checkbox" wire:model="sendNow" class="rounded border border-gray-300">
                 {{ __('Enviar en cuanto se genere') }}
             </label>
         </div>
@@ -186,35 +188,63 @@
     <div class="xl:sticky xl:top-6">
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                <h2 class="text-sm font-semibold text-gray-900">{{ __('Vista previa') }}</h2>
-                <button type="button" wire:click="preview" wire:loading.attr="disabled"
-                    class="px-3 py-1.5 rounded-md border border-gray-300 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50">
-                    <span wire:loading.remove wire:target="preview">
-                        {{ $previewKey ? __('Actualizar') : __('Ver documento') }}
-                    </span>
-                    <span wire:loading wire:target="preview">{{ __('Generando...') }}</span>
-                </button>
+                <h2 class="text-sm font-semibold text-gray-900">{{ __('Documento') }}</h2>
+                <span wire:loading wire:target="preview" class="text-xs text-gray-500">
+                    {{ __('Actualizando...') }}
+                </span>
             </div>
 
             @if ($previewError)
                 <div class="m-4 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
                     {{ $previewError }}
                 </div>
-            @elseif ($previewKey)
-                <iframe
-                    src="{{ route('templates.preview', ['key' => $previewKey]) }}"
-                    class="w-full"
-                    style="height: 70vh; border: 0"
-                    title="{{ __('Vista previa del documento') }}"
-                ></iframe>
             @else
-                <div class="px-4 py-16 text-center">
-                    <p class="text-sm text-gray-500">
-                        {{ __('Mira como queda el documento antes de enviarlo.') }}
-                    </p>
-                    <p class="text-xs text-gray-400 mt-1">
-                        {{ __('No hace falta rellenarlo todo: los campos vacios se dejan en blanco.') }}
-                    </p>
+                {{-- Dos iframes que se turnan.
+                     Recargar uno solo dejaba el panel en negro mientras el PDF
+                     se abria, y con un documento grande eso es un parpadeo en
+                     cada tecla. Se carga el nuevo por detras y se cambia
+                     cuando ya esta pintado. --}}
+                <div
+                    x-data="{
+                        first: true,
+                        srcA: '',
+                        srcB: '',
+                        loading: false,
+                        show(key) {
+                            if (! key) { return; }
+
+                            const url = @js(route('templates.preview', ['key' => '__KEY__']))
+                                .replace('__KEY__', key) + '#toolbar=0&navpanes=0&statusbar=0&view=FitH';
+
+                            if (this.srcA === url || this.srcB === url) { return; }
+
+                            this.loading = true;
+                            if (this.first) { this.srcB = url; } else { this.srcA = url; }
+                        },
+                        ready() {
+                            if (! this.loading) { return; }
+                            this.first = ! this.first;
+                            this.loading = false;
+                        },
+                    }"
+                    x-init="
+                        show($wire.previewKey);
+                        $wire.$watch('previewKey', (key) => show(key));
+                    "
+                    class="relative"
+                    style="height: calc(100vh - 220px)"
+                >
+                    <iframe x-show="first" :src="srcA" @load="ready()"
+                        class="absolute inset-0 w-full h-full" style="border: 0"
+                        title="{{ __('Vista previa del documento') }}"></iframe>
+
+                    <iframe x-show="! first" :src="srcB" @load="ready()"
+                        class="absolute inset-0 w-full h-full" style="border: 0"
+                        title="{{ __('Vista previa del documento') }}"></iframe>
+
+                    <div x-show="! srcA && ! srcB" class="absolute inset-0 flex items-center justify-center">
+                        <p class="text-sm text-gray-500">{{ __('Preparando el documento...') }}</p>
+                    </div>
                 </div>
             @endif
         </div>

@@ -146,14 +146,17 @@
 
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Clave') }}</label>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Nombre del campo') }}</label>
                             <input
                                 type="text"
-                                wire:model.blur="fields.{{ $sel }}.key"
-                                class="w-full rounded-md border-gray-300 text-sm font-mono"
+                                wire:model.live.debounce.400ms="fields.{{ $sel }}.label"
+                                class="w-full rounded-md border border-gray-300 text-sm"
                             >
-                            <p class="text-[11px] text-gray-500 mt-1">
-                                {{ __('Se usa en el formulario y en el JSON de la API.') }}
+                            @error("fields.{$sel}.label")
+                                <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
+                            <p class="text-[11px] text-gray-400 mt-1 font-mono">
+                                {{ $fields[$sel]['key'] }}
                             </p>
                             @error("fields.{$sel}.key")
                                 <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
@@ -161,19 +164,10 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Etiqueta') }}</label>
-                            <input
-                                type="text"
-                                wire:model.blur="fields.{{ $sel }}.label"
-                                class="w-full rounded-md border-gray-300 text-sm"
-                            >
-                        </div>
-
-                        <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Tipo') }}</label>
                             <select
                                 wire:model.live="fields.{{ $sel }}.type"
-                                class="w-full rounded-md border-gray-300 text-sm"
+                                class="w-full rounded-md border border-gray-300 text-sm"
                             >
                                 @foreach ($this->fieldTypes as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
@@ -182,7 +176,7 @@
                         </div>
 
                         <label class="flex items-center gap-2 text-sm text-gray-700">
-                            <input type="checkbox" wire:model="fields.{{ $sel }}.required" class="rounded border-gray-300">
+                            <input type="checkbox" wire:model="fields.{{ $sel }}.required" class="rounded border border-gray-300">
                             {{ __('Obligatorio') }}
                         </label>
 
@@ -190,11 +184,11 @@
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Cuerpo') }}</label>
                                 <input type="number" min="6" max="40" wire:model.blur="fields.{{ $sel }}.font_size"
-                                    class="w-full rounded-md border-gray-300 text-sm">
+                                    class="w-full rounded-md border border-gray-300 text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Alineacion') }}</label>
-                                <select wire:model="fields.{{ $sel }}.align" class="w-full rounded-md border-gray-300 text-sm">
+                                <select wire:model="fields.{{ $sel }}.align" class="w-full rounded-md border border-gray-300 text-sm">
                                     <option value="left">{{ __('Izquierda') }}</option>
                                     <option value="center">{{ __('Centro') }}</option>
                                     <option value="right">{{ __('Derecha') }}</option>
@@ -243,13 +237,13 @@
                             type="text"
                             wire:model.blur="signerRoles.{{ $i }}.label"
                             placeholder="{{ __('Arrendatario') }}"
-                            class="w-full rounded-md border-gray-300 text-sm"
+                            class="w-full rounded-md border border-gray-300 text-sm"
                         >
                         <input
                             type="text"
                             wire:model.blur="signerRoles.{{ $i }}.role_key"
                             placeholder="arrendatario"
-                            class="w-full rounded-md border-gray-300 text-xs font-mono"
+                            class="w-full rounded-md border border-gray-300 text-xs font-mono"
                         >
                         @error("signerRoles.{$i}.role_key")
                             <p class="text-[11px] text-red-600">{{ $message }}</p>

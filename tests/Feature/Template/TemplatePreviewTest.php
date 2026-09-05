@@ -148,17 +148,36 @@ class TemplatePreviewTest extends TestCase
             ->assertSee('no cabe en el espacio reservado');
     }
 
-    public function test_cambiar_un_valor_invalida_la_vista_previa(): void
+    public function test_el_documento_se_ve_desde_el_primer_momento(): void
     {
-        // Mejor sin vista previa que enseñando una que ya no corresponde.
-        $component = $this->fill()
-            ->set('values.arrendatario', 'Ana')
-            ->call('preview');
+        // Sin tener que pedirlo: asi se entiende que es lo que se rellena.
+        $this->assertNotNull($this->fill()->get('previewKey'));
+    }
 
-        $this->assertNotNull($component->get('previewKey'));
+    public function test_cambiar_un_valor_rehace_la_vista_previa(): void
+    {
+        // La gracia es ver el documento completandose mientras se escribe.
+        $component = $this->fill()->set('values.arrendatario', 'Ana');
 
-        $component->set('values.arrendatario', 'Luis')
-            ->assertSet('previewKey', null);
+        $primera = $component->get('previewKey');
+        $this->assertNotNull($primera);
+
+        $component->set('values.arrendatario', 'Luis');
+
+        $segunda = $component->get('previewKey');
+
+        $this->assertNotNull($segunda);
+        $this->assertNotSame($primera, $segunda, 'Cada cambio produce una vista previa nueva.');
+
+        $pdf = $this->actingAs($this->admin)
+            ->withoutMiddleware(IdentifyTenant::class)
+            ->get(route('templates.preview', ['key' => $segunda]))
+            ->getContent();
+
+        $texto = (new Parser)->parseContent((string) $pdf)->getText();
+
+        $this->assertStringContainsString('Luis', $texto);
+        $this->assertStringNotContainsString('Ana', $texto);
     }
 
     public function test_la_vista_previa_no_persiste_ningun_documento(): void

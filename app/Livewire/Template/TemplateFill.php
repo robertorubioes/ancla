@@ -86,19 +86,21 @@ class TemplateFill extends Component
 
         if ($roles->isEmpty()) {
             $this->addSigner();
-
-            return;
+        } else {
+            foreach ($roles as $role) {
+                $this->signers[] = [
+                    'name' => '',
+                    'email' => '',
+                    'phone' => '',
+                    'role' => $role->role_key,
+                    'label' => $role->label,
+                ];
+            }
         }
 
-        foreach ($roles as $role) {
-            $this->signers[] = [
-                'name' => '',
-                'email' => '',
-                'phone' => '',
-                'role' => $role->role_key,
-                'label' => $role->label,
-            ];
-        }
+        // El documento se ve desde el primer momento, aun vacio: asi se
+        // entiende que es lo que se esta rellenando.
+        $this->preview(app(TemplateRenderService::class));
     }
 
     /**
@@ -218,9 +220,12 @@ class TemplateFill extends Component
 
         $key = Str::random(40);
 
+        // En base64: el almacen de cache puede ser la base de datos, y los
+        // bytes de un PDF no son UTF-8 valido. Guardarlos crudos revienta con
+        // "Incorrect string value".
         Cache::put(
             self::previewCacheKey($key),
-            ['user_id' => auth()->id(), 'pdf' => $pdf],
+            ['user_id' => auth()->id(), 'pdf' => base64_encode($pdf)],
             now()->addMinutes(10),
         );
 
@@ -233,13 +238,15 @@ class TemplateFill extends Component
     }
 
     /**
-     * Cualquier cambio invalida la vista previa: mejor sin ella que
-     * enseñando una que ya no corresponde con lo escrito.
+     * Cada cambio rehace la vista previa.
+     *
+     * Se regenera en lugar de invalidarse: la gracia es ver el documento
+     * completandose mientras se escribe, no tener que pedirlo cada vez.
      */
     public function updated(string $property): void
     {
         if (str_starts_with($property, 'values.') || str_starts_with($property, 'signers.')) {
-            $this->previewKey = null;
+            $this->preview(app(TemplateRenderService::class));
         }
     }
 

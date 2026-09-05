@@ -425,7 +425,7 @@
                             <input
                                 type="checkbox"
                                 wire:model="alsoSaveAsTemplate"
-                                class="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                class="mt-0.5 rounded border border-gray-300 text-blue-600 focus:ring-blue-500"
                             >
                             <span>
                                 <span class="block text-sm font-medium text-gray-900">
