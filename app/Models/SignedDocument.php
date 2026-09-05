@@ -6,9 +6,11 @@ namespace App\Models;
 
 use App\Traits\Auditable;
 use App\Traits\BelongsToTenant;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class SignedDocument extends Model
 {
@@ -182,7 +184,15 @@ class SignedDocument extends Model
      */
     public function getFullPath(): string
     {
-        return storage_path('app/'.$this->signed_path);
+        return $this->disk()->path($this->signed_path);
+    }
+
+    /**
+     * El disco donde vive el fichero firmado.
+     */
+    private function disk(): Filesystem
+    {
+        return Storage::disk($this->storage_disk ?: config('filesystems.default'));
     }
 
     /**
@@ -190,11 +200,16 @@ class SignedDocument extends Model
      */
     public function verifyIntegrity(): bool
     {
-        if (! file_exists($this->getFullPath())) {
+        // Se lee por el disco declarado en storage_disk y no por una ruta
+        // armada a mano: el documento puede estar en S3, donde no hay rutas de
+        // fichero, y aun en local el disco puede apuntar a otro sitio.
+        $disk = $this->disk();
+
+        if (! $disk->exists($this->signed_path)) {
             return false;
         }
 
-        $currentHash = hash_file('sha256', $this->getFullPath());
+        $currentHash = hash('sha256', (string) $disk->get($this->signed_path));
 
         return hash_equals($this->content_hash, $currentHash);
     }

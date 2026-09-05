@@ -27,7 +27,9 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

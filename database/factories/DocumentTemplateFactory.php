@@ -22,7 +22,9 @@ class DocumentTemplateFactory extends Factory
     {
         return [
             'uuid' => (string) Str::uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'name' => $this->faker->words(3, true),
             'description' => $this->faker->sentence(),
             'status' => DocumentTemplate::STATUS_DRAFT,

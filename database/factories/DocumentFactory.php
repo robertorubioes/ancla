@@ -36,7 +36,9 @@ class DocumentFactory extends Factory
 
         return [
             'uuid' => Str::uuid()->toString(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'user_id' => User::factory(),
             'original_filename' => $filename,
             'original_extension' => 'pdf',

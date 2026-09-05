@@ -22,7 +22,9 @@ class DocumentTemplateSignerFactory extends Factory
     {
         return [
             'uuid' => (string) Str::uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'document_template_version_id' => DocumentTemplateVersion::factory(),
             'role_key' => 'rol_'.$this->faker->unique()->numberBetween(1, 100000),
             'label' => $this->faker->words(2, true),

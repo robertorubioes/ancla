@@ -27,7 +27,9 @@ class SigningProcessFactory extends Factory
     {
         return [
             'uuid' => Str::uuid()->toString(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'document_id' => Document::factory(),
             'created_by' => User::factory(),
             'status' => SigningProcess::STATUS_DRAFT,

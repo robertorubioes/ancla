@@ -85,12 +85,12 @@ class FinalDocumentServiceTest extends TestCase
             ]);
 
         // Create signers but not all signed
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
         ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'pending',
             'order' => 2,
         ]);
@@ -134,7 +134,7 @@ class FinalDocumentServiceTest extends TestCase
             ]);
 
         // Create signers but no signed documents
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
             'signed_at' => now(),
@@ -293,7 +293,7 @@ class FinalDocumentServiceTest extends TestCase
                 'completed_at' => now(),
             ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'viewed',
             'order' => 1,
         ]);
@@ -323,7 +323,7 @@ class FinalDocumentServiceTest extends TestCase
                 'final_document_path' => $path,
             ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
             'signed_at' => now(),
@@ -353,7 +353,7 @@ class FinalDocumentServiceTest extends TestCase
                 'final_document_path' => $oldPath,
             ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'signed_at' => now(),
         ]);

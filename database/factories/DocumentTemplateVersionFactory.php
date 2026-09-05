@@ -24,7 +24,9 @@ class DocumentTemplateVersionFactory extends Factory
     {
         return [
             'uuid' => (string) Str::uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'document_template_id' => DocumentTemplate::factory(),
             'version' => 1,
             'document_id' => Document::factory(),

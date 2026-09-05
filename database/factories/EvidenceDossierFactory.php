@@ -22,7 +22,9 @@ class EvidenceDossierFactory extends Factory
     {
         return [
             'uuid' => Str::uuid()->toString(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'signable_type' => EvidencePackage::class,
             'signable_id' => EvidencePackage::factory(),
             'dossier_type' => fake()->randomElement(EvidenceDossier::getDossierTypes()),

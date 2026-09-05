@@ -77,8 +77,12 @@ class RetentionPolicyService
      */
     public function isExpiringSoon(ArchivedDocument $archived, int $daysAhead = 90): bool
     {
+        // El orden importa: en Carbon 3 diffInDays devuelve el valor con
+        // signo, y calcularlo al reves daba siempre un numero negativo, con lo
+        // que cualquier documento -caducara en un mes o en veinte anos- se
+        // daba por proximo a caducar.
         return ! $this->isExpired($archived)
-            && $archived->retention_expires_at->diffInDays(now()) <= $daysAhead;
+            && now()->diffInDays($archived->retention_expires_at) <= $daysAhead;
     }
 
     /**
