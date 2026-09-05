@@ -19,12 +19,20 @@ let pdfjsPromise = null;
 
 function loadPdfJs() {
     pdfjsPromise ??= (async () => {
+        // Se importa como ?worker y no como ?url a proposito. Con ?url, Vite
+        // emite el fichero conservando la extension .mjs, y un servidor que
+        // no la tenga en sus mime.types la sirve como
+        // application/octet-stream; el navegador entonces se niega a cargarla
+        // como modulo y PDF.js falla con "Setting up fake worker failed".
+        // Eso pasaria igual en produccion, asi que se arregla aqui y no en la
+        // configuracion de cada servidor: con ?worker, Vite lo empaqueta y lo
+        // sirve como .js normal.
         const [lib, worker] = await Promise.all([
             import('pdfjs-dist'),
-            import('pdfjs-dist/build/pdf.worker.min.mjs?url'),
+            import('pdfjs-dist/build/pdf.worker.min.mjs?worker'),
         ]);
 
-        lib.GlobalWorkerOptions.workerSrc = worker.default;
+        lib.GlobalWorkerOptions.workerPort = new worker.default();
 
         return lib;
     })();

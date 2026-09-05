@@ -115,72 +115,39 @@
                 </p>
 
                 <div class="space-y-4">
-                    {{-- De donde sale el PDF base --}}
-                    <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
-                        <button type="button" wire:click="useSourceMode('upload')"
-                            class="py-2 rounded-md text-sm font-medium transition-colors
-                                {{ $sourceMode === 'upload' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                            {{ __('Subir documento') }}
-                        </button>
-                        <button type="button" wire:click="useSourceMode('select')"
-                            class="py-2 rounded-md text-sm font-medium transition-colors
-                                {{ $sourceMode === 'select' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700' }}">
-                            {{ __('Usar uno ya subido') }}
-                        </button>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Documento') }}</label>
+
+                        @if ($sourceDocumentId && ! $uploading)
+                            <div class="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-3 py-2">
+                                <span class="text-sm text-green-800 truncate">{{ __('Documento listo') }}</span>
+                                <button type="button" wire:click="$set('sourceDocumentId', null)"
+                                    class="text-xs text-green-700 hover:text-green-900 shrink-0 ml-2">
+                                    {{ __('Cambiar') }}
+                                </button>
+                            </div>
+                        @else
+                            <label class="flex flex-col items-center justify-center px-4 py-8 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:border-gray-400 hover:bg-gray-50">
+                                <input type="file" wire:model="uploadedFile" accept="application/pdf" class="hidden">
+                                <span wire:loading.remove wire:target="uploadedFile" class="text-sm text-gray-600">
+                                    {{ __('Haz clic para elegir un PDF') }}
+                                </span>
+                                <span wire:loading.remove wire:target="uploadedFile" class="text-xs text-gray-400 mt-1">
+                                    {{ __('Maximo 50 MB') }}
+                                </span>
+                                <span wire:loading wire:target="uploadedFile" class="text-sm text-gray-600">
+                                    {{ __('Subiendo...') }}
+                                </span>
+                            </label>
+                        @endif
+
+                        @error('uploadedFile')
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                        @error('sourceDocumentId')
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
-
-                    @if ($sourceMode === 'upload')
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Documento') }}</label>
-
-                            @if ($sourceDocumentId && ! $uploading)
-                                <div class="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-3 py-2">
-                                    <span class="text-sm text-green-800 truncate">
-                                        {{ __('Documento listo') }}
-                                    </span>
-                                    <button type="button" wire:click="$set('sourceDocumentId', null)"
-                                        class="text-xs text-green-700 hover:text-green-900 shrink-0 ml-2">
-                                        {{ __('Cambiar') }}
-                                    </button>
-                                </div>
-                            @else
-                                <label class="flex flex-col items-center justify-center px-4 py-8 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:border-gray-400 hover:bg-gray-50">
-                                    <input type="file" wire:model="uploadedFile" accept="application/pdf" class="hidden">
-                                    <span wire:loading.remove wire:target="uploadedFile" class="text-sm text-gray-600">
-                                        {{ __('Haz clic para elegir un PDF') }}
-                                    </span>
-                                    <span wire:loading.remove wire:target="uploadedFile" class="text-xs text-gray-400 mt-1">
-                                        {{ __('Maximo 50 MB') }}
-                                    </span>
-                                    <span wire:loading wire:target="uploadedFile" class="text-sm text-gray-600">
-                                        {{ __('Subiendo...') }}
-                                    </span>
-                                </label>
-                            @endif
-
-                            @error('uploadedFile')
-                                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    @else
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Documento') }}</label>
-                            <select wire:model.live="sourceDocumentId" class="w-full rounded-md border-gray-300 text-sm">
-                                <option value="">{{ __('-- Elige un documento --') }}</option>
-                                @foreach ($documents as $doc)
-                                    <option value="{{ $doc->id }}">{{ $doc->original_filename }}</option>
-                                @endforeach
-                            </select>
-                            @error('sourceDocumentId')
-                                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                            @if ($documents->isEmpty())
-                                <p class="text-xs text-gray-500 mt-1">
-                                    {{ __('No hay documentos sueltos disponibles. Sube uno.') }}
-                                </p>
-                            @endif
-                        </div>
-                    @endif
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Nombre') }}</label>

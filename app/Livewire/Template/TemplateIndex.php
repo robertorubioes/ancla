@@ -9,7 +9,6 @@ use App\Services\Document\DocumentUploadService;
 use App\Services\Template\TemplateException;
 use App\Services\Template\TemplateVersionService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -37,15 +36,6 @@ class TemplateIndex extends Component
 
     /** Dialogo de creacion de plantilla */
     public bool $showCreate = false;
-
-    /**
-     * De donde sale el PDF base: subiendolo o eligiendo uno ya subido.
-     *
-     * Subir es lo habitual: quien crea una plantilla suele tener el documento
-     * a mano. Elegir uno existente sirve para el caso contrario, cuando un
-     * documento que se mando suelto resulta que merece ser plantilla.
-     */
-    public string $sourceMode = 'upload';
 
     /** @var mixed */
     public $uploadedFile = null;
@@ -75,14 +65,7 @@ class TemplateIndex extends Component
     public function openCreate(): void
     {
         $this->reset(['sourceDocumentId', 'uploadedFile', 'newName', 'newDescription', 'error']);
-        $this->sourceMode = 'upload';
         $this->showCreate = true;
-    }
-
-    public function useSourceMode(string $mode): void
-    {
-        $this->sourceMode = in_array($mode, ['upload', 'select'], true) ? $mode : 'upload';
-        $this->error = '';
     }
 
     /**
@@ -139,22 +122,6 @@ class TemplateIndex extends Component
     public function closeCreate(): void
     {
         $this->showCreate = false;
-    }
-
-    /**
-     * Al elegir el documento se propone su nombre, que casi siempre sirve.
-     */
-    public function updatedSourceDocumentId(mixed $value): void
-    {
-        if (blank($value) || filled($this->newName)) {
-            return;
-        }
-
-        $document = $this->availableDocuments()->firstWhere('id', (int) $value);
-
-        if ($document !== null) {
-            $this->newName = pathinfo($document->original_filename, PATHINFO_FILENAME);
-        }
     }
 
     /**
@@ -277,26 +244,6 @@ class TemplateIndex extends Component
     }
 
     /**
-     * Documentos listos que todavia no son plantilla.
-     *
-     * @return Collection<int, Document>
-     */
-    public function availableDocuments(): Collection
-    {
-        return Document::query()
-            ->where('status', Document::STATUS_READY)
-            ->whereNotIn(
-                'id',
-                DocumentTemplate::query()
-                    ->join('document_template_versions as v', 'v.document_template_id', '=', 'document_templates.id')
-                    ->select('v.document_id')
-            )
-            ->orderByDesc('created_at')
-            ->limit(100)
-            ->get();
-    }
-
-    /**
      * @return LengthAwarePaginator<int, DocumentTemplate>
      */
     public function templates(): LengthAwarePaginator
@@ -314,9 +261,6 @@ class TemplateIndex extends Component
     {
         return view('livewire.template.template-index', [
             'items' => $this->templates(),
-            'documents' => $this->showCreate && $this->sourceMode === 'select'
-                ? $this->availableDocuments()
-                : collect(),
         ]);
     }
 }
