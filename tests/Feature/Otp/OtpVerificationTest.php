@@ -67,7 +67,11 @@ class OtpVerificationTest extends TestCase
     /** @test */
     public function signer_can_request_otp_from_livewire_component(): void
     {
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->call('requestOtp')
             ->assertSet('otpRequested', true)
             ->assertSet('otpError', false)
@@ -92,7 +96,11 @@ class OtpVerificationTest extends TestCase
         $result = $otpService->generate($this->signer);
         $code = $result->code;
 
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->set('otpRequested', true)
             ->set('otpCode', $code)
             ->call('verifyOtp')
@@ -148,8 +156,12 @@ class OtpVerificationTest extends TestCase
     /** @test */
     public function otp_input_is_disabled_until_code_is_requested(): void
     {
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
-            ->assertSee('Request Verification Code')
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
+            ->assertSee('Enviar código de verificación')
             ->assertDontSee('Enter Verification Code');
     }
 
@@ -160,12 +172,14 @@ class OtpVerificationTest extends TestCase
         $result = $otpService->generate($this->signer);
 
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->set('otpRequested', true)
             ->set('otpCode', $result->code)
             ->call('verifyOtp')
             ->assertSet('otpVerified', true)
-            ->assertSee('Verified')
-            ->assertSee('You can now proceed to sign');
+            ->assertSee('¡Identidad verificada!')
+            ->assertSee('Crea tu firma para completar el proceso');
     }
 
     /** @test */
@@ -281,18 +295,24 @@ class OtpVerificationTest extends TestCase
             ->verified()
             ->create();
 
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
-            ->assertSee('Verified')
-            ->assertSee('You can now proceed to sign');
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
+            ->assertSee('¡Identidad verificada!')
+            ->assertSee('Crea tu firma para completar el proceso');
     }
 
     /** @test */
     public function can_request_new_code_if_not_received(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->call('requestOtp')
             ->assertSet('otpRequested', true)
-            ->assertSee("Didn't receive it? Request new code");
+            ->assertSee('¿No lo recibiste? Enviar de nuevo');
     }
 
     /** @test */
@@ -303,9 +323,9 @@ class OtpVerificationTest extends TestCase
 
         // Check otp.requested was logged
         $this->assertDatabaseHas('audit_trail_entries', [
-            'action' => 'otp.requested',
-            'entity_type' => 'signer',
-            'entity_id' => $this->signer->id,
+            'event_type' => 'otp.requested',
+            'auditable_type' => Signer::class,
+            'auditable_id' => $this->signer->id,
         ]);
 
         // Verify the code
@@ -313,9 +333,9 @@ class OtpVerificationTest extends TestCase
 
         // Check otp.verified was logged
         $this->assertDatabaseHas('audit_trail_entries', [
-            'action' => 'otp.verified',
-            'entity_type' => 'signer',
-            'entity_id' => $this->signer->id,
+            'event_type' => 'otp.verified',
+            'auditable_type' => Signer::class,
+            'auditable_id' => $this->signer->id,
         ]);
     }
 

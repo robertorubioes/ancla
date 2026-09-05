@@ -3343,12 +3343,6 @@ parameters:
 			path: tests/Unit/Signing/SigningAccessServiceTest.php
 
 		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Models\\SigningProcess will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: tests/Unit/Signing/SigningAccessServiceTest.php
-
-		-
 			message: '#^Call to an undefined method App\\Services\\Evidence\\AuditTrailService\:\:shouldReceive\(\)\.$#'
 			identifier: method.notFound
 			count: 10

@@ -42,6 +42,14 @@ class SigningAccessService
 
         $process = $signer->signingProcess;
 
+        // Un token huerfano -proceso borrado, o filtrado por el scope de
+        // tenant si la peticion llega con uno en contexto- dejaba el proceso a
+        // null y la pagina reventaba con un error 500 al leerle el estado. Es
+        // un enlace que no lleva a ninguna parte: se trata como tal.
+        if ($process === null) {
+            throw SigningAccessException::tokenNotFound($token);
+        }
+
         // 2. Validate process status (must be sent or in_progress)
         if (! in_array($process->status, [SigningProcess::STATUS_SENT, SigningProcess::STATUS_IN_PROGRESS])) {
             if ($process->status === SigningProcess::STATUS_CANCELLED) {

@@ -34,7 +34,7 @@ use Illuminate\Support\Str;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
- * @property-read SigningProcess $signingProcess
+ * @property-read SigningProcess|null $signingProcess
  */
 class Signer extends Model
 {
@@ -264,19 +264,26 @@ class Signer extends Model
      */
     public function canSignNow(): bool
     {
+        $process = $this->signingProcess;
+
+        // Sin proceso no hay nada que firmar: la fila esta huerfana.
+        if ($process === null) {
+            return false;
+        }
+
         // If parallel, can always sign if not already signed
-        if ($this->signingProcess->isParallel()) {
+        if ($process->isParallel()) {
             return in_array($this->status, [self::STATUS_SENT, self::STATUS_VIEWED]);
         }
 
         // If sequential, check if previous signers have signed
-        if ($this->signingProcess->isSequential()) {
+        if ($process->isSequential()) {
             if (! in_array($this->status, [self::STATUS_SENT, self::STATUS_VIEWED])) {
                 return false;
             }
 
             // Check if all previous signers have signed
-            $previousSigners = $this->signingProcess->signers()
+            $previousSigners = $process->signers()
                 ->where('order', '<', $this->order)
                 ->get();
 
@@ -353,7 +360,7 @@ class Signer extends Model
      */
     public function isExpired(): bool
     {
-        $deadline = $this->signingProcess->deadline_at;
+        $deadline = $this->signingProcess?->deadline_at;
 
         return $deadline !== null && $deadline->isPast();
     }

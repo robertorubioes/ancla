@@ -181,8 +181,13 @@ class OtpServiceTest extends TestCase
         // Generate second code
         $this->otpService->generate($this->signer);
 
-        // First code should be deleted
-        $this->assertDatabaseMissing('otp_codes', ['id' => $firstCodeId]);
+        // El codigo anterior deja de servir, pero su rastro se conserva: es
+        // evidencia de un envio, y ademas el limite por horas cuenta filas.
+        $this->assertDatabaseHas('otp_codes', ['id' => $firstCodeId]);
+        $this->assertTrue($firstResult->otpCode->fresh()->isExpired());
+
+        $this->expectException(OtpException::class);
+        $this->otpService->verify($this->signer, $firstResult->code);
     }
 
     /** @test */
