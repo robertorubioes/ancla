@@ -69,7 +69,13 @@ class TemplateDocumentController extends Controller
             abort(403);
         }
 
-        return response((string) $entry['pdf'], 200, [
+        $pdf = base64_decode((string) $entry['pdf'], true);
+
+        if ($pdf === false) {
+            abort(404, 'La vista previa no se pudo recuperar. Vuelve a generarla.');
+        }
+
+        return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="vista-previa.pdf"',
             'Cache-Control' => 'private, no-store',

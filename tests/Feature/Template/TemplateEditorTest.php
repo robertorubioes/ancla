@@ -110,17 +110,58 @@ class TemplateEditorTest extends TestCase
             ->assertSet('selectedField', 0);
     }
 
-    public function test_las_claves_generadas_no_se_repiten(): void
+    public function test_los_campos_nuevos_se_llaman_distinto(): void
     {
+        // "Campo 1", "Campo 2"... para poder reconocerlos en la lista.
         $component = $this->editor()
             ->call('addField')
             ->call('addField')
             ->call('addField');
 
+        $fields = (array) $component->get('fields');
+
+        $this->assertSame(['Campo 1', 'Campo 2', 'Campo 3'], array_column($fields, 'label'));
+        $this->assertSame(['campo_1', 'campo_2', 'campo_3'], array_column($fields, 'key'));
+    }
+
+    public function test_la_clave_se_deriva_del_nombre(): void
+    {
+        // La clave la decide el sistema: es lo que viaja en el JSON de la API
+        // y no algo que quien disena la plantilla tenga que inventar.
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', 'Fecha de inicio')
+            ->assertSet('fields.0.key', 'fecha_de_inicio');
+    }
+
+    public function test_la_clave_derivada_pierde_tildes_y_signos(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', 'Nº de póliza (España)')
+            ->assertSet('fields.0.key', 'no_de_poliza_espana');
+    }
+
+    public function test_una_clave_que_no_empieza_por_letra_se_corrige(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', '2024')
+            ->assertSet('fields.0.key', 'campo_2024');
+    }
+
+    public function test_dos_nombres_iguales_producen_claves_distintas(): void
+    {
+        // Las claves son unicas dentro del documento.
+        $component = $this->editor()
+            ->call('addField')
+            ->call('addField')
+            ->set('fields.0.label', 'Importe')
+            ->set('fields.1.label', 'Importe');
+
         $keys = array_column((array) $component->get('fields'), 'key');
 
-        $this->assertCount(3, $keys);
-        $this->assertSame($keys, array_unique($keys), 'Cada campo nuevo debe traer una clave libre.');
+        $this->assertSame(['importe', 'importe_2'], $keys);
     }
 
     public function test_mueve_un_campo(): void
@@ -178,7 +219,6 @@ class TemplateEditorTest extends TestCase
     {
         $this->editor()
             ->call('addField', 1, 30.0, 60.0)
-            ->set('fields.0.key', 'dni')
             ->set('fields.0.label', 'Documento de identidad')
             ->set('fields.0.type', TemplateFieldType::TEXT->value)
             ->call('addSignerRole')
@@ -191,7 +231,7 @@ class TemplateEditorTest extends TestCase
 
         $this->assertDatabaseHas('document_template_fields', [
             'document_template_version_id' => $this->version->id,
-            'key' => 'dni',
+            'key' => 'documento_de_identidad',
             'label' => 'Documento de identidad',
             'page' => 1,
         ]);
@@ -213,7 +253,7 @@ class TemplateEditorTest extends TestCase
         $this->editor()
             ->call('removeField', 0)
             ->call('addField')
-            ->set('fields.0.key', 'nuevo')
+            ->set('fields.0.label', 'Nuevo')
             ->call('save')
             ->assertHasNoErrors();
 
@@ -230,6 +270,8 @@ class TemplateEditorTest extends TestCase
             ->set('fields.1.key', 'repetida')
             ->call('save')
             ->assertHasErrors('fields');
+        // Nota: aqui se fuerzan las claves a mano para ejercitar la guarda del
+        // servidor. Por la interfaz no puede pasar, porque se derivan unicas.
 
         $this->assertDatabaseCount('document_template_fields', 0);
     }
@@ -249,7 +291,7 @@ class TemplateEditorTest extends TestCase
     {
         $this->editor()
             ->call('addField')
-            ->set('fields.0.key', 'plan')
+            ->set('fields.0.label', 'Plan')
             ->set('fields.0.type', TemplateFieldType::SELECT->value)
             ->set('fields.0.options', [])
             ->call('save')

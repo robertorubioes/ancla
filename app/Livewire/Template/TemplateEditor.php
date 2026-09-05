@@ -125,10 +125,12 @@ class TemplateEditor extends Component
      */
     public function addField(int $page = 1, float $x = 20.0, float $y = 20.0): void
     {
+        $label = $this->nextAvailableLabel();
+
         $this->fields[] = [
             'id' => null,
-            'key' => $this->nextAvailableKey(),
-            'label' => 'Campo nuevo',
+            'key' => $this->deriveKey($label, -1),
+            'label' => $label,
             'help_text' => null,
             'type' => TemplateFieldType::TEXT->value,
             'required' => true,
@@ -357,16 +359,81 @@ class TemplateEditor extends Component
         }
     }
 
-    private function nextAvailableKey(): string
+    /**
+     * "Campo 1", "Campo 2"... Distintos entre si para poder reconocerlos.
+     */
+    private function nextAvailableLabel(): string
     {
-        $existing = array_column($this->fields, 'key');
+        $existing = array_column($this->fields, 'label');
 
         $n = count($existing) + 1;
-        while (in_array("campo_{$n}", $existing, true)) {
+        while (in_array("Campo {$n}", $existing, true)) {
             $n++;
         }
 
-        return "campo_{$n}";
+        return "Campo {$n}";
+    }
+
+    /**
+     * Deriva la clave interna de la etiqueta.
+     *
+     * La clave la decide el sistema: es un detalle tecnico -la que viaja en
+     * el JSON de la API- y no algo que quien disena una plantilla tenga que
+     * inventar. "Fecha de inicio" produce fecha_de_inicio.
+     *
+     * @param  int  $exceptIndex  Campo que se esta renombrando, para no chocar
+     *                            consigo mismo
+     */
+    private function deriveKey(string $label, int $exceptIndex): string
+    {
+        $base = Str::slug($label, '_');
+
+        // Una clave tiene que empezar por letra: "2024" o "" no valen.
+        if ($base === '' || ! preg_match('/^[a-z]/', $base)) {
+            $base = 'campo_'.$base;
+        }
+
+        $base = rtrim(substr($base, 0, 60), '_');
+
+        $taken = [];
+        foreach ($this->fields as $i => $field) {
+            if ($i !== $exceptIndex) {
+                $taken[] = $field['key'];
+            }
+        }
+
+        if (! in_array($base, $taken, true)) {
+            return $base;
+        }
+
+        // Las claves son unicas dentro del documento.
+        $n = 2;
+        while (in_array("{$base}_{$n}", $taken, true)) {
+            $n++;
+        }
+
+        return "{$base}_{$n}";
+    }
+
+    /**
+     * Renombrar un campo renombra su clave.
+     */
+    public function updated(string $property): void
+    {
+        if (! preg_match('/^fields\.(\d+)\.label$/', $property, $m)) {
+            return;
+        }
+
+        $index = (int) $m[1];
+
+        if (! isset($this->fields[$index])) {
+            return;
+        }
+
+        $this->fields[$index]['key'] = $this->deriveKey(
+            (string) $this->fields[$index]['label'],
+            $index,
+        );
     }
 
     private function nextAvailableRoleKey(): string
