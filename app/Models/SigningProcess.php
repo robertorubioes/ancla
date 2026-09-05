@@ -464,7 +464,7 @@ class SigningProcess extends Model
             // Invalidate all pending signer tokens
             $this->signers()
                 ->whereIn('status', [Signer::STATUS_PENDING, Signer::STATUS_SENT, Signer::STATUS_VIEWED])
-                ->update(['status' => 'cancelled']);
+                ->update(['status' => Signer::STATUS_CANCELLED]);
 
             // Send cancellation notifications (async)
             $this->sendCancellationNotifications();
@@ -487,7 +487,7 @@ class SigningProcess extends Model
     private function sendCancellationNotifications(): void
     {
         $pendingSigners = $this->signers()
-            ->where('status', 'cancelled')
+            ->where('status', Signer::STATUS_CANCELLED)
             ->get();
 
         foreach ($pendingSigners as $signer) {

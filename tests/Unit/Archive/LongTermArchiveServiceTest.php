@@ -39,6 +39,12 @@ class LongTermArchiveServiceTest extends TestCase
 
         Storage::fake('local');
 
+        // Los niveles frio y profundo apuntan a S3. Se falsean para que el
+        // test no necesite credenciales ni region de AWS: sin ellas el cliente
+        // ni siquiera se puede construir.
+        Storage::fake('s3-glacier');
+        Storage::fake('s3-deep-archive');
+
         $this->hashingService = Mockery::mock(HashingService::class);
         $this->resealService = Mockery::mock(TsaResealService::class);
         $this->policyService = Mockery::mock(RetentionPolicyService::class);

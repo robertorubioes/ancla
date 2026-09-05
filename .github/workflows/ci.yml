@@ -196,6 +196,11 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --force
 
+      # El certificado de desarrollo no vive en el repositorio: cada entorno
+      # genera el suyo. Sin el, los tests de firma no tienen con que firmar.
+      - name: Generar certificado de desarrollo
+        run: scripts/generate-dev-certificate.sh
+
       - name: Run tests
         run: php artisan test --parallel --coverage-text
         env:

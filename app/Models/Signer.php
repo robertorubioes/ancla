@@ -104,6 +104,9 @@ class Signer extends Model
 
     public const STATUS_REJECTED = 'rejected';
 
+    /** El proceso se cancelo antes de que este firmante llegara a firmar. */
+    public const STATUS_CANCELLED = 'cancelled';
+
     /**
      * Boot method to set default values.
      */

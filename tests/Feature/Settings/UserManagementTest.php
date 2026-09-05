@@ -358,7 +358,9 @@ class UserManagementTest extends TestCase
         SigningProcess::factory()->create([
             'tenant_id' => $this->tenant->id,
             'created_by' => $this->operator->id,
-            'status' => 'pending',
+            // 'pending' no es un estado de proceso: los activos son draft,
+            // sent e in_progress.
+            'status' => SigningProcess::STATUS_IN_PROGRESS,
         ]);
 
         Livewire::actingAs($this->admin)

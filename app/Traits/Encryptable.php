@@ -88,6 +88,26 @@ trait Encryptable
      * - Attribute is not already encrypted
      * - We're not already in an encryption operation
      */
+    /**
+     * Marca de lo que ya esta cifrado en una columna.
+     *
+     * El cifrado devuelve binario crudo -nonce, texto cifrado y tag-, y eso
+     * no cabe en una columna de texto: MySQL rechaza la escritura con
+     * "Incorrect string value" mientras SQLite la acepta sin rechistar, que es
+     * por lo que en los tests no se veia. Se guarda en base64 y con un prefijo
+     * para poder distinguir a simple vista lo ya cifrado de lo que no, sin
+     * tener que intentar descifrarlo.
+     */
+    private const PREFIJO_CIFRADO = 'enc:v1:';
+
+    /**
+     * Si el valor tal y como esta en la columna ya viene cifrado.
+     */
+    private function estaCifradoEnColumna(mixed $value): bool
+    {
+        return is_string($value) && str_starts_with($value, self::PREFIJO_CIFRADO);
+    }
+
     protected function encryptAttributes(): void
     {
         // Prevent infinite loops
@@ -113,9 +133,10 @@ trait Encryptable
                 }
 
                 // Only encrypt if not already encrypted
-                if (! $service->isEncrypted($value)) {
+                if (! $this->estaCifradoEnColumna($value)) {
                     try {
-                        $this->attributes[$attribute] = $service->encrypt($value);
+                        $this->attributes[$attribute] = self::PREFIJO_CIFRADO
+                            .base64_encode($service->encrypt($value));
 
                         Log::debug('Attribute encrypted', [
                             'model' => static::class,
@@ -170,9 +191,11 @@ trait Encryptable
             }
 
             // Only decrypt if encrypted
-            if ($service->isEncrypted($value)) {
+            if ($this->estaCifradoEnColumna($value)) {
                 try {
-                    $this->attributes[$attribute] = $service->decrypt($value);
+                    $this->attributes[$attribute] = $service->decrypt(
+                        (string) base64_decode(substr($value, strlen(self::PREFIJO_CIFRADO)), true)
+                    );
 
                     Log::debug('Attribute decrypted', [
                         'model' => static::class,
@@ -211,7 +234,9 @@ trait Encryptable
 
         $service = app(DocumentEncryptionService::class);
 
-        return $service->encrypt($value);
+        // Se devuelve en el mismo formato en que se guarda, para que el
+        // resultado se pueda escribir directamente en la columna.
+        return self::PREFIJO_CIFRADO.base64_encode($service->encrypt($value));
     }
 
     /**
@@ -233,7 +258,13 @@ trait Encryptable
 
         $service = app(DocumentEncryptionService::class);
 
-        return $service->decrypt($value);
+        if (! $this->estaCifradoEnColumna($value)) {
+            throw EncryptionException::invalidFormat();
+        }
+
+        return $service->decrypt(
+            (string) base64_decode(substr($value, strlen(self::PREFIJO_CIFRADO)), true)
+        );
     }
 
     /**
@@ -252,9 +283,7 @@ trait Encryptable
             return false;
         }
 
-        $service = app(DocumentEncryptionService::class);
-
-        return $service->isEncrypted($value);
+        return $this->estaCifradoEnColumna($value);
     }
 
     /**
