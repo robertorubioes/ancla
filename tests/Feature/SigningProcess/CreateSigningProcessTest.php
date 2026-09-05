@@ -6,6 +6,7 @@ namespace Tests\Feature\SigningProcess;
 
 use App\Livewire\SigningProcess\CreateSigningProcess;
 use App\Models\Document;
+use App\Models\DocumentTemplate;
 use App\Models\Signer;
 use App\Models\SigningProcess;
 use App\Models\Tenant;
@@ -386,6 +387,49 @@ class CreateSigningProcessTest extends TestCase
 
         $signer = Signer::first();
         $this->assertNull($signer->phone);
+    }
+
+    /** @test */
+    public function it_can_also_save_the_document_as_a_template(): void
+    {
+        // Un proceso que se repite acaba siendo una plantilla. Se ofrece aqui
+        // para no tener que rehacerlo desde cero.
+        Livewire::actingAs($this->user)
+            ->test(CreateSigningProcess::class)
+            ->set('documentId', $this->document->id)
+            ->set('signers', [
+                ['name' => 'John Doe', 'email' => 'john@example.com', 'phone' => ''],
+            ])
+            ->set('alsoSaveAsTemplate', true)
+            ->call('create');
+
+        $this->assertDatabaseHas('document_templates', [
+            'tenant_id' => $this->tenant->id,
+            'status' => DocumentTemplate::STATUS_DRAFT,
+        ]);
+
+        $template = DocumentTemplate::first();
+
+        $this->assertFalse($template->isUsable(), 'Queda en borrador: faltan los campos y habilitarla.');
+        $this->assertSame(
+            $this->document->id,
+            $template->versions()->first()->document_id,
+            'La plantilla parte del mismo documento que se acaba de enviar.'
+        );
+    }
+
+    /** @test */
+    public function it_does_not_create_a_template_unless_asked(): void
+    {
+        Livewire::actingAs($this->user)
+            ->test(CreateSigningProcess::class)
+            ->set('documentId', $this->document->id)
+            ->set('signers', [
+                ['name' => 'John Doe', 'email' => 'john@example.com', 'phone' => ''],
+            ])
+            ->call('create');
+
+        $this->assertDatabaseCount('document_templates', 0);
     }
 
     /** @test */

@@ -9,6 +9,7 @@ use App\Models\Signer;
 use App\Models\SigningProcess;
 use App\Services\Document\DocumentUploadService;
 use App\Services\Evidence\AuditTrailService;
+use App\Services\Template\TemplateVersionService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -88,6 +89,18 @@ class CreateSigningProcess extends Component
      * Whether file is uploading.
      */
     public bool $uploadingFile = false;
+
+    /**
+     * Guardar ademas el documento como plantilla.
+     *
+     * Un proceso de firma que se repite suele acabar siendo una plantilla. En
+     * lugar de obligar a rehacerlo desde cero, se ofrece aqui: queda en
+     * borrador, y hay que colocarle los campos y habilitarla antes de poder
+     * usarla.
+     */
+    public bool $alsoSaveAsTemplate = false;
+
+    public ?string $createdTemplateUuid = null;
 
     /**
      * Error message if creation fails.
@@ -296,6 +309,37 @@ class CreateSigningProcess extends Component
      * Validate signers array.
      */
     /**
+     * Crea la plantilla si se ha pedido al vuelo.
+     *
+     * Nunca hace fallar el envio: el proceso de firma ya esta creado, y no
+     * poder guardarlo ademas como plantilla es un contratiempo, no un motivo
+     * para tirar todo atras.
+     */
+    private function maybeCreateTemplate(Document $document): ?string
+    {
+        if (! $this->alsoSaveAsTemplate || $this->isEditing) {
+            return null;
+        }
+
+        try {
+            $template = app(TemplateVersionService::class)->createFromDocument(
+                $document,
+                auth()->user(),
+                pathinfo($document->original_filename, PATHINFO_FILENAME),
+            );
+
+            return $template->uuid;
+        } catch (\Throwable $e) {
+            Log::warning('No se pudo guardar el proceso como plantilla', [
+                'document_id' => $document->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
      * Validate the whole form in a single pass.
      *
      * Se valida todo de una vez, y no campo a campo, para que el formulario
@@ -455,6 +499,8 @@ class CreateSigningProcess extends Component
                     ]);
                     // Don't fail the creation, notifications can be resent
                 }
+
+                $this->createdTemplateUuid = $this->maybeCreateTemplate($document);
 
                 $this->success = $this->isEditing
                     ? 'Signing process updated and sent successfully!'

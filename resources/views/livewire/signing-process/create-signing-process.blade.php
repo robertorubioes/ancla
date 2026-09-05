@@ -417,6 +417,27 @@
                         <p class="mt-1 text-xs text-gray-500">{{ __('If set, signers must complete before this date') }}</p>
                     @enderror
                 </div>
+
+                {{-- Guardar ademas como plantilla --}}
+                @unless ($isEditing)
+                    <div class="pt-4 border-t border-gray-100">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                wire:model="alsoSaveAsTemplate"
+                                class="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            >
+                            <span>
+                                <span class="block text-sm font-medium text-gray-900">
+                                    {{ __('Guardar tambien como plantilla') }}
+                                </span>
+                                <span class="block text-xs text-gray-500 mt-0.5">
+                                    {{ __('Para volver a enviarlo con otros datos. Quedara en borrador: despues hay que colocarle los campos variables y habilitarla.') }}
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                @endunless
             </div>
         </div>
 

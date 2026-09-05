@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Services\Template\TemplateVersionService;
 use App\Services\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -119,6 +120,41 @@ class TemplateUiTest extends TestCase
         ]);
     }
 
+    public function test_se_puede_subir_el_documento_al_crear_la_plantilla(): void
+    {
+        // Quien crea una plantilla suele tener el PDF a mano; obligar a
+        // subirlo antes por otro sitio no tenia sentido.
+        $pdf = new \FPDF;
+        $pdf->AddPage();
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Cell(0, 10, 'CONTRATO', 0, 1);
+
+        $component = Livewire::actingAs($this->admin)
+            ->test(TemplateIndex::class)
+            ->call('openCreate')
+            ->assertSet('sourceMode', 'upload')
+            ->set('uploadedFile', UploadedFile::fake()->createWithContent('alquiler.pdf', $pdf->Output('S')));
+
+        $this->assertNotNull($component->get('sourceDocumentId'), 'La subida deja el documento elegido.');
+        $component->assertSet('newName', 'alquiler');
+
+        $component->call('createFromDocument')->assertHasNoErrors();
+
+        $this->assertDatabaseHas('document_templates', [
+            'name' => 'alquiler',
+            'status' => DocumentTemplate::STATUS_DRAFT,
+        ]);
+    }
+
+    public function test_un_fichero_que_no_es_pdf_se_rechaza(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(TemplateIndex::class)
+            ->call('openCreate')
+            ->set('uploadedFile', UploadedFile::fake()->createWithContent('notas.txt', 'esto no es un pdf'))
+            ->assertHasErrors('uploadedFile');
+    }
+
     public function test_elegir_documento_propone_su_nombre(): void
     {
         $document = $this->readyDocument('nomina-mensual.pdf');
@@ -126,6 +162,7 @@ class TemplateUiTest extends TestCase
         Livewire::actingAs($this->admin)
             ->test(TemplateIndex::class)
             ->call('openCreate')
+            ->call('useSourceMode', 'select')
             ->set('sourceDocumentId', $document->id)
             ->assertSet('newName', 'nomina-mensual');
     }
@@ -137,7 +174,9 @@ class TemplateUiTest extends TestCase
 
         app(TemplateVersionService::class)->createFromDocument($usado, $this->admin, 'Ya es plantilla');
 
-        $component = Livewire::actingAs($this->admin)->test(TemplateIndex::class);
+        $component = Livewire::actingAs($this->admin)
+            ->test(TemplateIndex::class)
+            ->call('useSourceMode', 'select');
         $ids = $component->instance()->availableDocuments()->pluck('id')->all();
 
         $this->assertContains($libre->id, $ids);
