@@ -43,8 +43,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test can cancel process with reason.
-     *
-     * @test
      */
     public function test_can_cancel_process_with_reason(): void
     {
@@ -61,8 +59,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cannot cancel completed process.
-     *
-     * @test
      */
     public function test_cannot_cancel_completed_process(): void
     {
@@ -84,8 +80,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cannot cancel already cancelled process.
-     *
-     * @test
      */
     public function test_cannot_cancel_already_cancelled_process(): void
     {
@@ -105,8 +99,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancellation invalidates signer tokens.
-     *
-     * @test
      */
     public function test_cancellation_invalidates_signer_tokens(): void
     {
@@ -138,8 +130,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancellation sends notifications to pending signers.
-     *
-     * @test
      */
     public function test_cancellation_sends_notifications_to_pending_signers(): void
     {
@@ -162,8 +152,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancellation creates audit trail.
-     *
-     * @test
      */
     public function test_cancellation_creates_audit_trail(): void
     {
@@ -200,8 +188,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancelled_by user is tracked.
-     *
-     * @test
      */
     public function test_cancelled_by_user_is_tracked(): void
     {
@@ -223,8 +209,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancellation reason is stored.
-     *
-     * @test
      */
     public function test_cancellation_reason_is_stored(): void
     {
@@ -242,8 +226,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancellation timestamp is recorded.
-     *
-     * @test
      */
     public function test_cancellation_timestamp_is_recorded(): void
     {
@@ -265,8 +247,6 @@ class ProcessCancellationTest extends TestCase
 
     /**
      * Test cancelled process returns cancelled status.
-     *
-     * @test
      */
     public function test_cancelled_process_returns_cancelled_status(): void
     {

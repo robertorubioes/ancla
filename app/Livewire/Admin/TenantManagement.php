@@ -26,6 +26,14 @@ class TenantManagement extends Component
 
     public $planFilter = '';
 
+    // Check if we should open create modal on mount
+    public function mount()
+    {
+        if (request()->query('action') === 'create') {
+            $this->openCreateModal();
+        }
+    }
+
     // Form fields
     public $showModal = false;
 
@@ -76,7 +84,6 @@ class TenantManagement extends Component
             'name' => 'required|string|min:3|max:100',
             'slug' => 'required|string|min:3|max:50|unique:tenants,slug,'.$this->tenantId,
             'subdomain' => 'required|string|min:3|max:50|unique:tenants,subdomain,'.$this->tenantId,
-            'contactEmail' => 'required|email',
             'plan' => 'required|in:free,starter,professional,enterprise',
             'status' => 'required|in:trial,active,suspended,cancelled',
             'maxUsers' => 'nullable|integer|min:1',
@@ -169,7 +176,7 @@ class TenantManagement extends Component
             DB::commit();
             $this->closeModal();
             session()->flash('message', $this->editMode ? 'Tenant updated successfully.' : 'Tenant created successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Tenant creation/update failed', [
                 'error' => $e->getMessage(),

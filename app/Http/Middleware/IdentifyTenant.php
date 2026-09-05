@@ -15,9 +15,20 @@ class IdentifyTenant
      *
      * @var array<string>
      */
+    /**
+     * Subdominios que son de la plataforma, no de un tenant.
+     *
+     * 'app' es el host principal donde entra todo el mundo
+     * (app.firmalum.test en local, app.firmalum.com en produccion). Sin
+     * excluirlo se buscaria un tenant con subdominio "app" y la aplicacion
+     * respondia 404 en su propia portada.
+     *
+     * @var list<string>
+     */
     protected array $excludedSubdomains = [
         'admin',
         'api',
+        'app',
         'www',
     ];
 
@@ -60,7 +71,10 @@ class IdentifyTenant
         $subdomain = $this->extractSubdomain($host);
 
         if ($subdomain && ! in_array($subdomain, $this->excludedSubdomains)) {
-            return $this->findTenantBySlug($subdomain);
+            $tenant = $this->findTenantBySlug($subdomain);
+            if ($tenant) {
+                return $tenant;
+            }
         }
 
         // 2. Intentar por dominio personalizado
@@ -74,6 +88,13 @@ class IdentifyTenant
             return $this->findTenantById($tenantId);
         }
 
+        // 4. En el host principal de la plataforma no hay subdominio de
+        // tenant: quien entra por ahi ya se ha identificado, y su tenant es
+        // el suyo.
+        if (($user = $request->user()) !== null && $user->tenant_id !== null) {
+            return $this->findTenantById((string) $user->tenant_id);
+        }
+
         return null;
     }
 
@@ -82,7 +103,7 @@ class IdentifyTenant
      */
     protected function extractSubdomain(string $host): ?string
     {
-        $baseDomain = config('app.base_domain', 'ancla.app');
+        $baseDomain = config('app.base_domain', 'firmalum.com');
 
         // Si estamos en localhost, extraer subdomain diferente
         if (str_contains($host, 'localhost')) {
@@ -105,14 +126,14 @@ class IdentifyTenant
     }
 
     /**
-     * Buscar tenant por slug con cache.
+     * Buscar tenant por subdomain con cache.
      */
-    protected function findTenantBySlug(string $slug): ?Tenant
+    protected function findTenantBySlug(string $subdomain): ?Tenant
     {
         return Cache::remember(
-            "tenant:slug:{$slug}",
+            "tenant:subdomain:{$subdomain}",
             now()->addMinutes(60),
-            fn () => Tenant::where('slug', $slug)->first()
+            fn () => Tenant::where('subdomain', $subdomain)->first()
         );
     }
 

@@ -15,5 +15,9 @@
         "postcss": "^8.5.6",
         "tailwindcss": "^4.1.18",
         "vite": "^7.0.7"
+    },
+    "dependencies": {
+        "alpinejs": "^3.15.3",
+        "pdfjs-dist": "^6.3.289"
     }
 }

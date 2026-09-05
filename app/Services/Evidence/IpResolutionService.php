@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\IpResolutionRecord;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -25,7 +26,7 @@ class IpResolutionService
         ?string $signerEmail = null,
         ?int $signerId = null
     ): IpResolutionRecord {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
         $ipAddress = $this->getRealIp($request);
         $ipVersion = $this->detectIpVersion($ipAddress);
 
@@ -87,9 +88,11 @@ class IpResolutionService
             $eventData['warnings'] = $record->active_warnings;
         }
 
+        $eventData['signable_type'] = get_class($signable);
+        $eventData['signable_id'] = $signable->getKey();
+
         $this->auditTrailService->logEvent(
             'evidence.ip_resolution_captured',
-            $signable,
             $eventData
         );
 
@@ -413,7 +416,7 @@ class IpResolutionService
     /**
      * Get IP resolutions for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return IpResolutionRecord::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\VerificationCode;
+use App\Services\Evidence\EvidenceDossierService;
 use App\Services\Verification\PublicVerificationService;
 use App\Services\Verification\QrCodeService;
 use Illuminate\Http\JsonResponse;
@@ -219,7 +221,7 @@ class PublicVerificationController extends Controller
      */
     public function getQrCode(string $code): Response|JsonResponse
     {
-        $verificationCode = \App\Models\VerificationCode::byCode($code)->first();
+        $verificationCode = VerificationCode::byCode($code)->first();
 
         if (! $verificationCode) {
             return response()->json([
@@ -300,7 +302,7 @@ class PublicVerificationController extends Controller
         // Try to generate evidence dossier
         // This requires the EvidenceDossierService
         try {
-            $dossierService = app(\App\Services\Evidence\EvidenceDossierService::class);
+            $dossierService = app(EvidenceDossierService::class);
 
             $dossier = $dossierService->generateForDocument(
                 $result->document,
@@ -333,14 +335,14 @@ class PublicVerificationController extends Controller
      * @urlParam code string required The verification code. Example: ABCD-EFGH-IJKL
      *
      * @response 200 {
-     *   "url": "https://ancla.app/verify/ABCD-EFGH-IJKL",
-     *   "short_url": "https://ancla.app/v/ABCDEF",
-     *   "qr_code_url": "https://ancla.app/api/v1/public/verify/ABCD-EFGH-IJKL/qr"
+     *   "url": "https://app.firmalum.com/verify/ABCD-EFGH-IJKL",
+     *   "short_url": "https://app.firmalum.com/v/ABCDEF",
+     *   "qr_code_url": "https://app.firmalum.com/api/v1/public/verify/ABCD-EFGH-IJKL/qr"
      * }
      */
     public function getUrls(string $code): JsonResponse
     {
-        $verificationCode = \App\Models\VerificationCode::byCode($code)->first();
+        $verificationCode = VerificationCode::byCode($code)->first();
 
         if (! $verificationCode) {
             return response()->json([

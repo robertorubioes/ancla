@@ -4,10 +4,21 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Jobs\SendCancellationNotificationJob;
+use App\Services\Document\FinalDocumentException;
+use App\Services\Document\FinalDocumentResult;
+use App\Services\Document\FinalDocumentService;
+use App\Services\Notification\CompletionNotificationException;
+use App\Services\Notification\CompletionNotificationResult;
+use App\Services\Notification\CompletionNotificationService;
+use App\Services\Notification\SigningNotificationException;
 use App\Services\Notification\SigningNotificationResult;
 use App\Services\Notification\SigningNotificationService;
 use App\Traits\BelongsToTenant;
+use App\Traits\Encryptable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,20 +36,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $status
  * @property string $signature_order
  * @property string|null $custom_message
- * @property \Carbon\Carbon|null $deadline_at
- * @property \Carbon\Carbon|null $completed_at
+ * @property Carbon|null $deadline_at
+ * @property Carbon|null $completed_at
  * @property array|null $metadata
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read Tenant $tenant
  * @property-read Document $document
  * @property-read User $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<Signer> $signers
+ * @property-read Collection<Signer> $signers
  */
 class SigningProcess extends Model
 {
     use BelongsToTenant;
+    use Encryptable;
     use HasFactory;
     use SoftDeletes;
 
@@ -51,6 +63,8 @@ class SigningProcess extends Model
         'uuid',
         'tenant_id',
         'document_id',
+        'document_template_version_id',
+        'template_values',
         'created_by',
         'status',
         'signature_order',
@@ -74,7 +88,18 @@ class SigningProcess extends Model
      *
      * @var array<string, string>
      */
+    /**
+     * Los valores con que se relleno una plantilla son datos personales
+     * -nombres, DNI, importes- y merecen el mismo trato que el documento.
+     *
+     * @var list<string>
+     */
+    protected array $encryptable = [
+        'template_values',
+    ];
+
     protected $casts = [
+        'template_values' => 'array',
         'deadline_at' => 'datetime',
         'completed_at' => 'datetime',
         'metadata' => 'array',
@@ -83,6 +108,21 @@ class SigningProcess extends Model
         'final_document_pages' => 'integer',
         'cancelled_at' => 'datetime',
     ];
+
+    /**
+     * Version de plantilla con la que se genero, si vino de una.
+     *
+     * @return BelongsTo<DocumentTemplateVersion, $this>
+     */
+    public function templateVersion(): BelongsTo
+    {
+        return $this->belongsTo(DocumentTemplateVersion::class, 'document_template_version_id');
+    }
+
+    public function cameFromTemplate(): bool
+    {
+        return $this->document_template_version_id !== null;
+    }
 
     /**
      * Status constants.
@@ -132,6 +172,8 @@ class SigningProcess extends Model
 
     /**
      * Get the signers for this process.
+     *
+     * @return HasMany<Signer, $this>
      */
     public function signers(): HasMany
     {
@@ -422,7 +464,7 @@ class SigningProcess extends Model
             // Invalidate all pending signer tokens
             $this->signers()
                 ->whereIn('status', [Signer::STATUS_PENDING, Signer::STATUS_SENT, Signer::STATUS_VIEWED])
-                ->update(['status' => 'cancelled']);
+                ->update(['status' => Signer::STATUS_CANCELLED]);
 
             // Send cancellation notifications (async)
             $this->sendCancellationNotifications();
@@ -445,12 +487,12 @@ class SigningProcess extends Model
     private function sendCancellationNotifications(): void
     {
         $pendingSigners = $this->signers()
-            ->where('status', 'cancelled')
+            ->where('status', Signer::STATUS_CANCELLED)
             ->get();
 
         foreach ($pendingSigners as $signer) {
             try {
-                \App\Jobs\SendCancellationNotificationJob::dispatch($this, $signer)
+                SendCancellationNotificationJob::dispatch($this, $signer)
                     ->onQueue('notifications');
             } catch (\Exception $e) {
                 Log::error('Failed to queue cancellation notification', [
@@ -493,7 +535,7 @@ class SigningProcess extends Model
      *
      * @return SigningNotificationResult Result of the notification operation
      *
-     * @throws \App\Services\Notification\SigningNotificationException
+     * @throws SigningNotificationException
      */
     public function sendNotifications(): SigningNotificationResult
     {
@@ -528,11 +570,11 @@ class SigningProcess extends Model
      * This method is automatically called when the process is marked as completed.
      *
      *
-     * @throws \App\Services\Document\FinalDocumentException
+     * @throws FinalDocumentException
      */
-    public function generateFinalDocument(): \App\Services\Document\FinalDocumentResult
+    public function generateFinalDocument(): FinalDocumentResult
     {
-        $service = app(\App\Services\Document\FinalDocumentService::class);
+        $service = app(FinalDocumentService::class);
 
         return $service->generateFinalDocument($this);
     }
@@ -542,13 +584,13 @@ class SigningProcess extends Model
      *
      * This method is automatically called after final document generation.
      *
-     * @return \App\Services\Notification\CompletionNotificationResult Result of the notification operation
+     * @return CompletionNotificationResult Result of the notification operation
      *
-     * @throws \App\Services\Notification\CompletionNotificationException
+     * @throws CompletionNotificationException
      */
-    public function sendCopies(): \App\Services\Notification\CompletionNotificationResult
+    public function sendCopies(): CompletionNotificationResult
     {
-        $service = app(\App\Services\Notification\CompletionNotificationService::class);
+        $service = app(CompletionNotificationService::class);
 
         return $service->sendCopies($this);
     }

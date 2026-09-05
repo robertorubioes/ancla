@@ -92,9 +92,13 @@ class OtpService
     public function verify(Signer $signer, string $code): bool
     {
         // 1. Find active OTP code
+        // Se mira el ultimo codigo sea cual sea su estado: si se descartan de
+        // entrada los ya verificados, reintentar uno usado se confunde con no
+        // tener ninguno y nunca se llegaba a avisar de la reutilizacion.
+        // El desempate por id importa: tres codigos pueden compartir segundo.
         $otpCode = OtpCode::where('signer_id', $signer->id)
-            ->where('verified', false)
             ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->first();
 
         if (! $otpCode) {
@@ -110,7 +114,22 @@ class OtpService
             throw OtpException::notFound();
         }
 
-        // 2. Check if expired
+        // 2. Codigo ya usado
+        if ($otpCode->verified) {
+            $this->auditTrailService->record(
+                auditable: $signer,
+                event: 'otp.failed',
+                payload: [
+                    'reason' => 'already_verified',
+                    'otp_code_id' => $otpCode->id,
+                    'signer_email' => $signer->email,
+                ]
+            );
+
+            throw OtpException::alreadyVerified();
+        }
+
+        // 3. Check if expired
         if ($otpCode->isExpired()) {
             $this->auditTrailService->record(
                 auditable: $signer,
@@ -239,8 +258,14 @@ class OtpService
      */
     private function invalidatePreviousCodes(Signer $signer): void
     {
+        // Se caducan, no se borran. Borrarlos dejaba el contador del limite
+        // por horas siempre a uno -cuenta filas creadas en la ultima hora-,
+        // asi que un firmante podia pedir codigos sin tope. Ademas, en un
+        // producto de evidencias, tirar el rastro de lo que se envio es lo
+        // ultimo que se debe hacer.
         OtpCode::where('signer_id', $signer->id)
             ->where('verified', false)
-            ->delete();
+            ->where('expires_at', '>', now())
+            ->update(['expires_at' => now()]);
     }
 }

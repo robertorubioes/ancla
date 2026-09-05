@@ -15,6 +15,7 @@ use App\Services\Otp\OtpService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class OtpServiceTest extends TestCase
@@ -42,7 +43,7 @@ class OtpServiceTest extends TestCase
         Queue::fake();
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_valid_otp_code(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -52,7 +53,7 @@ class OtpServiceTest extends TestCase
         $this->assertNotNull($result->code);
     }
 
-    /** @test */
+    #[Test]
     public function generated_code_is_6_digits(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -61,7 +62,7 @@ class OtpServiceTest extends TestCase
         $this->assertMatchesRegularExpression('/^\d{6}$/', $result->code);
     }
 
-    /** @test */
+    #[Test]
     public function code_is_hashed_in_database(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -72,7 +73,7 @@ class OtpServiceTest extends TestCase
         $this->assertTrue(Hash::check($result->code, $otpCode->code_hash));
     }
 
-    /** @test */
+    #[Test]
     public function expiration_is_10_minutes_from_generation(): void
     {
         $beforeGeneration = now();
@@ -93,7 +94,7 @@ class OtpServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function verification_succeeds_with_correct_code(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -104,7 +105,7 @@ class OtpServiceTest extends TestCase
         $this->assertTrue($verified);
     }
 
-    /** @test */
+    #[Test]
     public function verification_fails_with_incorrect_code(): void
     {
         $this->otpService->generate($this->signer);
@@ -115,7 +116,7 @@ class OtpServiceTest extends TestCase
         $this->otpService->verify($this->signer, '999999');
     }
 
-    /** @test */
+    #[Test]
     public function expired_code_is_rejected(): void
     {
         OtpCode::factory()
@@ -130,7 +131,7 @@ class OtpServiceTest extends TestCase
         $this->otpService->verify($this->signer, '123456');
     }
 
-    /** @test */
+    #[Test]
     public function max_attempts_limit_is_enforced(): void
     {
         OtpCode::factory()
@@ -145,7 +146,7 @@ class OtpServiceTest extends TestCase
         $this->otpService->verify($this->signer, '123456');
     }
 
-    /** @test */
+    #[Test]
     public function rate_limiting_allows_3_requests_per_hour(): void
     {
         // First 3 requests should succeed
@@ -160,7 +161,7 @@ class OtpServiceTest extends TestCase
         $this->otpService->generate($this->signer);
     }
 
-    /** @test */
+    #[Test]
     public function can_request_otp_checks_rate_limit(): void
     {
         $this->assertTrue($this->otpService->canRequestOtp($this->signer));
@@ -171,7 +172,7 @@ class OtpServiceTest extends TestCase
         $this->assertFalse($this->otpService->canRequestOtp($this->signer));
     }
 
-    /** @test */
+    #[Test]
     public function previous_codes_are_invalidated_on_new_generation(): void
     {
         // Generate first code
@@ -181,11 +182,16 @@ class OtpServiceTest extends TestCase
         // Generate second code
         $this->otpService->generate($this->signer);
 
-        // First code should be deleted
-        $this->assertDatabaseMissing('otp_codes', ['id' => $firstCodeId]);
+        // El codigo anterior deja de servir, pero su rastro se conserva: es
+        // evidencia de un envio, y ademas el limite por horas cuenta filas.
+        $this->assertDatabaseHas('otp_codes', ['id' => $firstCodeId]);
+        $this->assertTrue($firstResult->otpCode->fresh()->isExpired());
+
+        $this->expectException(OtpException::class);
+        $this->otpService->verify($this->signer, $firstResult->code);
     }
 
-    /** @test */
+    #[Test]
     public function signer_otp_verified_status_is_updated(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -197,7 +203,7 @@ class OtpServiceTest extends TestCase
         $this->assertTrue($this->otpService->hasVerifiedOtp($this->signer));
     }
 
-    /** @test */
+    #[Test]
     public function audit_trail_logs_otp_requested(): void
     {
         $auditTrailService = $this->mock(AuditTrailService::class);
@@ -213,7 +219,7 @@ class OtpServiceTest extends TestCase
         $otpService->generate($this->signer);
     }
 
-    /** @test */
+    #[Test]
     public function audit_trail_logs_otp_verified(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -230,7 +236,7 @@ class OtpServiceTest extends TestCase
         $otpService->verify($this->signer, $result->code);
     }
 
-    /** @test */
+    #[Test]
     public function audit_trail_logs_otp_failed(): void
     {
         $this->otpService->generate($this->signer);
@@ -253,7 +259,7 @@ class OtpServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function email_job_is_dispatched(): void
     {
         Queue::fake();
@@ -263,7 +269,7 @@ class OtpServiceTest extends TestCase
         Queue::assertPushed(SendOtpCodeJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function attempts_counter_increments_on_failure(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -281,7 +287,7 @@ class OtpServiceTest extends TestCase
         $this->assertEquals(1, $otpCode->attempts);
     }
 
-    /** @test */
+    #[Test]
     public function verified_code_cannot_be_reused(): void
     {
         $result = $this->otpService->generate($this->signer);
@@ -296,7 +302,7 @@ class OtpServiceTest extends TestCase
         $this->otpService->verify($this->signer, $result->code);
     }
 
-    /** @test */
+    #[Test]
     public function code_not_found_throws_exception(): void
     {
         $this->expectException(OtpException::class);
@@ -305,7 +311,7 @@ class OtpServiceTest extends TestCase
         $this->otpService->verify($this->signer, '123456');
     }
 
-    /** @test */
+    #[Test]
     public function rate_limit_is_per_signer(): void
     {
         // Create another signer

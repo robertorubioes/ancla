@@ -50,14 +50,15 @@ class TsaResealServiceTest extends TestCase
 
         $tsaToken = TsaToken::factory()->create([
             'tenant_id' => $tenant->id,
+            // tsa_tokens no tiene expires_at: la caducidad vive en
+            // tsa_chain_entries, y TsaResealService cae a now()->addYears(2).
             'issued_at' => now(),
-            'expires_at' => now()->addYears(2),
         ]);
 
         $this->tsaService
             ->shouldReceive('requestTimestamp')
             ->once()
-            ->with($document->content_hash)
+            ->with($document->content_hash, $document->tenant_id)
             ->andReturn($tsaToken);
 
         $chain = $this->service->initializeChain($document);
@@ -101,8 +102,9 @@ class TsaResealServiceTest extends TestCase
 
         $newToken = TsaToken::factory()->create([
             'tenant_id' => $tenant->id,
+            // tsa_tokens no tiene expires_at: la caducidad vive en
+            // tsa_chain_entries, y TsaResealService cae a now()->addYears(2).
             'issued_at' => now(),
-            'expires_at' => now()->addYears(2),
         ]);
 
         $this->hashingService
@@ -161,7 +163,7 @@ class TsaResealServiceTest extends TestCase
         $result = $this->service->verifyChain($chain);
 
         $this->assertInstanceOf(ChainVerificationResult::class, $result);
-        $this->assertTrue($result->isValid);
+        $this->assertTrue($result->isValid());
         $this->assertEquals(1, $result->entriesVerified);
         $this->assertEmpty($result->errors);
     }
@@ -198,7 +200,7 @@ class TsaResealServiceTest extends TestCase
 
         $result = $this->service->verifyChain($chain);
 
-        $this->assertFalse($result->isValid);
+        $this->assertFalse($result->isValid());
         $this->assertNotEmpty($result->errors);
         $this->assertStringContainsString('Sequence gap', $result->errors[0]);
     }
@@ -263,11 +265,5 @@ class TsaResealServiceTest extends TestCase
 
         $this->assertNotEmpty($hash);
         $this->assertEquals(64, strlen($hash));
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 }

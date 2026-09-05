@@ -1,59 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Firmalum
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma SaaS de **firma electronica avanzada** conforme a eIDAS,
+multi-tenant y de marca blanca. Su diferencial es la generacion, conservacion
+y exportacion de **evidencias legales** defendibles ante una auditoria o un
+procedimiento judicial.
 
-## About Laravel
+- Firma **PAdES-B-LT** con sellado de tiempo cualificado (TSA).
+- **Verificacion publica** sin registro, por web y por API.
+- **Dossier probatorio** exportable en PDF.
+- **Multi-tenant** con personalizacion por cliente.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Vision completa: [`docs/SYSTEM_OVERVIEW.md`](docs/SYSTEM_OVERVIEW.md).
+Indice de documentacion: [`docs/INDEX.md`](docs/INDEX.md).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+PHP 8.2+ · Composer 2 · Node 20+ · MySQL 8 · Redis
 
-## Learning Laravel
+## Puesta en marcha
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+git clone git@github.com:robertorubioes/ancla.git firmalum
+cd firmalum
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+composer setup                      # deps, .env, key, migraciones, assets
+scripts/install-hooks.sh            # pre-commit (Pint + PHPStan) y commit-msg
+scripts/generate-dev-certificate.sh # certificado de firma de desarrollo
 
-## Laravel Sponsors
+composer dev                        # servidor, cola, logs y vite
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Luego edita el `.env`:
 
-### Premium Partners
+```bash
+APP_BASE_DOMAIN=firmalum.local      # dominio base de los subdominios de tenant
+SUPERADMIN_EMAIL=tu@correo.com      # el seeder aborta si falta
+SUPERADMIN_PASSWORD=                # vacio en local -> genera una aleatoria
+TSA_MOCK_ENABLED=true               # sin esto se llama a la TSA real
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+php artisan db:seed --class=SuperadminSeeder
+```
 
-## Contributing
+## Calidad
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Las tres puertas corren en CI en **modo verificacion**: el CI comprueba, no
+reescribe. Reformatear es trabajo del hook local.
 
-## Code of Conduct
+```bash
+composer pint          # formatea
+composer pint:test     # verifica formato (lo que corre el CI)
+composer stan          # PHPStan nivel 6 sobre baseline
+composer test          # PHPUnit (usa --parallel para medir de verdad)
+composer quality       # las tres seguidas
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+`phpstan-baseline.neon` congela la deuda existente: PHPStan solo bloquea
+errores **nuevos**. Para reducirla, arregla y regenera con
+`composer stan:baseline`. Nunca regeneres el baseline para tapar un error
+nuevo.
 
-## Security Vulnerabilities
+> **La suite de tests esta actualmente en rojo**: 71 de 657. Ejecutala
+> siempre con `--parallel`; en serie una fuga de transaccion contamina el
+> resto y la salida es ilegible. El detalle, las causas y el orden en que se
+> paga estan en
+> [`docs/REFACTORING_AND_TESTING.md`](docs/REFACTORING_AND_TESTING.md).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Flujo de trabajo
 
-## License
+- `main` esta protegido: todo entra por PR con CI verde. Nunca push directo.
+- Ramas `feat/…`, `fix/…`, `refactor/…`, `docs/…`.
+- Commits en espanol con prefijo convencional (`feat:`, `fix:`, `refactor:`,
+  `docs:`, `test:`, `chore:`). El hook `commit-msg` lo verifica.
+- Un cambio funcional se documenta en `docs/` **en el mismo commit**.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Operacion
+
+| Script | Que hace |
+|---|---|
+| `scripts/install-hooks.sh` | Instala los hooks locales de git. |
+| `scripts/generate-dev-certificate.sh` | Genera el certificado de firma de desarrollo. |
+| `scripts/clone-prod-to-test.sh` | Clon nocturno de produccion a testing, anonimizado. |
+| `scripts/backup.sh` | Backup verificado de la BD + `.env` cifrado + manifiesto. |
+| `scripts/backup-verify.sh` | Verifica un backup. Un backup no verificado no existe. |
+| `scripts/restore.sh` | Restaura un backup, verificandolo antes. |
+| `bin/deploy-production.sh` | Despliegue en produccion (anterior al estandar de la casa). |
+
+Entornos: [`docs/ENTORNOS.md`](docs/ENTORNOS.md).
+Backups: [`docs/BACKUPS.md`](docs/BACKUPS.md).
+Despliegue: [`docs/deployment/`](docs/deployment/).
+
+## Seguridad
+
+- Los secretos viven solo en `.env`. `.env.example` se mantiene al dia.
+- El certificado de firma **no** esta en el repositorio: cada entorno genera
+  o instala el suyo (`SIGNATURE_CERT_PATH` / `SIGNATURE_KEY_PATH`).
+- Las credenciales del superadmin se leen del entorno; en produccion y
+  staging el seeder aborta si `SUPERADMIN_PASSWORD` no esta definido.

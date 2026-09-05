@@ -81,7 +81,7 @@ class PdfSignatureService
                 $tsaToken = null;
                 if ($this->requiresTsaToken()) {
                     try {
-                        $tsaToken = $this->tsaService->requestTimestamp($originalHash);
+                        $tsaToken = $this->tsaService->requestTimestamp($originalHash, $document->tenant_id);
                         $pkcs7 = $this->pkcs7Builder->embedTsaToken($pkcs7, $tsaToken);
 
                         Log::info('TSA timestamp obtained', [

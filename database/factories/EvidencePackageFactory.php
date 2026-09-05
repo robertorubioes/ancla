@@ -21,7 +21,9 @@ class EvidencePackageFactory extends Factory
     {
         return [
             'uuid' => Str::uuid()->toString(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'packagable_type' => 'App\\Models\\Document',
             'packagable_id' => fake()->randomNumber(5),
             'document_hash' => hash('sha256', Str::random(100)),

@@ -26,8 +26,8 @@ return [
     |
     */
     'certificate' => [
-        'cert_path' => env('SIGNATURE_CERT_PATH', 'storage/certificates/ancla-dev.crt'),
-        'key_path' => env('SIGNATURE_KEY_PATH', 'storage/certificates/ancla-dev.key'),
+        'cert_path' => env('SIGNATURE_CERT_PATH', 'storage/certificates/firmalum-dev.crt'),
+        'key_path' => env('SIGNATURE_KEY_PATH', 'storage/certificates/firmalum-dev.key'),
         'key_password' => env('SIGNATURE_KEY_PASSWORD', null),
         'pkcs12_path' => env('SIGNATURE_PKCS12_PATH', null),
         'ca_bundle_path' => env('SIGNATURE_CA_BUNDLE_PATH', null),
@@ -67,7 +67,7 @@ return [
             'background_color' => env('SIGNATURE_BG_COLOR', '#f8f9fa'),
             'font_family' => env('SIGNATURE_FONT', 'Helvetica'),
             'font_size' => (int) env('SIGNATURE_FONT_SIZE', 9),
-            'logo_path' => 'signatures/logo-ancla.png',
+            'logo_path' => 'signatures/logo-firmalum.png',
         ],
 
         'text' => [
@@ -239,8 +239,8 @@ return [
     |
     */
     'contact' => [
-        'info' => env('SIGNATURE_CONTACT_INFO', 'soporte@ancla.es'),
-        'url' => env('APP_URL', 'https://ancla.es'),
+        'info' => env('SIGNATURE_CONTACT_INFO', 'soporte@firmalum.com'),
+        'url' => env('APP_URL', 'https://app.firmalum.com'),
     ],
 
     /*

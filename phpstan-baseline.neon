@@ -1,0 +1,3391 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property App\\Models\\Document\:\:\$file_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/BackupEncryptedDocuments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SignedDocument\:\:\$signed_file_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/BackupEncryptedDocuments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Document\:\:\$file_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/EncryptExistingDocuments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SignedDocument\:\:\$signed_file_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/EncryptExistingDocuments.php
+
+		-
+			message: '#^Parameter \#1 \$tenant of method App\\Services\\TenantContext\:\:run\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/EncryptExistingDocuments.php
+
+		-
+			message: '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:groupBy\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Console/Commands/EvidenceCleanupExpiredCommand.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>on_expiry_action" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/EvidenceCleanupExpiredCommand.php
+
+		-
+			message: '#^Method App\\Enums\\Permission\:\:all\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/Permission.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\EvidenceDossierService\:\:generateForDocument\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/PublicVerificationController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\EvidenceDossierService\:\:renderToPdf\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/PublicVerificationController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/DocumentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$final_document_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/DocumentDownloadController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/DocumentDownloadController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\EvidenceDossierService\:\:generateDossier\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/DocumentDownloadController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasFinalDocument\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/DocumentDownloadController.php
+
+		-
+			message: '#^Parameter \#1 \$process of method App\\Services\\Document\\FinalDocumentService\:\:getFinalDocumentContent\(\) expects App\\Models\\SigningProcess, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/DocumentDownloadController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/InvitationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\InvitationController\:\:accept\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/InvitationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\InvitationController\:\:show\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/InvitationController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Support\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Jobs/ResealDocumentJob.php
+
+		-
+			message: '#^Property App\\Jobs\\SendCancellationNotificationJob\:\:\$backoff type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/SendCancellationNotificationJob.php
+
+		-
+			message: '#^Method App\\Jobs\\SendSignedDocumentCopyJob\:\:tags\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/SendSignedDocumentCopyJob.php
+
+		-
+			message: '#^Property App\\Jobs\\SendSignedDocumentCopyJob\:\:\$backoff type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/SendSignedDocumentCopyJob.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:closeModal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:createTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:generateSlug\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:generateSlug\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:mount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:openCreateModal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:openEditModal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:openEditModal\(\) has parameter \$tenantId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:openSuspendModal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:openSuspendModal\(\) has parameter \$tenantId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:resetForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:rules\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:saveTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:suspendTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:unsuspendTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:unsuspendTenant\(\) has parameter \$tenantId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updateTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updateTenant\(\) has parameter \$tenant with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedName\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedName\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedPlan\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedPlan\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedPlanFilter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedSearch\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedSlug\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedSlug\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Admin\\TenantManagement\:\:updatedStatusFilter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$adminEmail has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$adminName has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$adminNotes has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$autoGeneratePassword has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$contactEmail has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$editMode has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$maxDocumentsPerMonth has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$maxUsers has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$name has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$plan has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$planFilter has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$queryString has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$search has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$showModal has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$showSuspendModal has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$slug has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$status has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$statusFilter has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$subdomain has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$suspendTenantId has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$suspensionReason has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$tenantId has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Admin\\TenantManagement\:\:\$trialEndsAt has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Admin/TenantManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\ForgotPassword\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Auth/ForgotPassword.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\LoginForm\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Auth/LoginForm.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Auth/LoginForm.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\RegisterForm\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Auth/RegisterForm.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\ResetPassword\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Auth/ResetPassword.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\TwoFactorChallenge\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Auth/TwoFactorChallenge.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\TwoFactorChallenge\:\:verifyRecoveryCode\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Auth/TwoFactorChallenge.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\TwoFactorChallenge\:\:verifyTotpCode\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Livewire/Auth/TwoFactorChallenge.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\TwoFactorSetup\:\:recoveryCodes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Auth/TwoFactorSetup.php
+
+		-
+			message: '#^Method App\\Livewire\\Auth\\TwoFactorSetup\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Auth/TwoFactorSetup.php
+
+		-
+			message: '#^Method App\\Livewire\\Document\\DocumentUpload\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Document/DocumentUpload.php
+
+		-
+			message: '#^Property App\\Livewire\\Document\\DocumentUpload\:\:\$file has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Document/DocumentUpload.php
+
+		-
+			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:editRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:getInvitationsQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:getUsersQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:inviteRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Method App\\Livewire\\Settings\\UserManagement\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$deletingUser has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$editEmail has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$editName has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$editRole has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$editingUser has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$inviteEmail has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$inviteMessage has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$inviteName has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$inviteRole has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$queryString has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$roleFilter has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$search has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$showDeleteModal has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$showEditModal has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$showInviteModal has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Property App\\Livewire\\Settings\\UserManagement\:\:\$statusFilter has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Settings/UserManagement.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Signing\\SigningPage\:\:\$canSign\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Signing/SigningPage.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Signing\\SigningPage\:\:\$hasVerifiedOtp\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Signing/SigningPage.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Signing\\SigningPage\:\:\$process\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Livewire/Signing/SigningPage.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Signing\\SigningPage\:\:\$signer\.$#'
+			identifier: property.notFound
+			count: 7
+			path: app/Livewire/Signing/SigningPage.php
+
+		-
+			message: '#^Property App\\Livewire\\Signing\\SigningPage\:\:\$uploadedSignature has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/Signing/SigningPage.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:availableDocuments\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:create\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:reorderSigners\(\) has parameter \$order with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:saveAsDraft\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:selectedDocument\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Property App\\Livewire\\SigningProcess\\CreateSigningProcess\:\:\$uploadedFile has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: app/Livewire/SigningProcess/CreateSigningProcess.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\ProcessesDashboard\:\:getProcessesQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/ProcessesDashboard.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\ProcessesDashboard\:\:processes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/ProcessesDashboard.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\ProcessesDashboard\:\:render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Livewire/SigningProcess/ProcessesDashboard.php
+
+		-
+			message: '#^Method App\\Livewire\\SigningProcess\\ProcessesDashboard\:\:statistics\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/SigningProcess/ProcessesDashboard.php
+
+		-
+			message: '#^Method App\\Livewire\\Verification\\VerificationPage\:\:formatResult\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Verification/VerificationPage.php
+
+		-
+			message: '#^Property App\\Livewire\\Verification\\VerificationPage\:\:\$details type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Verification/VerificationPage.php
+
+		-
+			message: '#^Property App\\Livewire\\Verification\\VerificationPage\:\:\$result type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Livewire/Verification/VerificationPage.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Verification/VerificationPage.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SigningProcess\:\:\$verificationCode\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Mail/SignedDocumentCopyMail.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Mail/TenantSuspendedMail.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Mail/UserInvitationMail.php
+
+		-
+			message: '#^Class App\\Models\\ArchivedDocument has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeActive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeActive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeDueForReseal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeDueForReseal\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeExpiredRetention\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeExpiredRetention\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeInTier\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeInTier\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeReadyForTierMigration\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeReadyForTierMigration\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeRetentionExpiringSoon\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Method App\\Models\\ArchivedDocument\:\:scopeRetentionExpiringSoon\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ArchivedDocument\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ArchivedDocument.php
+
+		-
+			message: '#^Class App\\Models\\AuditTrailEntry has PHPDoc tag @property for property \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/AuditTrailEntry.php
+
+		-
+			message: '#^Method App\\Models\\AuditTrailEntry\:\:actor\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\AuditTrailEntry\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/AuditTrailEntry.php
+
+		-
+			message: '#^Method App\\Models\\AuditTrailEntry\:\:auditable\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\AuditTrailEntry\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/AuditTrailEntry.php
+
+		-
+			message: '#^Method App\\Models\\AuditTrailEntry\:\:tsaToken\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\TsaToken, App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\TsaToken, \$this\(App\\Models\\AuditTrailEntry\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/AuditTrailEntry.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>hash" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/AuditTrailEntry.php
+
+		-
+			message: '#^Match arm comparison between ''communication'' and ''communication'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Match arm comparison between ''revoked'' and ''revoked'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeAccepted\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeAccepted\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeBySigner\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeBySigner\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeForSignature\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeForSignature\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeOfType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeOfType\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeRejected\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeRejected\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeRevoked\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeRevoked\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeWithScreenshot\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeWithScreenshot\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeWithTsa\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\ConsentRecord\:\:scopeWithTsa\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/ConsentRecord.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeByHash\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeByHash\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeBySigner\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeBySigner\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeDesktop\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeDesktop\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeMobile\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:scopeMobile\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Method App\\Models\\DeviceFingerprint\:\:signer\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/DeviceFingerprint.php
+
+		-
+			message: '#^Class App\\Models\\Document has PHPDoc tag @property for property \$pdf_metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Document.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Document\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Document.php
+
+		-
+			message: '#^Match arm comparison between ''executive_summary'' and ''executive_summary'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:getIncludedContentAttribute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:getStatsSummaryAttribute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeByVerificationCode\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeByVerificationCode\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeFullEvidence\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeFullEvidence\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeOfType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeOfType\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeSigned\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeSigned\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeWithTsa\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidenceDossier\:\:scopeWithTsa\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/EvidenceDossier.php
+
+		-
+			message: '#^Method App\\Models\\EvidencePackage\:\:packagable\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, App\\Models\\EvidencePackage\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\EvidencePackage\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/EvidencePackage.php
+
+		-
+			message: '#^Method App\\Models\\EvidencePackage\:\:tsaToken\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\TsaToken, App\\Models\\EvidencePackage\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\TsaToken, \$this\(App\\Models\\EvidencePackage\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/EvidencePackage.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:getEffectiveLatitudeAttribute\(\) should return float\|null but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:getEffectiveLongitudeAttribute\(\) should return float\|null but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeFromCountry\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeFromCountry\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeRefused\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeRefused\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeWithGps\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeWithGps\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeWithIpFallback\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:scopeWithIpFallback\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\GeolocationRecord\:\:signer\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/GeolocationRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:getActiveWarningsAttribute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeByIp\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeByIp\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeClean\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeClean\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeFromDatacenter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeFromDatacenter\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeFromTor\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeFromTor\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeSuspicious\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeSuspicious\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithProxy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithProxy\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithVpn\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:scopeWithVpn\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^Method App\\Models\\IpResolutionRecord\:\:signer\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/IpResolutionRecord.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\OtpCode\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/OtpCode.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeActive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeActive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeByPriority\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeByPriority\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeDefault\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeDefault\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeForDocumentType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeForDocumentType\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeForTenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeForTenant\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeGlobal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Method App\\Models\\RetentionPolicy\:\:scopeGlobal\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\RetentionPolicy\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/RetentionPolicy.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\AuditTrailEntry\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 2
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:auditTrail\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\AuditTrailEntry, \$this\(App\\Models\\SignedDocument\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:auditTrailChronological\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\AuditTrailEntry, \$this\(App\\Models\\SignedDocument\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeForProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeForProcess\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeForSigner\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeForSigner\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeSigned\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeSigned\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithPadesLevel\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithPadesLevel\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithStatus\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Method App\\Models\\SignedDocument\:\:scopeWithStatus\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\SignedDocument\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/SignedDocument.php
+
+		-
+			message: '#^Class App\\Models\\Signer has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Signer.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Signer\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Signer.php
+
+		-
+			message: '#^Call to static method error\(\) on an unknown class App\\Models\\Log\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/SigningProcess.php
+
+		-
+			message: '#^Class App\\Models\\SigningProcess has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/SigningProcess.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\SigningProcess\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/SigningProcess.php
+
+		-
+			message: '#^Cannot call method isFuture\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:getPlanLimits\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeActive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeActive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeByDomain\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeByDomain\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeBySlug\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeBySlug\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeBySubdomain\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\Tenant\:\:scopeBySubdomain\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/Tenant.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeActive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeActive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeDueForReseal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeDueForReseal\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeInvalid\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeInvalid\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeNeedsVerification\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeNeedsVerification\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeOfType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Method App\\Models\\TsaChain\:\:scopeOfType\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\TsaChain\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/TsaChain.php
+
+		-
+			message: '#^Class App\\Models\\TsaChainEntry has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeExpired\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeExpired\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeExpiringSoon\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeExpiringSoon\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeInChain\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeInChain\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeInitial\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeInitial\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeReseals\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Method App\\Models\\TsaChainEntry\:\:scopeReseals\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\TsaChainEntry\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/TsaChainEntry.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\AuditTrailEntry\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/TsaToken.php
+
+		-
+			message: '#^Method App\\Models\\TsaToken\:\:auditTrailEntries\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\AuditTrailEntry\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\AuditTrailEntry, \$this\(App\\Models\\TsaToken\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/TsaToken.php
+
+		-
+			message: '#^Match arm comparison between ''invited'' and ''invited'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:can\(\) has parameter \$ability with no value type specified in iterable type iterable\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:canAny\(\) has parameter \$abilities with no value type specified in iterable type iterable\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeActive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeActive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeAdmins\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeAdmins\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeInactive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeInactive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeOperators\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeOperators\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeSuperAdmins\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeSuperAdmins\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeViewers\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:scopeViewers\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:signingProcesses\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Match arm comparison between ''admin''\|''operator''\|''viewer'' and App\\Enums\\UserRole\:\:ADMIN is always false\.$#'
+			identifier: match.alwaysFalse
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Match arm comparison between ''admin''\|''operator''\|''viewer'' and App\\Enums\\UserRole\:\:OPERATOR is always false\.$#'
+			identifier: match.alwaysFalse
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Match arm comparison between ''admin''\|''operator''\|''viewer'' and App\\Enums\\UserRole\:\:VIEWER is always false\.$#'
+			identifier: match.alwaysFalse
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Method App\\Models\\UserInvitation\:\:scopeAccepted\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Method App\\Models\\UserInvitation\:\:scopeAccepted\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Method App\\Models\\UserInvitation\:\:scopeExpired\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Method App\\Models\\UserInvitation\:\:scopeExpired\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Method App\\Models\\UserInvitation\:\:scopePending\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^Method App\\Models\\UserInvitation\:\:scopePending\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^PHPDoc type array\<string\> of property App\\Models\\UserInvitation\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/UserInvitation.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\VerificationCode\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/VerificationCode.php
+
+		-
+			message: '#^Class App\\Models\\VerificationLog has PHPDoc tag @property for property \$details with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/VerificationLog.php
+
+		-
+			message: '#^Method App\\Models\\VerificationLog\:\:getChecks\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/VerificationLog.php
+
+		-
+			message: '#^Method App\\Models\\VerificationLog\:\:scopeInDateRange\(\) has parameter \$endDate with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/VerificationLog.php
+
+		-
+			message: '#^Method App\\Models\\VerificationLog\:\:scopeInDateRange\(\) has parameter \$startDate with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/VerificationLog.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\VerificationLog\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/VerificationLog.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Providers/FortifyServiceProvider.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\LongTermArchiveService\:\:getStatistics\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/LongTermArchiveService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\LongTermArchiveService\:\:processTierMigrations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/LongTermArchiveService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\LongTermArchiveService\:\:restore\(\) should return App\\Models\\Document but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Archive/LongTermArchiveService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\LongTermArchiveService\:\:verifyIntegrity\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/LongTermArchiveService.php
+
+		-
+			message: '#^Parameter \#1 \$chain of method App\\Services\\Archive\\TsaResealService\:\:verifyChain\(\) expects App\\Models\\TsaChain, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Archive/LongTermArchiveService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$retention_days\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$retention_years\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\RetentionPolicyService\:\:applyPolicy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\RetentionPolicyService\:\:createPolicy\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\RetentionPolicyService\:\:getRetentionStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\RetentionPolicyService\:\:processExpiryActions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\RetentionPolicyService\:\:validatePolicy\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\RetentionPolicyService\:\:validatePolicy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/RetentionPolicyService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content_hash\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Archive/TsaResealService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\TsaResealService\:\:processAllDueReseals\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/TsaResealService.php
+
+		-
+			message: '#^Method App\\Services\\Archive\\TsaResealService\:\:verifyAllChains\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Archive/TsaResealService.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Services/Document/CertificationPageBuilder.php
+
+		-
+			message: '#^Method App\\Services\\Document\\DocumentEncryptionService\:\:getMetadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Document/DocumentEncryptionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Document/FinalDocumentService.php
+
+		-
+			message: '#^Method App\\Services\\Document\\FinalDocumentService\:\:getSignedDocuments\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Services/Document/FinalDocumentService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$document\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Evidence/AuditTrailService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$signingProcess\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Evidence/AuditTrailService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tenant\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Evidence/AuditTrailService.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Http\\Request\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 5
+			path: app/Services/Evidence/AuditTrailService.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\AuditTrailEntry\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Services/Evidence/AuditTrailService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\TsaService\:\:verifyToken\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Match arm comparison between ''image/webp'' and ''image/webp'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\ConsentCaptureService\:\:getAvailableConsentTypes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\ConsentCaptureService\:\:recordConsent\(\) has parameter \$uiContext with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\ConsentCaptureService\:\:recordSignatureConsent\(\) has parameter \$uiContext with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\ConsentCaptureService\:\:saveScreenshot\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\ConsentCaptureService\:\:verifyConsent\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/ConsentCaptureService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\DeviceFingerprintService\:\:buildFingerprintData\(\) has parameter \$clientData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\DeviceFingerprintService\:\:buildFingerprintData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\DeviceFingerprintService\:\:calculateFingerprintHash\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\DeviceFingerprintService\:\:capture\(\) has parameter \$clientData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\DeviceFingerprintService\:\:validateClientData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\DeviceFingerprintService\:\:validateClientData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/DeviceFingerprintService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 8
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\TsaService\:\:verifyToken\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Call to static method format\(\) on an unknown class SimpleSoftwareIO\\QrCode\\Facades\\QrCode\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\AuditTrailService\:\:verifyChain\(\) invoked with 1 parameter, 2 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\EvidenceDossierService\:\:collectEvidenceData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\EvidenceDossierService\:\:generatePdf\(\) has parameter \$dossierData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\EvidenceDossierService\:\:signDossier\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\EvidenceDossierService\:\:verify\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/EvidenceDossierService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:capture\(\) has parameter \$gpsData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:determineCaptureMethod\(\) has parameter \$gpsData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:fetchFromIpApi\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:fetchFromIpInfo\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:formatAddress\(\) has parameter \$gpsData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:formatAddress\(\) has parameter \$ipGeoData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:getIpGeolocation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:validateGpsData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\GeolocationService\:\:validateGpsData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Property App\\Services\\Evidence\\GeolocationService\:\:\$hashingService is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: app/Services/Evidence/GeolocationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\IpResolutionService\:\:basicVpnDetection\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\IpResolutionService\:\:detectVpnProxy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\IpResolutionService\:\:detectWithProxyCheck\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\IpResolutionService\:\:getIpInfo\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Method App\\Services\\Evidence\\IpResolutionService\:\:getRelevantHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Property App\\Services\\Evidence\\IpResolutionService\:\:\$hashingService is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: app/Services/Evidence/IpResolutionService.php
+
+		-
+			message: '#^Method App\\Services\\Notification\\CompletionNotificationResult\:\:__construct\(\) has parameter \$errors with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Notification/CompletionNotificationResult.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\CertificateService\:\:getCertificateInfo\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/CertificateService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\CertificateService\:\:loadFromPkcs12\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/CertificateService.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\CertificateService\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/CertificateService.php
+
+		-
+			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:getNumPages\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Call to an undefined method setasign\\Fpdi\\Fpdi\:\:setPage\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfEmbedder\:\:addSignatureAppearance\(\) has parameter \$appearance with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfEmbedder\:\:addSignatureField\(\) has parameter \$position with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfEmbedder\:\:embedMetadata\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfEmbedder\:\:hexToRgb\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\PdfEmbedder\:\:\$appearance type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\PdfEmbedder\:\:\$metadata is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\PdfEmbedder\:\:\$metadata type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\PdfEmbedder\:\:\$originalContent is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\PdfEmbedder\:\:\$signaturePosition type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfEmbedder.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Signer\:\:\$otp_verified\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Signer\:\:\$tenant_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfSignatureService\:\:prepareEmbeddedMetadata\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfSignatureService\:\:prepareEmbeddedMetadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfSignatureService\:\:prepareSignatureAppearance\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfSignatureService\:\:prepareSignatureAppearance\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PdfSignatureService\:\:signDocument\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Parameter \#1 \$token of method App\\Services\\Evidence\\TsaService\:\:verifyTimestamp\(\) expects App\\Models\\TsaToken, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Signing/PdfSignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\Pkcs7Builder\:\:buildHeaders\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/Pkcs7Builder.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PrivateKey\:\:getDetails\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PrivateKey.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\PrivateKey\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PrivateKey.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\PrivateKey\:\:\$details type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/PrivateKey.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:allSignersCompleted\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isInProgress\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:markAsCompleted\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:markAsInProgress\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\SignatureService\:\:processSignature\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\SignatureService\:\:validateSignatureData\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\SignatureService\:\:validateUploadedSignature\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/SignatureService.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\SignatureValidationResult\:\:__construct\(\) has parameter \$warnings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/SignatureValidationResult.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\SignatureValidationResult\:\:getSummary\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/SignatureValidationResult.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\SignatureValidationResult\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/SignatureValidationResult.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:formatDN\(\) has parameter \$dn with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:getExtensions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:getIssuerArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:getIssuerDN\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:getPurposes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:getSubjectArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Method App\\Services\\Signing\\X509Certificate\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Property App\\Services\\Signing\\X509Certificate\:\:\$parsed type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Signing/X509Certificate.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\TsaToken\:\:\$valid_until\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Verification/PublicVerificationService.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Services/Verification/PublicVerificationService.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 2
+			path: app/Services/Verification/PublicVerificationService.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Services/Verification/PublicVerificationService.php
+
+		-
+			message: '#^Access to constant H on an unknown class chillerlan\\QRCode\\Common\\EccLevel\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Access to constant L on an unknown class chillerlan\\QRCode\\Common\\EccLevel\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Access to constant M on an unknown class chillerlan\\QRCode\\Common\\EccLevel\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Access to constant Q on an unknown class chillerlan\\QRCode\\Common\\EccLevel\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Call to method write\(\) on an unknown class Endroid\\QrCode\\Writer\\PngWriter\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Instantiated class Endroid\\QrCode\\Writer\\PngWriter not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Instantiated class chillerlan\\QRCode\\QROptions not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Verification/QrCodeService.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Services/Verification/VerificationResult.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 4
+			path: app/Traits/Encryptable.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Illuminate\\\\Foundation\\\\Auth\\\\User'' and ''can'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Traits/HasPermissions.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Illuminate\\\\Foundation\\\\Auth\\\\User'' and ''canAny'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Traits/HasPermissions.php
+
+		-
+			message: '#^Parameter \#1 \$document of method Database\\Factories\\TsaChainFactory\:\:forDocument\(\) expects App\\Models\\Document, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/factories/ArchivedDocumentFactory.php
+
+		-
+			message: '#^Method Database\\Factories\\TenantFactory\:\:withSettings\(\) has parameter \$settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: database/factories/TenantFactory.php
+
+		-
+			message: '#^PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of property Database\\Factories\\TenantFactory\:\:\$model is not covariant with PHPDoc type class\-string\<App\\Models\\Tenant\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<App\\Models\\Tenant\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/TenantFactory.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>cumulative_hash" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: database/factories/TsaChainEntryFactory.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:auto_applies_plan_limits_when_plan_selected\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:auto_generates_slug_from_name\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_create_new_tenant_with_admin_user\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_display_tenant_statistics\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_edit_existing_tenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_filter_tenants_by_plan\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_filter_tenants_by_status\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_search_tenants_by_name\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_suspend_tenant_with_reason\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:can_unsuspend_tenant\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:closing_modal_resets_form\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:get_plan_limits_returns_correct_values\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:non_superadmin_cannot_access_tenant_management_page\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:superadmin_can_access_tenant_management_page\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:tenant_can_apply_plan_limits\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:tenant_can_check_document_quota\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:tenant_can_check_if_can_add_user\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:tenant_suspension_changes_status_correctly\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:tenant_unsuspension_clears_suspension_fields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:tenant_with_null_max_users_can_add_unlimited\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:unauthenticated_user_cannot_access_tenant_management_page\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:validates_required_fields_on_create\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:validates_suspension_reason_min_length\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:validates_unique_slug\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Admin\\TenantManagementTest\:\:validates_unique_subdomain\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Admin/TenantManagementTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Feature/AuthenticationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_can_resend_copy_to_specific_signer\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_generates_download_token_for_signer\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_handles_partial_failures_gracefully\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_sends_copies_to_all_signers\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_sets_download_expiration_to_30_days\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_throws_exception_when_no_final_document\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_throws_exception_when_no_signers\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_throws_exception_when_process_not_completed\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_updates_signer_copy_sent_at_timestamp\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\CompletionNotificationTest\:\:it_validates_email_format\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Property Tests\\Feature\\Notification\\CompletionNotificationTest\:\:\$user is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Feature/Notification/CompletionNotificationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\DocumentDownloadTest\:\:it_downloads_document_with_valid_token\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\DocumentDownloadTest\:\:it_increments_download_count\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\DocumentDownloadTest\:\:it_rejects_expired_token\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\DocumentDownloadTest\:\:it_rejects_invalid_token\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Notification\\DocumentDownloadTest\:\:it_sets_downloaded_at_timestamp\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between Carbon\\Carbon and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: tests/Feature/Notification/DocumentDownloadTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Settings/UserManagementTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Feature/Settings/UserManagementTest.php
+
+		-
+			message: '#^Cannot call method isAfter\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Feature/Settings/UserManagementTest.php
+
+		-
+			message: '#^Cannot call method isBefore\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Feature/Settings/UserManagementTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Signing/SigningAccessTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/SigningProcess/ProcessCancellationTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/SigningProcess/ProcessCancellationTest.php
+
+		-
+			message: '#^Parameter \#1 \$hashingService of class App\\Services\\Archive\\LongTermArchiveService constructor expects App\\Services\\Evidence\\HashingService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Archive/LongTermArchiveServiceTest.php
+
+		-
+			message: '#^Parameter \#2 \$resealService of class App\\Services\\Archive\\LongTermArchiveService constructor expects App\\Services\\Archive\\TsaResealService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Archive/LongTermArchiveServiceTest.php
+
+		-
+			message: '#^Parameter \#3 \$policyService of class App\\Services\\Archive\\LongTermArchiveService constructor expects App\\Services\\Archive\\RetentionPolicyService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Archive/LongTermArchiveServiceTest.php
+
+		-
+			message: '#^Parameter \#1 \$hashingService of class App\\Services\\Archive\\TsaResealService constructor expects App\\Services\\Evidence\\HashingService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Archive/TsaResealServiceTest.php
+
+		-
+			message: '#^Parameter \#2 \$tsaService of class App\\Services\\Archive\\TsaResealService constructor expects App\\Services\\Evidence\\TsaService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Archive/TsaResealServiceTest.php
+
+		-
+			message: '#^Parameter \#1 \$validator of class App\\Services\\Document\\DocumentUploadService constructor expects App\\Services\\Document\\PdfValidationService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Document/DocumentUploadServiceTest.php
+
+		-
+			message: '#^Parameter \#2 \$hashingService of class App\\Services\\Document\\DocumentUploadService constructor expects App\\Services\\Evidence\\HashingService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Document/DocumentUploadServiceTest.php
+
+		-
+			message: '#^Parameter \#3 \$tsaService of class App\\Services\\Document\\DocumentUploadService constructor expects App\\Services\\Evidence\\TsaService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Document/DocumentUploadServiceTest.php
+
+		-
+			message: '#^Parameter \#4 \$auditService of class App\\Services\\Document\\DocumentUploadService constructor expects App\\Services\\Evidence\\AuditTrailService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Document/DocumentUploadServiceTest.php
+
+		-
+			message: '#^Parameter \#5 \$tenantContext of class App\\Services\\Document\\DocumentUploadService constructor expects App\\Services\\TenantContext, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Document/DocumentUploadServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Document\\FinalDocumentServiceTest\:\:\$user is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Unit/Document/FinalDocumentServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Document/PdfValidationServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<string\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 2
+			path: tests/Unit/Document/PdfValidationServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsBool\(\) with bool will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Document/PdfValidationServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Encryption/DocumentEncryptionServiceTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Tests\\Unit\\Encryption\\EncryptableTestModel\>\|Tests\\Unit\\Encryption\\EncryptableTestModel\:\:\$secret_data\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Unit/Encryption/EncryptableTraitTest.php
+
+		-
+			message: '#^Access to an undefined property Tests\\Unit\\Encryption\\EncryptableTestModel\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 8
+			path: tests/Unit/Encryption/EncryptableTraitTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Encryption/EncryptableTraitTest.php
+
+		-
+			message: '#^Cannot access property \$public_data on array\<mixed\>\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: tests/Unit/Encryption/EncryptableTraitTest.php
+
+		-
+			message: '#^Cannot access property \$secret_data on array\<mixed\>\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: tests/Unit/Encryption/EncryptableTraitTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Encryption\\EncryptableTestModel\:\:\$encryptable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Unit/Encryption/EncryptableTraitTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$signer_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Evidence/ConsentCaptureServiceTest.php
+
+		-
+			message: '#^Parameter \#2 \$tsaService of class App\\Services\\Evidence\\ConsentCaptureService constructor expects App\\Services\\Evidence\\TsaService, Mockery\\MockInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Evidence/ConsentCaptureServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\ConsentCaptureServiceTest\:\:\$auditTrailService \(App\\Services\\Evidence\\AuditTrailService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/ConsentCaptureServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\ConsentCaptureServiceTest\:\:\$tsaService \(App\\Services\\Evidence\\TsaService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/ConsentCaptureServiceTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$signer_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Evidence/DeviceFingerprintServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\DeviceFingerprintServiceTest\:\:\$auditTrailService \(App\\Services\\Evidence\\AuditTrailService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/DeviceFingerprintServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\EvidenceDossierServiceTest\:\:\$auditTrailService \(App\\Services\\Evidence\\AuditTrailService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/EvidenceDossierServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\EvidenceDossierServiceTest\:\:\$tsaService \(App\\Services\\Evidence\\TsaService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/EvidenceDossierServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\GeolocationServiceTest\:\:\$auditTrailService \(App\\Services\\Evidence\\AuditTrailService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/GeolocationServiceTest.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Evidence/IpResolutionServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Evidence/IpResolutionServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Evidence\\IpResolutionServiceTest\:\:\$auditTrailService \(App\\Services\\Evidence\\AuditTrailService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Evidence/IpResolutionServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Evidence/TsaServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/ExampleTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with string\|null will always evaluate to false\.$#'
+			identifier: method.impossibleType
+			count: 1
+			path: tests/Unit/MultiTenantTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/MultiTenantTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Signing/CertificateServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Services\\Signing\\PrivateKey will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Signing/CertificateServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Services\\Signing\\X509Certificate will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Signing/CertificateServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Signing\\PdfSignatureServiceTest\:\:\$service is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Unit/Signing/PdfSignatureServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Signing\\PdfSignatureServiceTest\:\:\$tenant is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/Unit/Signing/PdfSignatureServiceTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:verifyIntegrity\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Unit/Signing/SignedDocumentTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$payload\.$#'
+			identifier: property.notFound
+			count: 5
+			path: tests/Unit/Signing/SigningAccessServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Models\\Document will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Signing/SigningAccessServiceTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\AuditTrailService\:\:shouldReceive\(\)\.$#'
+			identifier: method.notFound
+			count: 10
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\HashingService\:\:shouldReceive\(\)\.$#'
+			identifier: method.notFound
+			count: 13
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\Evidence\\TsaService\:\:shouldReceive\(\)\.$#'
+			identifier: method.notFound
+			count: 10
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Models\\VerificationCode will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 2
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Verification\\PublicVerificationServiceTest\:\:\$auditTrailService \(App\\Services\\Evidence\\AuditTrailService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Verification\\PublicVerificationServiceTest\:\:\$hashingService \(App\\Services\\Evidence\\HashingService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php
+
+		-
+			message: '#^Property Tests\\Unit\\Verification\\PublicVerificationServiceTest\:\:\$tsaService \(App\\Services\\Evidence\\TsaService\) does not accept Mockery\\MockInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Unit/Verification/PublicVerificationServiceTest.php

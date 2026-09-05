@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TsaToken>
+ * @extends Factory<TsaToken>
  */
 class TsaTokenFactory extends Factory
 {
@@ -23,7 +23,9 @@ class TsaTokenFactory extends Factory
     {
         return [
             'uuid' => Str::uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'hash_algorithm' => 'SHA-256',
             'data_hash' => hash('sha256', fake()->text()),
             'token' => base64_encode(fake()->sha256()),

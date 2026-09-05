@@ -6,6 +6,10 @@ namespace App\Services\Verification;
 
 use App\Models\Document;
 use App\Models\VerificationCode;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -101,21 +105,21 @@ class QrCodeService
         }
 
         // Try chillerlan/php-qrcode if available
-        if (class_exists(\chillerlan\QRCode\QRCode::class)) {
-            $options = new \chillerlan\QRCode\QROptions([
-                'outputType' => \chillerlan\QRCode\QRCode::OUTPUT_IMAGE_PNG,
+        if (class_exists(QRCode::class)) {
+            $options = new QROptions([
+                'outputType' => QRCode::OUTPUT_IMAGE_PNG,
                 'eccLevel' => match ($errorCorrection) {
-                    'L' => \chillerlan\QRCode\Common\EccLevel::L,
-                    'M' => \chillerlan\QRCode\Common\EccLevel::M,
-                    'Q' => \chillerlan\QRCode\Common\EccLevel::Q,
-                    'H' => \chillerlan\QRCode\Common\EccLevel::H,
-                    default => \chillerlan\QRCode\Common\EccLevel::M,
+                    'L' => EccLevel::L,
+                    'M' => EccLevel::M,
+                    'Q' => EccLevel::Q,
+                    'H' => EccLevel::H,
+                    default => EccLevel::M,
                 },
                 'scale' => (int) ($size / 50),
                 'imageTransparent' => false,
             ]);
 
-            return (new \chillerlan\QRCode\QRCode($options))->render($content);
+            return (new QRCode($options))->render($content);
         }
 
         // Try endroid/qr-code if available
@@ -124,7 +128,7 @@ class QrCodeService
                 ->setSize($size)
                 ->setMargin($margin);
 
-            $writer = new \Endroid\QrCode\Writer\PngWriter;
+            $writer = new PngWriter;
 
             return $writer->write($qrCode)->getString();
         }

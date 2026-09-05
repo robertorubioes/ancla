@@ -6,12 +6,14 @@ namespace Tests\Feature\SigningProcess;
 
 use App\Livewire\SigningProcess\CreateSigningProcess;
 use App\Models\Document;
+use App\Models\DocumentTemplate;
 use App\Models\Signer;
 use App\Models\SigningProcess;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CreateSigningProcessTest extends TestCase
@@ -44,19 +46,19 @@ class CreateSigningProcessTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_render_the_create_signing_process_component(): void
     {
         Livewire::actingAs($this->user)
             ->test(CreateSigningProcess::class)
             ->assertOk()
             ->assertSee('Create Signing Process')
-            ->assertSee('Select Document')
-            ->assertSee('Add Signers')
-            ->assertSee('Configure Process');
+            ->assertSee('1. Select or Upload Document')
+            ->assertSee('2. Add Signers')
+            ->assertSee('3. Configure Process');
     }
 
-    /** @test */
+    #[Test]
     public function it_initializes_with_one_empty_signer(): void
     {
         Livewire::actingAs($this->user)
@@ -66,7 +68,7 @@ class CreateSigningProcessTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_add_signers_up_to_maximum(): void
     {
         $component = Livewire::actingAs($this->user)
@@ -87,7 +89,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertSet('error', 'Maximum 10 signers allowed.');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_remove_signers_but_not_the_last_one(): void
     {
         $component = Livewire::actingAs($this->user)
@@ -107,7 +109,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertSet('error', 'At least one signer is required.');
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_required_fields(): void
     {
         Livewire::actingAs($this->user)
@@ -125,7 +127,7 @@ class CreateSigningProcessTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_email_format(): void
     {
         Livewire::actingAs($this->user)
@@ -138,7 +140,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertHasErrors(['signers.0.email']);
     }
 
-    /** @test */
+    #[Test]
     public function it_prevents_duplicate_emails(): void
     {
         Livewire::actingAs($this->user)
@@ -152,7 +154,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertHasErrors(['signers']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_deadline_must_be_in_future(): void
     {
         Livewire::actingAs($this->user)
@@ -166,7 +168,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertHasErrors(['deadlineAt']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_signing_process_with_parallel_order(): void
     {
         $this->assertDatabaseCount('signing_processes', 0);
@@ -192,7 +194,10 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals($this->document->id, $process->document_id);
         $this->assertEquals($this->tenant->id, $process->tenant_id);
         $this->assertEquals($this->user->id, $process->created_by);
-        $this->assertEquals(SigningProcess::STATUS_DRAFT, $process->status);
+        // create() envia las notificaciones acto seguido, de modo que el
+        // proceso nace en draft y queda en sent. Para dejarlo en draft esta
+        // saveAsDraft().
+        $this->assertEquals(SigningProcess::STATUS_SENT, $process->status);
         $this->assertEquals(SigningProcess::ORDER_PARALLEL, $process->signature_order);
         $this->assertEquals('Please sign this document', $process->custom_message);
 
@@ -202,7 +207,8 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals('John Doe', $signers[0]->name);
         $this->assertEquals('john@example.com', $signers[0]->email);
         $this->assertEquals(0, $signers[0]->order);
-        $this->assertEquals(Signer::STATUS_PENDING, $signers[0]->status);
+        // create() envia las notificaciones, de modo que el firmante queda en sent.
+        $this->assertEquals(Signer::STATUS_SENT, $signers[0]->status);
         $this->assertNotEmpty($signers[0]->token);
 
         $this->assertEquals('Jane Smith', $signers[1]->name);
@@ -210,7 +216,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals(1, $signers[1]->order);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_signing_process_with_sequential_order(): void
     {
         Livewire::actingAs($this->user)
@@ -227,7 +233,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals(SigningProcess::ORDER_SEQUENTIAL, $process->signature_order);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_signing_process_with_deadline(): void
     {
         $deadline = now()->addWeek()->format('Y-m-d');
@@ -246,7 +252,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals($deadline, $process->deadline_at->format('Y-m-d'));
     }
 
-    /** @test */
+    #[Test]
     public function it_normalizes_email_to_lowercase(): void
     {
         Livewire::actingAs($this->user)
@@ -261,7 +267,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals('john@example.com', $signer->email);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_unique_tokens_for_each_signer(): void
     {
         Livewire::actingAs($this->user)
@@ -280,7 +286,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals(32, strlen($signers[1]->token));
     }
 
-    /** @test */
+    #[Test]
     public function it_only_shows_documents_from_same_tenant(): void
     {
         // Create another tenant with documents
@@ -299,7 +305,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertFalse($availableDocs->contains('id', $otherDocument->id));
     }
 
-    /** @test */
+    #[Test]
     public function it_only_shows_ready_documents(): void
     {
         $pendingDoc = Document::factory()->create([
@@ -317,7 +323,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertFalse($availableDocs->contains('id', $pendingDoc->id));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_reset_the_form(): void
     {
         $component = Livewire::actingAs($this->user)
@@ -338,7 +344,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertCount('signers', 1);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_custom_message_length(): void
     {
         Livewire::actingAs($this->user)
@@ -352,7 +358,7 @@ class CreateSigningProcessTest extends TestCase
             ->assertHasErrors(['customMessage']);
     }
 
-    /** @test */
+    #[Test]
     public function it_trims_whitespace_from_signer_data(): void
     {
         Livewire::actingAs($this->user)
@@ -369,7 +375,7 @@ class CreateSigningProcessTest extends TestCase
         $this->assertEquals('+34600000000', $signer->phone);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_empty_phone_numbers(): void
     {
         Livewire::actingAs($this->user)
@@ -384,7 +390,50 @@ class CreateSigningProcessTest extends TestCase
         $this->assertNull($signer->phone);
     }
 
-    /** @test */
+    #[Test]
+    public function it_can_also_save_the_document_as_a_template(): void
+    {
+        // Un proceso que se repite acaba siendo una plantilla. Se ofrece aqui
+        // para no tener que rehacerlo desde cero.
+        Livewire::actingAs($this->user)
+            ->test(CreateSigningProcess::class)
+            ->set('documentId', $this->document->id)
+            ->set('signers', [
+                ['name' => 'John Doe', 'email' => 'john@example.com', 'phone' => ''],
+            ])
+            ->set('alsoSaveAsTemplate', true)
+            ->call('create');
+
+        $this->assertDatabaseHas('document_templates', [
+            'tenant_id' => $this->tenant->id,
+            'status' => DocumentTemplate::STATUS_DRAFT,
+        ]);
+
+        $template = DocumentTemplate::first();
+
+        $this->assertFalse($template->isUsable(), 'Queda en borrador: faltan los campos y habilitarla.');
+        $this->assertSame(
+            $this->document->id,
+            $template->versions()->first()->document_id,
+            'La plantilla parte del mismo documento que se acaba de enviar.'
+        );
+    }
+
+    #[Test]
+    public function it_does_not_create_a_template_unless_asked(): void
+    {
+        Livewire::actingAs($this->user)
+            ->test(CreateSigningProcess::class)
+            ->set('documentId', $this->document->id)
+            ->set('signers', [
+                ['name' => 'John Doe', 'email' => 'john@example.com', 'phone' => ''],
+            ])
+            ->call('create');
+
+        $this->assertDatabaseCount('document_templates', 0);
+    }
+
+    #[Test]
     public function it_creates_audit_trail_entry(): void
     {
         Livewire::actingAs($this->user)
@@ -397,7 +446,8 @@ class CreateSigningProcessTest extends TestCase
 
         $this->assertDatabaseHas('audit_trail_entries', [
             'event_type' => 'signing_process.created',
-            'user_id' => $this->user->id,
+            // La tabla guarda actor_id/actor_type, no user_id.
+            'actor_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
         ]);
     }

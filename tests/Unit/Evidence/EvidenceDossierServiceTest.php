@@ -40,8 +40,8 @@ class EvidenceDossierServiceTest extends TestCase
         // Mock TSA service
         $this->tsaService = Mockery::mock(TsaService::class);
         $tsaToken = TsaToken::factory()->create();
-        $this->tsaService->shouldReceive('getTimestamp')->andReturn($tsaToken);
-        $this->tsaService->shouldReceive('verifyToken')->andReturn(true);
+        $this->tsaService->shouldReceive('requestTimestamp')->andReturn($tsaToken);
+        $this->tsaService->shouldReceive('verifyTimestamp')->andReturn(true);
 
         // Mock audit trail service
         $this->auditTrailService = Mockery::mock(AuditTrailService::class);
@@ -355,11 +355,5 @@ class EvidenceDossierServiceTest extends TestCase
 
         $isValid = $this->service->verifySignature($dossier);
         $this->assertFalse($isValid);
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 }
