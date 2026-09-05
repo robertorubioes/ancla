@@ -4,6 +4,8 @@ namespace App\Livewire\Template;
 
 use App\Models\Document;
 use App\Models\DocumentTemplate;
+use App\Services\Document\DocumentUploadException;
+use App\Services\Document\DocumentUploadService;
 use App\Services\Template\TemplateException;
 use App\Services\Template\TemplateVersionService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -11,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 /**
@@ -25,14 +28,29 @@ use Livewire\WithPagination;
 #[Layout('components.layouts.app')]
 class TemplateIndex extends Component
 {
+    use WithFileUploads;
     use WithPagination;
 
     public string $search = '';
 
     public string $statusFilter = '';
 
-    /** Dialogo de conversion de documento a plantilla */
+    /** Dialogo de creacion de plantilla */
     public bool $showCreate = false;
+
+    /**
+     * De donde sale el PDF base: subiendolo o eligiendo uno ya subido.
+     *
+     * Subir es lo habitual: quien crea una plantilla suele tener el documento
+     * a mano. Elegir uno existente sirve para el caso contrario, cuando un
+     * documento que se mando suelto resulta que merece ser plantilla.
+     */
+    public string $sourceMode = 'upload';
+
+    /** @var mixed */
+    public $uploadedFile = null;
+
+    public bool $uploading = false;
 
     public ?int $sourceDocumentId = null;
 
@@ -56,8 +74,66 @@ class TemplateIndex extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['sourceDocumentId', 'newName', 'newDescription', 'error']);
+        $this->reset(['sourceDocumentId', 'uploadedFile', 'newName', 'newDescription', 'error']);
+        $this->sourceMode = 'upload';
         $this->showCreate = true;
+    }
+
+    public function useSourceMode(string $mode): void
+    {
+        $this->sourceMode = in_array($mode, ['upload', 'select'], true) ? $mode : 'upload';
+        $this->error = '';
+    }
+
+    /**
+     * Sube el PDF base y lo deja elegido.
+     *
+     * Se apoya en DocumentUploadService, el mismo que usa la creacion de
+     * procesos: valida el PDF, lo cifra y lo sella. Una plantilla no merece
+     * un camino de subida propio.
+     */
+    public function updatedUploadedFile(): void
+    {
+        if (! $this->uploadedFile) {
+            return;
+        }
+
+        $this->error = '';
+
+        $this->validate([
+            'uploadedFile' => ['required', 'file', 'mimes:pdf', 'max:51200'],
+        ], [], ['uploadedFile' => 'documento']);
+
+        $this->uploading = true;
+
+        try {
+            $document = app(DocumentUploadService::class)->upload(
+                $this->uploadedFile,
+                auth()->user(),
+            );
+        } catch (DocumentUploadException $e) {
+            $this->error = $e->getMessage();
+            $this->uploadedFile = null;
+            $this->uploading = false;
+
+            return;
+        } catch (\Throwable $e) {
+            report($e);
+            $this->error = 'No se pudo subir el documento.';
+            $this->uploadedFile = null;
+            $this->uploading = false;
+
+            return;
+        }
+
+        $this->sourceDocumentId = $document->id;
+
+        if (blank($this->newName)) {
+            $this->newName = pathinfo($document->original_filename, PATHINFO_FILENAME);
+        }
+
+        $this->uploadedFile = null;
+        $this->uploading = false;
     }
 
     public function closeCreate(): void
@@ -238,7 +314,9 @@ class TemplateIndex extends Component
     {
         return view('livewire.template.template-index', [
             'items' => $this->templates(),
-            'documents' => $this->showCreate ? $this->availableDocuments() : collect(),
+            'documents' => $this->showCreate && $this->sourceMode === 'select'
+                ? $this->availableDocuments()
+                : collect(),
         ]);
     }
 }
