@@ -27,6 +27,16 @@ class AuditTrailService
     private const GENESIS_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
 
     /**
+     * Formato de fecha con el que se firma una entrada.
+     *
+     * Segundos y no microsegundos a proposito: la fila se guarda con
+     * precision de segundo, asi que firmar los microsegundos daba un hash
+     * imposible de reproducir al releer y la cadena no se podia verificar
+     * nunca. Para ordenar ya estan la secuencia y el encadenado de hashes.
+     */
+    public const HASH_DATE_FORMAT = 'Y-m-d H:i:s';
+
+    /**
      * Create a new AuditTrailService instance.
      */
     public function __construct(
@@ -63,6 +73,10 @@ class AuditTrailService
             // Get previous hash (genesis hash if first entry)
             $previousHash = $lastEntry->hash ?? self::GENESIS_HASH;
 
+            // Un unico instante para firmar y para guardar: con dos llamadas a
+            // now() la fecha firmada no era la almacenada.
+            $now = now();
+
             // Prepare entry data
             $entryData = [
                 'tenant_id' => $tenantId,
@@ -76,7 +90,7 @@ class AuditTrailService
                 'ip_address' => request()?->ip(),
                 'user_agent' => request()?->userAgent(),
                 'sequence' => $sequence,
-                'created_at' => now()->format('Y-m-d H:i:s.u'),
+                'created_at' => $now->format(self::HASH_DATE_FORMAT),
             ];
 
             // Calculate hash for this entry
@@ -98,7 +112,7 @@ class AuditTrailService
                 'hash' => $hash,
                 'previous_hash' => $previousHash,
                 'sequence' => $sequence,
-                'created_at' => now(),
+                'created_at' => $now,
             ]);
 
             // Request TSA timestamp for critical events
@@ -194,7 +208,7 @@ class AuditTrailService
                 'ip_address' => $entry->ip_address,
                 'user_agent' => $entry->user_agent,
                 'sequence' => $entry->sequence,
-                'created_at' => $entry->created_at->format('Y-m-d H:i:s.u'),
+                'created_at' => $entry->created_at->format(self::HASH_DATE_FORMAT),
             ], $entry->previous_hash);
 
             if (! hash_equals($entry->hash, $calculatedHash)) {

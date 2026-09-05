@@ -8,6 +8,7 @@ use App\Models\SignedDocument;
 use App\Models\Tenant;
 use App\Services\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SignedDocumentTest extends TestCase
@@ -29,13 +30,15 @@ class SignedDocumentTest extends TestCase
         $hash = hash('sha256', $content);
         $path = 'signed/test.pdf';
 
-        // Create file in the actual storage path
-        $fullPath = storage_path('app/'.$path);
-        @mkdir(dirname($fullPath), 0755, true);
-        file_put_contents($fullPath, $content);
+        // Se escribe por el disco, no en una ruta armada a mano: es por donde
+        // lo lee verifyIntegrity(), y asi la prueba no depende de donde tenga
+        // configurada su raiz el disco local.
+        Storage::fake('local');
+        Storage::disk('local')->put($path, $content);
 
         $signedDoc = SignedDocument::factory()->create([
             'tenant_id' => $tenant->id,
+            'storage_disk' => 'local',
             'signed_path' => $path,
             'content_hash' => $hash,
         ]);
@@ -46,8 +49,6 @@ class SignedDocumentTest extends TestCase
         // Assert
         $this->assertTrue($isValid);
 
-        // Cleanup
-        @unlink($fullPath);
     }
 
     public function test_verify_integrity_fails_when_file_modified(): void
@@ -63,13 +64,15 @@ class SignedDocumentTest extends TestCase
         $originalHash = hash('sha256', $originalContent);
         $path = 'signed/test-modified.pdf';
 
-        // Create file with modified content
-        $fullPath = storage_path('app/'.$path);
-        @mkdir(dirname($fullPath), 0755, true);
-        file_put_contents($fullPath, $modifiedContent);
+        // Se escribe por el disco, no en una ruta armada a mano: es por donde
+        // lo lee verifyIntegrity(), y asi la prueba no depende de donde tenga
+        // configurada su raiz el disco local.
+        Storage::fake('local');
+        Storage::disk('local')->put($path, $modifiedContent);
 
         $signedDoc = SignedDocument::factory()->create([
             'tenant_id' => $tenant->id,
+            'storage_disk' => 'local',
             'signed_path' => $path,
             'content_hash' => $originalHash, // Hash of original
         ]);
@@ -80,7 +83,5 @@ class SignedDocumentTest extends TestCase
         // Assert
         $this->assertFalse($isValid);
 
-        // Cleanup
-        @unlink($fullPath);
     }
 }
