@@ -40,34 +40,37 @@
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
 
         {{-- Lienzo: paginas del PDF con las cajas encima --}}
-        <div class="bg-gray-100 rounded-xl p-6 overflow-auto">
+        <div class="bg-gray-100 rounded-xl p-6">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <p class="text-xs text-gray-500">
-                    {{ __('Haz doble clic sobre la pagina para anadir un campo. Arrastra para moverlo, y la esquina inferior derecha para redimensionarlo.') }}
-                </p>
+                <button
+                    type="button"
+                    @click="addFieldHere()"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+                >
+                    <span class="text-base leading-none">+</span>
+                    {{ __('Anadir campo') }}
+                </button>
 
-                @if (count($pages) > 1)
-                    <div class="flex items-center gap-2 shrink-0">
-                        <span class="text-xs text-gray-500">{{ __('Ir a la pagina') }}</span>
-                        <select
-                            @change="goToPage($event.target.value)"
-                            class="rounded-md border-gray-300 text-xs py-1 pr-7"
-                        >
-                            @foreach ($pages as $page)
-                                <option value="{{ $page['number'] }}">
-                                    {{ $page['number'] }}@if ($fieldsPerPage[$page['number']] ?? false) · {{ $fieldsPerPage[$page['number']] }} {{ __('campos') }}@endif
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="text-xs text-gray-400">{{ __('de') }} {{ count($pages) }}</span>
-                    </div>
-                @endif
+                <div class="flex items-center gap-3 text-xs text-gray-500">
+                    <span>{{ __('o haz doble clic sobre el documento') }}</span>
+                    @if (count($pages) > 1)
+                        <span class="tabular-nums">
+                            {{ __('Pagina') }} <span x-text="currentPage">1</span> {{ __('de') }} {{ count($pages) }}
+                        </span>
+                    @endif
+                </div>
             </div>
 
             <template x-if="loadError">
                 <p class="text-sm text-red-700 py-6 text-center" x-text="loadError"></p>
             </template>
 
+            <div
+                x-ref="scroller"
+                @scroll.debounce.100ms="trackCurrentPage()"
+                class="overflow-y-auto rounded-lg"
+                style="max-height: calc(100vh - 260px)"
+            >
             @forelse ($pages as $page)
                 <div
                     wire:key="tpl-page-{{ $page['number'] }}"
@@ -128,6 +131,7 @@
                     {{ __('No se pudieron leer las paginas del documento.') }}
                 </p>
             @endforelse
+            </div>
         </div>
 
         {{-- Panel lateral --}}

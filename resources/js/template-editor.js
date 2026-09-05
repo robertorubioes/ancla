@@ -41,34 +41,39 @@ function loadPdfJs() {
 }
 
 export default function templateEditor({ pdfUrl }) {
+    /*
+     * Estado que NO puede vivir en el objeto de Alpine.
+     *
+     * Alpine envuelve sus datos en un Proxy, y el documento de PDF.js usa
+     * campos privados de clase: leerlos a traves de un Proxy lanza
+     * "Cannot read private member #s from an object whose class did not
+     * declare it". El observador y el conjunto de paginas pintadas van aqui
+     * por lo mismo.
+     */
+    let doc = null;
+    let observer = null;
+    const painted = new Set();
+
     return {
         pdfUrl,
 
         loading: true,
         loadError: '',
 
+        /** Numero de paginas, para la interfaz */
+        pageCount: 0,
+
+        /** Pagina que se esta mirando ahora mismo */
+        currentPage: 1,
+
         /** Arrastre en curso */
         drag: null,
-
-        /** Documento de PDF.js, una vez abierto */
-        doc: null,
-
-        /** Observa que paginas entran en pantalla, para pintarlas entonces */
-        observer: null,
-
-        /**
-         * Paginas ya pintadas.
-         *
-         * Se lleva aqui y no en un data- del DOM: Livewire rehace el HTML al
-         * anadir o mover un campo, y se llevaria por delante cualquier marca
-         * que hubiesemos dejado en los elementos.
-         */
-        painted: new Set(),
 
         async init() {
             try {
                 const pdfjsLib = await loadPdfJs();
-                this.doc = await pdfjsLib.getDocument({ url: this.pdfUrl }).promise;
+                doc = await pdfjsLib.getDocument({ url: this.pdfUrl }).promise;
+                this.pageCount = doc.numPages;
 
                 this.watchPages();
 
@@ -102,9 +107,9 @@ export default function templateEditor({ pdfUrl }) {
          * mira, y el resto queda en blanco hasta que hace falta.
          */
         watchPages() {
-            this.observer?.disconnect();
+            observer?.disconnect();
 
-            this.observer = new IntersectionObserver(
+            observer = new IntersectionObserver(
                 (entries) => {
                     for (const entry of entries) {
                         if (entry.isIntersecting) {
@@ -112,18 +117,19 @@ export default function templateEditor({ pdfUrl }) {
                         }
                     }
                 },
-                // Con margen, para que este pintada antes de llegar a ella
-                { rootMargin: '600px 0px' },
+                // Se observa dentro del panel con scroll, con margen para
+                // que la pagina llegue ya pintada.
+                { root: this.$refs.scroller ?? null, rootMargin: '600px 0px' },
             );
 
             for (const holder of document.querySelectorAll('.tpl-page')) {
-                this.observer.observe(holder);
+                observer.observe(holder);
 
                 // Un canvas que Livewire haya recreado se queda vacio aunque
                 // la pagina figure como pintada: se repinta.
                 const canvas = holder.querySelector('canvas');
                 if (canvas && canvas.width === 0) {
-                    this.painted.delete(Number(holder.dataset.page));
+                    painted.delete(Number(holder.dataset.page));
                 }
             }
         },
@@ -132,16 +138,16 @@ export default function templateEditor({ pdfUrl }) {
             const number = Number(holder.dataset.page);
             const canvas = holder.querySelector('canvas');
 
-            if (!canvas || !this.doc || this.painted.has(number)) {
+            if (!canvas || !doc || painted.has(number)) {
                 return;
             }
 
             // Se marca antes de empezar: pintar es asincrono y el observador
             // puede volver a disparar mientras tanto.
-            this.painted.add(number);
+            painted.add(number);
 
             try {
-                const page = await this.doc.getPage(number);
+                const page = await doc.getPage(number);
                 const base = page.getViewport({ scale: 1 });
 
                 // Al ancho real del hueco y con el ratio del dispositivo, para
@@ -158,15 +164,69 @@ export default function templateEditor({ pdfUrl }) {
                     viewport,
                 }).promise;
             } catch (error) {
-                this.painted.delete(number);
+                painted.delete(number);
                 console.error('[template-editor] pagina', number, error);
             }
         },
 
-        goToPage(number) {
-            document
-                .querySelector(`.tpl-page[data-page="${number}"]`)
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        /**
+         * Anade un campo en la pagina que se este mirando.
+         *
+         * Existe porque nadie adivina que hay que hacer doble clic sobre el
+         * documento. El doble clic se mantiene como atajo para colocarlo en
+         * un punto concreto.
+         */
+        addFieldHere() {
+            const holder = this.visiblePage();
+
+            if (!holder) {
+                return;
+            }
+
+            const mmWidth = Number(holder.dataset.mmWidth);
+            const mmHeight = Number(holder.dataset.mmHeight);
+
+            // Centrado a lo ancho y un poco por encima del medio: se ve
+            // siempre, y desde ahi se arrastra a donde toque.
+            this.$wire.addField(
+                Number(holder.dataset.page),
+                this.round(mmWidth / 2 - 30),
+                this.round(mmHeight / 3),
+            );
+        },
+
+        /** La pagina que ocupa mas superficie visible del panel */
+        visiblePage() {
+            const scroller = this.$refs.scroller;
+
+            if (!scroller) {
+                return document.querySelector('.tpl-page');
+            }
+
+            const view = scroller.getBoundingClientRect();
+            let mejor = null;
+            let mayor = 0;
+
+            for (const holder of scroller.querySelectorAll('.tpl-page')) {
+                const r = holder.getBoundingClientRect();
+                const visible = Math.min(r.bottom, view.bottom) - Math.max(r.top, view.top);
+
+                if (visible > mayor) {
+                    mayor = visible;
+                    mejor = holder;
+                }
+            }
+
+            return mejor ?? document.querySelector('.tpl-page');
+        },
+
+        /** Mantiene al dia el indicador de pagina */
+        trackCurrentPage() {
+            const holder = this.visiblePage();
+
+            if (holder) {
+                this.currentPage = Number(holder.dataset.page);
+            }
         },
 
         /** El contenedor de la pagina, con sus dimensiones en mm */
