@@ -9,6 +9,7 @@ use App\Services\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -44,7 +45,7 @@ class DocumentEncryptionServiceTest extends TestCase
         Config::set('app.encryption_key', 'base64:'.base64_encode(random_bytes(32)));
     }
 
-    /** @test */
+    #[Test]
     public function it_encrypts_plaintext_successfully(): void
     {
         $plaintext = 'This is secret document content';
@@ -56,7 +57,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertGreaterThanOrEqual(28, strlen($encrypted)); // Min size: 12 + 16 bytes
     }
 
-    /** @test */
+    #[Test]
     public function it_decrypts_encrypted_data_successfully(): void
     {
         $plaintext = 'This is secret document content';
@@ -67,7 +68,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertEquals($plaintext, $decrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_produces_different_ciphertext_for_same_plaintext(): void
     {
         $plaintext = 'Same content';
@@ -83,7 +84,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertEquals($plaintext, $this->service->decrypt($encrypted2));
     }
 
-    /** @test */
+    #[Test]
     public function it_uses_different_keys_for_different_tenants(): void
     {
         $plaintext = 'Same content across tenants';
@@ -108,7 +109,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertEquals($plaintext, $this->service->decrypt($encrypted2));
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_decrypt_with_wrong_tenant_context(): void
     {
         $plaintext = 'Tenant-specific content';
@@ -125,7 +126,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->decrypt($encrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_detects_data_tampering(): void
     {
         $plaintext = 'Original content';
@@ -139,7 +140,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->decrypt($tampered);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_invalid_encrypted_data_format(): void
     {
         $invalidData = 'too-short'; // Less than 28 bytes
@@ -149,7 +150,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->decrypt($invalidData);
     }
 
-    /** @test */
+    #[Test]
     public function it_identifies_encrypted_data_correctly(): void
     {
         $plaintext = 'Test content';
@@ -160,7 +161,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertFalse($this->service->isEncrypted('short'));
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_tenant_context_missing_for_encryption(): void
     {
         $this->tenantContext->clear();
@@ -170,7 +171,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->encrypt('test');
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_tenant_context_missing_for_decryption(): void
     {
         // Encrypt with tenant context
@@ -184,7 +185,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->decrypt($encrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_master_key_missing(): void
     {
         // La clave vive en config/encryption.php, no en config/app.php.
@@ -195,7 +196,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->encrypt('test');
     }
 
-    /** @test */
+    #[Test]
     public function it_caches_derived_tenant_keys(): void
     {
         Cache::shouldReceive('get')
@@ -214,7 +215,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->service->encrypt('test');
     }
 
-    /** @test */
+    #[Test]
     public function it_provides_encryption_metadata(): void
     {
         $plaintext = 'Test content';
@@ -231,7 +232,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertArrayHasKey('total_size', $metadata);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_large_content(): void
     {
         // Generate 1MB of data
@@ -244,7 +245,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertGreaterThan(strlen($largeContent), strlen($encrypted)); // Overhead from nonce + tag
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_binary_content(): void
     {
         // Test with binary data (PDF-like content)
@@ -256,7 +257,7 @@ class DocumentEncryptionServiceTest extends TestCase
         $this->assertEquals($binaryContent, $decrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_clears_key_cache_for_tenant(): void
     {
         // First encrypt to populate cache

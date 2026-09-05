@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\Document\FinalDocumentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FinalDocumentGenerationTest extends TestCase
@@ -38,7 +39,7 @@ class FinalDocumentGenerationTest extends TestCase
         Storage::fake('local');
     }
 
-    /** @test */
+    #[Test]
     public function it_automatically_generates_final_document_when_process_completed(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -120,7 +121,7 @@ class FinalDocumentGenerationTest extends TestCase
         Storage::assertExists($process->final_document_path);
     }
 
-    /** @test */
+    #[Test]
     public function it_merges_multiple_signed_documents(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -199,7 +200,7 @@ class FinalDocumentGenerationTest extends TestCase
         $this->assertEquals($result->contentHash, $process->final_document_hash);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_certification_page(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -273,7 +274,7 @@ class FinalDocumentGenerationTest extends TestCase
         $this->assertTrue(Storage::exists($result->storagePath));
     }
 
-    /** @test */
+    #[Test]
     public function it_respects_tenant_isolation(): void
     {
         $tenant2 = Tenant::factory()->create();
@@ -347,7 +348,7 @@ class FinalDocumentGenerationTest extends TestCase
         $this->assertStringStartsNotWith("final/{$tenant2->id}/", $result->storagePath);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_correct_hash(): void
     {
         $document = Document::factory()->for($this->tenant)->create([

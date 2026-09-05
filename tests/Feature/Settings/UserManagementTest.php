@@ -13,6 +13,7 @@ use App\Models\UserInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UserManagementTest extends TestCase
@@ -52,7 +53,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_access_user_management_page(): void
     {
         $response = $this->actingAs($this->admin)->get(route('settings.users'));
@@ -61,7 +62,7 @@ class UserManagementTest extends TestCase
         $response->assertSeeLivewire('settings.user-management');
     }
 
-    /** @test */
+    #[Test]
     public function operator_cannot_access_user_management_page(): void
     {
         $response = $this->actingAs($this->operator)->get(route('settings.users'));
@@ -69,7 +70,7 @@ class UserManagementTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
+    #[Test]
     public function viewer_cannot_access_user_management_page(): void
     {
         $response = $this->actingAs($this->viewer)->get(route('settings.users'));
@@ -77,7 +78,7 @@ class UserManagementTest extends TestCase
         $response->assertForbidden();
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_see_all_tenant_users(): void
     {
         Livewire::actingAs($this->admin)
@@ -87,7 +88,7 @@ class UserManagementTest extends TestCase
             ->assertSee($this->viewer->name);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_invite_new_user(): void
     {
         Mail::fake();
@@ -113,7 +114,7 @@ class UserManagementTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function cannot_invite_user_with_existing_email(): void
     {
         Livewire::actingAs($this->admin)
@@ -129,7 +130,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function cannot_invite_user_with_pending_invitation(): void
     {
         $existingInvitation = UserInvitation::createInvitation(
@@ -149,7 +150,7 @@ class UserManagementTest extends TestCase
             ->assertHasErrors(['inviteEmail']);
     }
 
-    /** @test */
+    #[Test]
     public function invitation_email_validation(): void
     {
         Livewire::actingAs($this->admin)
@@ -161,7 +162,7 @@ class UserManagementTest extends TestCase
             ->assertHasErrors(['inviteEmail']);
     }
 
-    /** @test */
+    #[Test]
     public function invitation_requires_name(): void
     {
         Livewire::actingAs($this->admin)
@@ -173,7 +174,7 @@ class UserManagementTest extends TestCase
             ->assertHasErrors(['inviteName']);
     }
 
-    /** @test */
+    #[Test]
     public function invitation_requires_valid_role(): void
     {
         Livewire::actingAs($this->admin)
@@ -185,7 +186,7 @@ class UserManagementTest extends TestCase
             ->assertHasErrors(['inviteRole']);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_resend_invitation(): void
     {
         Mail::fake();
@@ -212,7 +213,7 @@ class UserManagementTest extends TestCase
         Mail::assertSent(UserInvitationMail::class);
     }
 
-    /** @test */
+    #[Test]
     public function cannot_resend_invitation_more_than_three_times(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -231,7 +232,7 @@ class UserManagementTest extends TestCase
         $this->assertFalse($invitation->canResend());
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_cancel_invitation(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -251,7 +252,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_edit_user(): void
     {
         Livewire::actingAs($this->admin)
@@ -269,7 +270,7 @@ class UserManagementTest extends TestCase
         $this->assertEquals(UserRole::VIEWER, $this->operator->role);
     }
 
-    /** @test */
+    #[Test]
     public function admin_cannot_change_own_role(): void
     {
         Livewire::actingAs($this->admin)
@@ -286,7 +287,7 @@ class UserManagementTest extends TestCase
         $this->assertEquals(UserRole::ADMIN, $this->admin->role);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_deactivate_user(): void
     {
         Livewire::actingAs($this->admin)
@@ -298,7 +299,7 @@ class UserManagementTest extends TestCase
         $this->assertEquals('inactive', $this->operator->status);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_reactivate_user(): void
     {
         $this->operator->update(['status' => 'inactive']);
@@ -312,7 +313,7 @@ class UserManagementTest extends TestCase
         $this->assertEquals('active', $this->operator->status);
     }
 
-    /** @test */
+    #[Test]
     public function admin_cannot_deactivate_themselves(): void
     {
         Livewire::actingAs($this->admin)
@@ -324,7 +325,7 @@ class UserManagementTest extends TestCase
         $this->assertEquals('active', $this->admin->status);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_delete_user(): void
     {
         Livewire::actingAs($this->admin)
@@ -337,7 +338,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_cannot_delete_themselves(): void
     {
         Livewire::actingAs($this->admin)
@@ -351,7 +352,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function cannot_delete_user_with_active_signing_processes(): void
     {
         SigningProcess::factory()->create([
@@ -371,7 +372,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_search_users_by_name(): void
     {
         Livewire::actingAs($this->admin)
@@ -380,7 +381,7 @@ class UserManagementTest extends TestCase
             ->assertSee($this->operator->name);
     }
 
-    /** @test */
+    #[Test]
     public function can_search_users_by_email(): void
     {
         Livewire::actingAs($this->admin)
@@ -389,7 +390,7 @@ class UserManagementTest extends TestCase
             ->assertSee($this->operator->email);
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_users_by_role(): void
     {
         Livewire::actingAs($this->admin)
@@ -399,7 +400,7 @@ class UserManagementTest extends TestCase
             ->assertDontSee($this->viewer->name);
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_users_by_status(): void
     {
         $this->operator->update(['status' => 'inactive']);
@@ -410,7 +411,7 @@ class UserManagementTest extends TestCase
             ->assertSee($this->operator->name);
     }
 
-    /** @test */
+    #[Test]
     public function user_invitation_creates_secure_token(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -425,7 +426,7 @@ class UserManagementTest extends TestCase
         $this->assertEquals(64, strlen($invitation->token));
     }
 
-    /** @test */
+    #[Test]
     public function user_invitation_expires_after_seven_days(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -440,7 +441,7 @@ class UserManagementTest extends TestCase
         $this->assertTrue($invitation->expires_at->isBefore(now()->addDays(8)));
     }
 
-    /** @test */
+    #[Test]
     public function guest_can_view_valid_invitation(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -458,7 +459,7 @@ class UserManagementTest extends TestCase
         $response->assertSee($this->tenant->name);
     }
 
-    /** @test */
+    #[Test]
     public function guest_sees_error_for_invalid_invitation_token(): void
     {
         $response = $this->get(route('invitation.show', 'invalid-token'));
@@ -467,7 +468,7 @@ class UserManagementTest extends TestCase
         $response->assertSee('Invalid Invitation');
     }
 
-    /** @test */
+    #[Test]
     public function guest_sees_error_for_expired_invitation(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -486,7 +487,7 @@ class UserManagementTest extends TestCase
         $response->assertSee('Invalid Invitation');
     }
 
-    /** @test */
+    #[Test]
     public function guest_can_accept_invitation_and_create_account(): void
     {
         Mail::fake();
@@ -524,7 +525,7 @@ class UserManagementTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    /** @test */
+    #[Test]
     public function accepting_invitation_requires_valid_password(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -547,7 +548,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function accepting_invitation_requires_password_confirmation(): void
     {
         $invitation = UserInvitation::createInvitation(
@@ -566,7 +567,7 @@ class UserManagementTest extends TestCase
         $response->assertSessionHasErrors(['password']);
     }
 
-    /** @test */
+    #[Test]
     public function admin_cannot_invite_super_admin(): void
     {
         Livewire::actingAs($this->admin)
@@ -582,7 +583,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function operator_cannot_invite_admin(): void
     {
         // Note: This test validates the logic, but in practice operators can't access user management
@@ -600,7 +601,7 @@ class UserManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_cannot_assign_super_admin_role(): void
     {
         Livewire::actingAs($this->admin)

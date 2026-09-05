@@ -74,8 +74,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test promoter can download final document.
-     *
-     * @test
      */
     public function test_promoter_can_download_final_document(): void
     {
@@ -92,8 +90,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test non-creator cannot download document (403).
-     *
-     * @test
      */
     public function test_non_creator_cannot_download_document(): void
     {
@@ -106,8 +102,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test download requires completed process.
-     *
-     * @test
      */
     public function test_download_requires_completed_process(): void
     {
@@ -120,8 +114,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test promoter can download evidence dossier.
-     *
-     * @test
      */
     public function test_promoter_can_download_dossier(): void
     {
@@ -138,8 +130,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test dossier download requires completed process.
-     *
-     * @test
      */
     public function test_dossier_requires_completed_process(): void
     {
@@ -152,8 +142,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test promoter can download bundle (ZIP with both files).
-     *
-     * @test
      */
     public function test_promoter_can_download_bundle(): void
     {
@@ -170,8 +158,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test bundle contains both final document and evidence dossier.
-     *
-     * @test
      */
     public function test_bundle_contains_both_files(): void
     {
@@ -199,8 +185,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test ZIP cleanup happens on error.
-     *
-     * @test
      */
     public function test_zip_cleanup_on_error(): void
     {
@@ -232,8 +216,6 @@ class PromoterDownloadTest extends TestCase
 
     /**
      * Test tenant isolation on downloads.
-     *
-     * @test
      */
     public function test_tenant_isolation_on_downloads(): void
     {

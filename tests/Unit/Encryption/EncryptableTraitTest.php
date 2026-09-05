@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -54,7 +55,7 @@ class EncryptableTraitTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function it_encrypts_attributes_on_save(): void
     {
         $model = new EncryptableTestModel([
@@ -75,7 +76,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertEquals('This is public', $raw->public_data);
     }
 
-    /** @test */
+    #[Test]
     public function it_decrypts_attributes_on_retrieval(): void
     {
         $model = new EncryptableTestModel([
@@ -91,7 +92,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertEquals('This is secret', $retrieved->secret_data);
     }
 
-    /** @test */
+    #[Test]
     public function it_prevents_double_encryption(): void
     {
         $model = new EncryptableTestModel([
@@ -115,7 +116,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertEquals($firstEncrypted, $secondEncrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_checks_if_attribute_is_encrypted(): void
     {
         $model = new EncryptableTestModel([
@@ -137,7 +138,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertNotEquals('Test data', $rawData);
     }
 
-    /** @test */
+    #[Test]
     public function it_provides_encryption_metadata_for_attributes(): void
     {
         $model = new EncryptableTestModel([
@@ -152,7 +153,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertArrayHasKey('encrypted', $metadata);
     }
 
-    /** @test */
+    #[Test]
     public function it_manually_encrypts_attribute(): void
     {
         $model = new EncryptableTestModel(['tenant_id' => $this->tenant->id]);
@@ -164,7 +165,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertIsString($encrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_manually_decrypts_attribute(): void
     {
         $model = new EncryptableTestModel(['tenant_id' => $this->tenant->id]);
@@ -176,7 +177,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertEquals($plaintext, $decrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_for_non_encryptable_attribute_encryption(): void
     {
         $model = new EncryptableTestModel(['tenant_id' => $this->tenant->id]);
@@ -185,7 +186,7 @@ class EncryptableTraitTest extends TestCase
         $model->encryptAttribute('public_data', 'test');
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_for_non_encryptable_attribute_decryption(): void
     {
         $model = new EncryptableTestModel(['tenant_id' => $this->tenant->id]);
@@ -194,7 +195,7 @@ class EncryptableTraitTest extends TestCase
         $model->decryptAttribute('public_data', 'test');
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_null_values(): void
     {
         $model = new EncryptableTestModel([
@@ -208,7 +209,7 @@ class EncryptableTraitTest extends TestCase
         $this->assertNull($retrieved->secret_data);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_empty_string(): void
     {
         $model = new EncryptableTestModel([

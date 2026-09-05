@@ -139,14 +139,20 @@ class DeviceFingerprintServiceTest extends TestCase
         $request = Request::create('/sign', 'POST');
 
         $signable = EvidencePackage::factory()->create();
-        $clientData = [
+
+        $fingerprint = $this->service->capture($request, $signable, [
+            'screen_width' => 1920,
+            'timezone' => 'Europe/Madrid',
             'custom_field' => 'custom_value',
-            'another_field' => 123,
-        ];
+        ]);
 
-        $fingerprint = $this->service->capture($request, $signable, $clientData);
-
-        $this->assertEquals($clientData, $fingerprint->raw_data);
+        // El servicio guarda la instantanea ya saneada, no lo que llego tal
+        // cual: los datos vienen de un endpoint publico y solo se acepta la
+        // lista blanca de campos, con sus cotas. Lo que importa fijar aqui es
+        // que un campo inventado no llega a la base de datos.
+        $this->assertSame(1920, $fingerprint->raw_data['screen_width']);
+        $this->assertSame('Europe/Madrid', $fingerprint->raw_data['timezone']);
+        $this->assertArrayNotHasKey('custom_field', $fingerprint->raw_data);
     }
 
     #[Test]

@@ -196,6 +196,10 @@ class DocumentUploadServiceTest extends TestCase
         $this->expectException(DocumentUploadException::class);
         $this->expectExceptionMessage('No tenant context available');
 
+        // Sin tenant en contexto el servicio recurre al del usuario, asi que
+        // para llegar al error hace falta un usuario que tampoco lo tenga.
+        $this->user->forceFill(['tenant_id' => null]);
+
         $this->service->upload($file, $this->user);
     }
 

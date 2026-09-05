@@ -12,6 +12,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProcessesDashboardTest extends TestCase
@@ -36,7 +37,7 @@ class ProcessesDashboardTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_renders_successfully_for_authenticated_user(): void
     {
         Livewire::actingAs($this->user)
@@ -46,7 +47,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('New Process');
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_statistics_correctly(): void
     {
         // Create processes with different statuses
@@ -79,7 +80,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('Completed');
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_processes_in_table(): void
     {
         $process = SigningProcess::factory()->create([
@@ -101,7 +102,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('View Details');
     }
 
-    /** @test */
+    #[Test]
     public function it_filters_by_status(): void
     {
         SigningProcess::factory()->create([
@@ -125,7 +126,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee($this->document->original_filename);
     }
 
-    /** @test */
+    #[Test]
     public function it_searches_by_document_name(): void
     {
         $searchableDoc = Document::factory()->create([
@@ -152,7 +153,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('contract-search-test.pdf');
     }
 
-    /** @test */
+    #[Test]
     public function it_searches_by_signer_name(): void
     {
         $process = SigningProcess::factory()->create([
@@ -173,7 +174,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee($this->document->original_filename);
     }
 
-    /** @test */
+    #[Test]
     public function it_clears_filters(): void
     {
         Livewire::actingAs($this->user)
@@ -185,7 +186,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSet('search', '');
     }
 
-    /** @test */
+    #[Test]
     public function it_opens_details_modal(): void
     {
         $process = SigningProcess::factory()->create([
@@ -201,7 +202,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSet('showDetailsModal', true);
     }
 
-    /** @test */
+    #[Test]
     public function it_closes_details_modal(): void
     {
         $process = SigningProcess::factory()->create([
@@ -218,7 +219,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSet('showDetailsModal', false);
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_process_completion_percentage(): void
     {
         $process = SigningProcess::factory()->create([
@@ -243,7 +244,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('50%'); // 1 out of 2 = 50%
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_signer_timeline_in_details(): void
     {
         $process = SigningProcess::factory()->create([
@@ -270,7 +271,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('Signers Timeline');
     }
 
-    /** @test */
+    #[Test]
     public function it_only_shows_processes_for_current_user(): void
     {
         $otherUser = User::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -294,7 +295,7 @@ class ProcessesDashboardTest extends TestCase
         $this->assertEquals(1, $component->get('processes')->total());
     }
 
-    /** @test */
+    #[Test]
     public function it_enforces_tenant_isolation(): void
     {
         $otherTenant = Tenant::factory()->create();
@@ -317,7 +318,7 @@ class ProcessesDashboardTest extends TestCase
         $this->assertEquals(0, $component->get('processes')->total());
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_empty_state_when_no_processes(): void
     {
         Livewire::actingAs($this->user)
@@ -326,7 +327,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('Create Your First Process');
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_deadline_information(): void
     {
         $process = SigningProcess::factory()->create([
@@ -341,7 +342,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee($process->deadline_at->format('M d, Y'));
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_custom_message_in_details(): void
     {
         $process = SigningProcess::factory()->create([
@@ -357,7 +358,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('Please sign this important document.');
     }
 
-    /** @test */
+    #[Test]
     public function it_resets_pagination_when_filter_changes(): void
     {
         // Create 15 processes to force pagination
@@ -383,7 +384,7 @@ class ProcessesDashboardTest extends TestCase
         $this->assertCount(10, $component->get('processes')->items());
     }
 
-    /** @test */
+    #[Test]
     public function it_displays_signature_order_in_table(): void
     {
         SigningProcess::factory()->create([
@@ -398,7 +399,7 @@ class ProcessesDashboardTest extends TestCase
             ->assertSee('Sequential');
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_statistics_correctly(): void
     {
         SigningProcess::factory()->count(2)->create([

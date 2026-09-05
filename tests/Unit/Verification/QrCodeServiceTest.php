@@ -12,6 +12,7 @@ use App\Services\Verification\PublicVerificationService;
 use App\Services\Verification\QrCodeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class QrCodeServiceTest extends TestCase
@@ -37,7 +38,7 @@ class QrCodeServiceTest extends TestCase
         Storage::fake('local');
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_verification_url(): void
     {
         $code = 'TESTCODE123';
@@ -47,7 +48,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertStringContainsString($code, $url);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_short_verification_url(): void
     {
         $shortCode = 'TEST12';
@@ -57,7 +58,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertStringContainsString($shortCode, $url);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_qr_code_for_verification_code(): void
     {
         $document = Document::factory()->create([
@@ -83,7 +84,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertEquals($path, $verificationCode->qr_code_path);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_qr_code_for_document(): void
     {
         $document = Document::factory()->create([
@@ -123,7 +124,7 @@ class QrCodeServiceTest extends TestCase
         Storage::disk('local')->assertExists($path);
     }
 
-    /** @test */
+    #[Test]
     public function it_retrieves_qr_code_content(): void
     {
         $document = Document::factory()->create([
@@ -150,7 +151,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertNotEmpty($content);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_null_for_missing_qr_code(): void
     {
         $document = Document::factory()->create([
@@ -173,7 +174,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertNull($content);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_qr_code_as_data_url(): void
     {
         $document = Document::factory()->create([
@@ -200,7 +201,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertStringContainsString('base64,', $dataUrl);
     }
 
-    /** @test */
+    #[Test]
     public function it_deletes_qr_code(): void
     {
         $document = Document::factory()->create([
@@ -233,7 +234,7 @@ class QrCodeServiceTest extends TestCase
         $this->assertNull($verificationCode->qr_code_path);
     }
 
-    /** @test */
+    #[Test]
     public function it_regenerates_qr_code(): void
     {
         $document = Document::factory()->create([
@@ -254,15 +255,20 @@ class QrCodeServiceTest extends TestCase
         $oldPath = $this->service->generateForCode($verificationCode);
         $verificationCode->refresh();
 
+        Storage::disk('local')->delete($oldPath);
+        Storage::disk('local')->assertMissing($oldPath);
+
         // Regenerate
         $newPath = $this->service->regenerateQrCode($verificationCode);
 
-        $this->assertNotEquals($oldPath, $newPath);
-        Storage::disk('local')->assertMissing($oldPath);
+        // El nombre sale del uuid del codigo de verificacion, asi que regenerar
+        // reescribe el mismo fichero: es lo que se quiere, porque el QR apunta
+        // siempre a la misma url y no tiene sentido ir dejando copias sueltas.
+        $this->assertSame($oldPath, $newPath);
         Storage::disk('local')->assertExists($newPath);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_true_when_deleting_non_existent_qr(): void
     {
         $document = Document::factory()->create([

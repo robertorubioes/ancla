@@ -202,9 +202,7 @@ class ConsentCaptureServiceTest extends TestCase
     {
         $signable = EvidencePackage::factory()->create();
 
-        // Create a simple base64 image
-        $imageData = base64_encode('fake image data');
-        $dataUrl = "data:image/png;base64,{$imageData}";
+        $dataUrl = 'data:image/png;base64,'.base64_encode($this->pngDePrueba());
 
         $record = $this->service->recordConsent(
             $signable,
@@ -405,5 +403,25 @@ class ConsentCaptureServiceTest extends TestCase
         $this->assertContains('signature', $types);
         $this->assertContains('terms', $types);
         $this->assertContains('privacy', $types);
+    }
+
+    /**
+     * Un PNG valido de 20x20.
+     *
+     * El servicio no se fia del tipo que declara la data-url: comprueba los
+     * bytes con finfo y exige unas dimensiones minimas, asi que una cadena
+     * cualquiera no vale como captura.
+     */
+    private function pngDePrueba(): string
+    {
+        $imagen = imagecreatetruecolor(20, 20);
+
+        ob_start();
+        imagepng($imagen);
+        $bytes = (string) ob_get_clean();
+
+        imagedestroy($imagen);
+
+        return $bytes;
     }
 }

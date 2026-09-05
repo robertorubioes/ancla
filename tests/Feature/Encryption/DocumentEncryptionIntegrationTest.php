@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -46,7 +47,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         Storage::fake('local');
     }
 
-    /** @test */
+    #[Test]
     public function it_encrypts_and_decrypts_documents_end_to_end(): void
     {
         $service = app(DocumentEncryptionService::class);
@@ -69,7 +70,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         $this->assertEquals($originalContent, $decrypted);
     }
 
-    /** @test */
+    #[Test]
     public function it_maintains_tenant_isolation_in_encryption(): void
     {
         $service = app(DocumentEncryptionService::class);
@@ -95,7 +96,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         $this->assertEquals($content, $service->decrypt($encrypted2));
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_encrypt_existing_documents_command_dry_run(): void
     {
         // Create unencrypted documents
@@ -126,7 +127,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         $this->assertEquals($content, $storedContent);
     }
 
-    /** @test */
+    #[Test]
     public function it_preserves_data_integrity_across_encryption_decryption_cycles(): void
     {
         $service = app(DocumentEncryptionService::class);
@@ -152,7 +153,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_correctly_identifies_encrypted_vs_plaintext_documents(): void
     {
         $service = app(DocumentEncryptionService::class);
@@ -164,7 +165,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         $this->assertTrue($service->isEncrypted($encrypted));
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_consistent_metadata_for_encrypted_documents(): void
     {
         $service = app(DocumentEncryptionService::class);
@@ -184,7 +185,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         $this->assertIsString($metadata['nonce_hex']);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_concurrent_encryption_operations_safely(): void
     {
         $service = app(DocumentEncryptionService::class);
@@ -206,7 +207,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_document_encryption_metadata(): void
     {
         $document = Document::factory()->create([
@@ -231,7 +232,7 @@ class DocumentEncryptionIntegrationTest extends TestCase
         $this->assertEquals('v1', $document->encryption_key_version);
     }
 
-    /** @test */
+    #[Test]
     public function it_supports_multiple_encryption_key_versions(): void
     {
         $service = app(DocumentEncryptionService::class);

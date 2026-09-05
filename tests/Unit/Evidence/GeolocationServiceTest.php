@@ -210,9 +210,22 @@ class GeolocationServiceTest extends TestCase
             'speed' => 5.0,
         ];
 
-        $record = $this->service->capture($request, $signable, $gpsData, 'granted');
+        $record = $this->service->capture(
+            $request,
+            $signable,
+            $gpsData + ['inventado' => 'x'],
+            'granted'
+        );
 
-        $this->assertEquals($gpsData, $record->raw_gps_data);
+        // Se guarda la instantanea ya saneada -lista blanca de campos y cotas-,
+        // no lo que llego tal cual: el dato viene de un endpoint publico. Los
+        // valores se comparan uno a uno porque al releerlos del JSON un 90.0
+        // vuelve como 90.
+        foreach ($gpsData as $campo => $valor) {
+            $this->assertEquals($valor, $record->raw_gps_data[$campo], $campo);
+        }
+
+        $this->assertArrayNotHasKey('inventado', $record->raw_gps_data);
     }
 
     #[Test]

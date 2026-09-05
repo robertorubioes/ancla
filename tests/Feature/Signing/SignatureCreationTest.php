@@ -17,6 +17,7 @@ use App\Services\Signing\SignatureService;
 use App\Services\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SignatureCreationTest extends TestCase
@@ -76,7 +77,7 @@ class SignatureCreationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_renders_signature_type_tabs(): void
     {
         // Los tabs solo aparecen tras leer el documento y verificar el OTP.
@@ -89,7 +90,7 @@ class SignatureCreationTest extends TestCase
             ->assertSee('Subir');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_switch_signature_types(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
@@ -101,7 +102,7 @@ class SignatureCreationTest extends TestCase
             ->assertSet('signatureType', 'upload');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_clear_signature_data(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
@@ -112,7 +113,7 @@ class SignatureCreationTest extends TestCase
             ->assertSet('typedSignature', '');
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_canvas_signature_is_not_empty(): void
     {
         $service = app(SignatureService::class);
@@ -140,7 +141,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_typed_signature_minimum_length(): void
     {
         $service = app(SignatureService::class);
@@ -156,7 +157,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_typed_signature_maximum_length(): void
     {
         $service = app(SignatureService::class);
@@ -172,7 +173,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_uploaded_signature_format(): void
     {
         $service = app(SignatureService::class);
@@ -188,7 +189,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_uploaded_signature_size(): void
     {
         $service = app(SignatureService::class);
@@ -212,7 +213,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_consent_to_sign(): void
     {
         $service = app(SignatureService::class);
@@ -228,7 +229,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_otp_verification_before_signing(): void
     {
         // Create a signer without OTP verification
@@ -251,7 +252,7 @@ class SignatureCreationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_successfully_processes_draw_signature(): void
     {
         $service = app(SignatureService::class);
@@ -273,7 +274,7 @@ class SignatureCreationTest extends TestCase
         $this->assertNotNull($this->signer->fresh()->evidence_package_id);
     }
 
-    /** @test */
+    #[Test]
     public function it_successfully_processes_type_signature(): void
     {
         $service = app(SignatureService::class);
@@ -294,7 +295,7 @@ class SignatureCreationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_successfully_processes_upload_signature(): void
     {
         $service = app(SignatureService::class);
@@ -314,7 +315,7 @@ class SignatureCreationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_captures_evidence_package_on_signature(): void
     {
         $service = app(SignatureService::class);
@@ -340,7 +341,7 @@ class SignatureCreationTest extends TestCase
         $this->assertNotNull($evidencePackage->tsa_token_id);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_audit_trail_entry_on_signature(): void
     {
         $service = app(SignatureService::class);
@@ -360,7 +361,7 @@ class SignatureCreationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_process_status_when_all_signers_complete(): void
     {
         $service = app(SignatureService::class);
@@ -378,7 +379,7 @@ class SignatureCreationTest extends TestCase
         $this->assertNotNull($process->completed_at);
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_complete_process_until_all_signers_sign(): void
     {
         // Add another signer
@@ -419,7 +420,7 @@ class SignatureCreationTest extends TestCase
         $this->assertEquals('completed', $process->status);
     }
 
-    /** @test */
+    #[Test]
     public function it_respects_multi_tenant_isolation(): void
     {
         // Create another tenant with its own data
@@ -444,7 +445,7 @@ class SignatureCreationTest extends TestCase
         $this->assertNotEquals($otherTenant->id, $evidencePackage->tenant_id);
     }
 
-    /** @test */
+    #[Test]
     public function livewire_component_sign_button_is_disabled_without_consent(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
@@ -453,7 +454,7 @@ class SignatureCreationTest extends TestCase
             ->assertSee('disabled');
     }
 
-    /** @test */
+    #[Test]
     public function livewire_component_sign_button_is_disabled_without_signature(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
@@ -462,7 +463,7 @@ class SignatureCreationTest extends TestCase
             ->assertSee('disabled');
     }
 
-    /** @test */
+    #[Test]
     public function livewire_component_can_sign_document_successfully(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
