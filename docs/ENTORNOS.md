@@ -78,6 +78,32 @@ raras, ni los casos limite que solo aparecen con datos reales.
   al bucket de produccion, ni a la pasarela de pago real.
   `TSA_MOCK_ENABLED=true`, bucket propio y `MAIL_MAILER=log`.
 
+### Montarlo o actualizarlo
+
+Vive en el mismo servidor que produccion, en `/var/www/firmalum-test`, con su
+propia base de datos, su propio vhost y su propio certificado. Todo lo monta
+un solo script, que se puede volver a ejecutar las veces que haga falta:
+
+```bash
+# en el servidor, como root
+/root/setup-testing.sh          # monta o actualiza
+/root/setup-testing.sh --ssl    # ademas pide o renueva el certificado
+```
+
+Lo unico que el script no puede resolver es el DNS. Antes de la primera
+ejecucion con `--ssl` deben existir estos registros apuntando al servidor:
+
+| Registro                | Tipo |
+|-------------------------|------|
+| `app.test.firmalum.com` | A    |
+| `*.test.firmalum.com`   | A    |
+
+El comodin es necesario porque cada tenant vive en su subdominio.
+
+Una vez montado, `app.test.firmalum.com` responde por HTTPS, redirige desde
+HTTP y sale con `X-Robots-Tag: noindex, nofollow` para que ningun buscador lo
+indexe.
+
 ### El clon nocturno
 
 ```bash
