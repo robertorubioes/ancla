@@ -45,8 +45,8 @@ Para producción, obtener certificado de una CA confiable:
 ```bash
 # Generar CSR
 openssl req -new -newkey rsa:4096 -nodes \
-  -keyout storage/certificates/ancla-prod.key \
-  -out storage/certificates/ancla-prod.csr \
+  -keyout storage/certificates/firmalum-prod.key \
+  -out storage/certificates/firmalum-prod.csr \
   -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Technologies/CN=Firmalum Signature Service"
 
 # Enviar CSR a la CA y guardar certificado recibido
@@ -120,7 +120,7 @@ $signedDocument = $pdfSignatureService->signDocument(
     signer: $signer,
     metadata: [
         'verification_code' => 'ABC1-DEF2-GH34',
-        'verification_url' => 'https://ancla.es/verify/xxx',
+        'verification_url' => 'https://firmalum.com/verify/xxx',
         'qr_code_path' => 'qr-codes/xxx.png',
         'evidence_package_id' => $evidencePackage->id,
         'ip_address' => request()->ip(),
@@ -238,7 +238,7 @@ Según GDPR, solo se embeben hashes y datos no personales:
     'Firmalum_Process_ID' => 123,
     'Firmalum_Signer_ID' => 456,
     'Firmalum_Verify_Code' => 'ABC1-DEF2-GH34',
-    'Firmalum_Verify_URL' => 'https://ancla.es/verify/xxx',
+    'Firmalum_Verify_URL' => 'https://firmalum.com/verify/xxx',
     'Firmalum_IP_Hash' => 'sha256(ip)',  // Hash, no IP real
     'Firmalum_Location' => 'Madrid, Spain',  // Solo ciudad/país
     'Firmalum_Device_FP' => 'sha256(fingerprint)',
@@ -274,9 +274,9 @@ En producción, usar Docker Secrets o HashiCorp Vault:
 # docker-compose.yml
 secrets:
   ancla_cert:
-    file: ./secrets/ancla-prod.crt
+    file: ./secrets/firmalum-prod.crt
   ancla_key:
-    file: ./secrets/ancla-prod.key
+    file: ./secrets/firmalum-prod.key
 
 services:
   app:
@@ -338,7 +338,7 @@ ls -la storage/certificates/
 openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -keyout storage/certificates/ancla-dev.key \
   -out storage/certificates/ancla-dev.crt \
-  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Dev/CN=ancla.local"
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Dev/CN=firmalum.local"
 ```
 
 ### Error: "Failed to read private key"

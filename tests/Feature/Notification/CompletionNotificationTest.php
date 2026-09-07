@@ -13,7 +13,9 @@ use App\Models\User;
 use App\Services\Notification\CompletionNotificationException;
 use App\Services\Notification\CompletionNotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CompletionNotificationTest extends TestCase
@@ -36,7 +38,7 @@ class CompletionNotificationTest extends TestCase
         $this->user = User::factory()->create(['tenant_id' => $this->tenant->id]);
     }
 
-    /** @test */
+    #[Test]
     public function it_sends_copies_to_all_signers()
     {
         Queue::fake();
@@ -71,7 +73,7 @@ class CompletionNotificationTest extends TestCase
         Queue::assertPushed(SendSignedDocumentCopyJob::class, 2);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_no_final_document()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -89,7 +91,7 @@ class CompletionNotificationTest extends TestCase
         $this->service->sendCopies($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_process_not_completed()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -107,7 +109,7 @@ class CompletionNotificationTest extends TestCase
         $this->service->sendCopies($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_no_signers()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -125,7 +127,7 @@ class CompletionNotificationTest extends TestCase
         $this->service->sendCopies($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_signer_copy_sent_at_timestamp()
     {
         Queue::fake();
@@ -151,7 +153,7 @@ class CompletionNotificationTest extends TestCase
         $this->assertNotNull($signer->copy_sent_at);
     }
 
-    /** @test */
+    #[Test]
     public function it_generates_download_token_for_signer()
     {
         Queue::fake();
@@ -171,14 +173,21 @@ class CompletionNotificationTest extends TestCase
             'download_token' => null,
         ]);
 
+        Mail::fake();
+
         $this->service->sendCopies($process);
+
+        // El enlace de descarga lo acuna el job, no el servicio: este solo lo
+        // encola. Con la cola falseada hay que ejecutarlo para comprobarlo.
+        Queue::assertPushed(SendSignedDocumentCopyJob::class);
+        (new SendSignedDocumentCopyJob($process, $signer))->handle();
 
         $signer->refresh();
         $this->assertNotNull($signer->download_token);
         $this->assertEquals(64, strlen($signer->download_token));
     }
 
-    /** @test */
+    #[Test]
     public function it_sets_download_expiration_to_30_days()
     {
         Queue::fake();
@@ -197,7 +206,10 @@ class CompletionNotificationTest extends TestCase
             'status' => Signer::STATUS_SIGNED,
         ]);
 
+        Mail::fake();
+
         $this->service->sendCopies($process);
+        (new SendSignedDocumentCopyJob($process, $signer))->handle();
 
         $signer->refresh();
         $this->assertNotNull($signer->download_expires_at);
@@ -205,7 +217,7 @@ class CompletionNotificationTest extends TestCase
         $this->assertTrue($signer->download_expires_at->isBefore(now()->addDays(31)));
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_email_format()
     {
         Queue::fake();
@@ -232,7 +244,7 @@ class CompletionNotificationTest extends TestCase
         $this->assertEquals(1, $result->errorCount());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_resend_copy_to_specific_signer()
     {
         Queue::fake();
@@ -256,7 +268,7 @@ class CompletionNotificationTest extends TestCase
         Queue::assertPushed(SendSignedDocumentCopyJob::class, 1);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_partial_failures_gracefully()
     {
         Queue::fake();

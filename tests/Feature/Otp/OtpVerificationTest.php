@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class OtpVerificationTest extends TestCase
@@ -64,17 +65,21 @@ class OtpVerificationTest extends TestCase
         Mail::fake();
     }
 
-    /** @test */
+    #[Test]
     public function signer_can_request_otp_from_livewire_component(): void
     {
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->call('requestOtp')
             ->assertSet('otpRequested', true)
             ->assertSet('otpError', false)
             ->assertSee('Verification code sent to your email');
     }
 
-    /** @test */
+    #[Test]
     public function email_is_sent_when_otp_is_requested(): void
     {
         Queue::fake();
@@ -85,14 +90,18 @@ class OtpVerificationTest extends TestCase
         Queue::assertPushed(SendOtpCodeJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function signer_can_verify_otp_with_correct_code(): void
     {
         $otpService = app(OtpService::class);
         $result = $otpService->generate($this->signer);
         $code = $result->code;
 
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->set('otpRequested', true)
             ->set('otpCode', $code)
             ->call('verifyOtp')
@@ -101,7 +110,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('Verified successfully');
     }
 
-    /** @test */
+    #[Test]
     public function verification_fails_with_incorrect_code(): void
     {
         $otpService = app(OtpService::class);
@@ -116,7 +125,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('Invalid verification code');
     }
 
-    /** @test */
+    #[Test]
     public function expired_code_shows_appropriate_message(): void
     {
         OtpCode::factory()
@@ -133,7 +142,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('expired');
     }
 
-    /** @test */
+    #[Test]
     public function rate_limit_blocks_after_3_requests(): void
     {
         // Create 3 OTP codes in the last hour
@@ -145,30 +154,36 @@ class OtpVerificationTest extends TestCase
             ->assertSee('Rate limit exceeded');
     }
 
-    /** @test */
+    #[Test]
     public function otp_input_is_disabled_until_code_is_requested(): void
     {
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
-            ->assertSee('Request Verification Code')
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
+            ->assertSee('Enviar código de verificación')
             ->assertDontSee('Enter Verification Code');
     }
 
-    /** @test */
+    #[Test]
     public function signing_section_is_unlocked_after_verification(): void
     {
         $otpService = app(OtpService::class);
         $result = $otpService->generate($this->signer);
 
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->set('otpRequested', true)
             ->set('otpCode', $result->code)
             ->call('verifyOtp')
             ->assertSet('otpVerified', true)
-            ->assertSee('Verified')
-            ->assertSee('You can now proceed to sign');
+            ->assertSee('¡Identidad verificada!')
+            ->assertSee('Crea tu firma para completar el proceso');
     }
 
-    /** @test */
+    #[Test]
     public function multi_tenant_isolation_is_enforced(): void
     {
         // Create another tenant and signer
@@ -193,7 +208,7 @@ class OtpVerificationTest extends TestCase
             ->assertSet('otpError', true);
     }
 
-    /** @test */
+    #[Test]
     public function queue_job_retries_on_failure(): void
     {
         $otpCode = OtpCode::factory()
@@ -207,7 +222,7 @@ class OtpVerificationTest extends TestCase
         $this->assertEquals(10, $job->backoff);
     }
 
-    /** @test */
+    #[Test]
     public function can_request_new_code_after_expiration(): void
     {
         // Create expired code
@@ -225,7 +240,7 @@ class OtpVerificationTest extends TestCase
         Queue::assertPushed(SendOtpCodeJob::class);
     }
 
-    /** @test */
+    #[Test]
     public function otp_code_is_6_digits_only(): void
     {
         $otpService = app(OtpService::class);
@@ -235,7 +250,7 @@ class OtpVerificationTest extends TestCase
         $this->assertMatchesRegularExpression('/^\d{6}$/', $result->code);
     }
 
-    /** @test */
+    #[Test]
     public function cannot_verify_without_requesting_first(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
@@ -245,7 +260,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('No active verification code found');
     }
 
-    /** @test */
+    #[Test]
     public function empty_code_shows_validation_error(): void
     {
         $otpService = app(OtpService::class);
@@ -259,7 +274,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('Please enter the verification code');
     }
 
-    /** @test */
+    #[Test]
     public function code_must_be_6_digits(): void
     {
         $otpService = app(OtpService::class);
@@ -273,7 +288,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('must be 6 digits');
     }
 
-    /** @test */
+    #[Test]
     public function verified_signer_sees_verified_status(): void
     {
         OtpCode::factory()
@@ -281,21 +296,27 @@ class OtpVerificationTest extends TestCase
             ->verified()
             ->create();
 
+        // La verificacion es el tercer paso: no se muestra hasta haber leido
+        // el documento y pulsado continuar.
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
-            ->assertSee('Verified')
-            ->assertSee('You can now proceed to sign');
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
+            ->assertSee('¡Identidad verificada!')
+            ->assertSee('Crea tu firma para completar el proceso');
     }
 
-    /** @test */
+    #[Test]
     public function can_request_new_code_if_not_received(): void
     {
         Livewire::test(SigningPage::class, ['token' => $this->signer->token])
+            ->set('documentRead', true)
+            ->call('proceedToVerification')
             ->call('requestOtp')
             ->assertSet('otpRequested', true)
-            ->assertSee("Didn't receive it? Request new code");
+            ->assertSee('¿No lo recibiste? Enviar de nuevo');
     }
 
-    /** @test */
+    #[Test]
     public function audit_trail_is_created_for_otp_events(): void
     {
         $otpService = app(OtpService::class);
@@ -303,9 +324,9 @@ class OtpVerificationTest extends TestCase
 
         // Check otp.requested was logged
         $this->assertDatabaseHas('audit_trail_entries', [
-            'action' => 'otp.requested',
-            'entity_type' => 'signer',
-            'entity_id' => $this->signer->id,
+            'event_type' => 'otp.requested',
+            'auditable_type' => Signer::class,
+            'auditable_id' => $this->signer->id,
         ]);
 
         // Verify the code
@@ -313,13 +334,13 @@ class OtpVerificationTest extends TestCase
 
         // Check otp.verified was logged
         $this->assertDatabaseHas('audit_trail_entries', [
-            'action' => 'otp.verified',
-            'entity_type' => 'signer',
-            'entity_id' => $this->signer->id,
+            'event_type' => 'otp.verified',
+            'auditable_type' => Signer::class,
+            'auditable_id' => $this->signer->id,
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function max_5_attempts_are_allowed_per_code(): void
     {
         $otpService = app(OtpService::class);
@@ -340,7 +361,7 @@ class OtpVerificationTest extends TestCase
             ->assertSee('Maximum verification attempts exceeded');
     }
 
-    /** @test */
+    #[Test]
     public function code_is_not_stored_in_plain_text(): void
     {
         $otpService = app(OtpService::class);

@@ -138,7 +138,7 @@ class Tenant extends Model
             return "{$scheme}://{$this->domain}";
         }
 
-        $baseDomain = config('app.base_domain', 'ancla.app');
+        $baseDomain = config('app.base_domain', 'firmalum.com');
         $scheme = app()->environment('production') ? 'https' : 'http';
 
         return "{$scheme}://{$this->slug}.{$baseDomain}";

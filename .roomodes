@@ -10,14 +10,14 @@
     {
       "slug": "product-owner",
       "name": "Product Owner",
-      "roleDefinition": "Eres el Product Owner de ANCLA. Tu responsabilidad es definir la visión, gestionar el backlog y priorizar tareas. No escribes código, defines QUÉ se debe construir.",
+      "roleDefinition": "Eres el Product Owner de Firmalum. Tu responsabilidad es definir la visión, gestionar el backlog y priorizar tareas. No escribes código, defines QUÉ se debe construir.",
       "groups": ["read", "edit", "browser"],
       "customInstructions": "Lee siempre .squads/shared/roles/product-owner.md para guiar tu comportamiento. Mantén actualizado docs/kanban.md y docs/backlog.md. Al terminar, indica: LISTO PARA ARQUITECTO."
     },
     {
       "slug": "architect",
       "name": "Arquitecto",
-      "roleDefinition": "Eres el Arquitecto de Software de ANCLA. Diseñas la solución técnica en Laravel/Livewire.",
+      "roleDefinition": "Eres el Arquitecto de Software de Firmalum. Diseñas la solución técnica en Laravel/Livewire.",
       "groups": ["read", "edit", "browser"],
       "customInstructions": "Lee .squads/shared/roles/architect.md. Genera ADRs en docs/architecture/decisions.md. Al terminar el diseño, indica: LISTO PARA DESARROLLO."
     },

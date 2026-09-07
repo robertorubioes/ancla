@@ -60,6 +60,39 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Niveles de archivo a largo plazo. config/archive.php los referencia
+         * por nombre; sin ellos, mover un documento a tier frio o de archivo
+         * lanza "Disk [...] does not have a configured driver".
+         *
+         * La clase de almacenamiento se aplica por objeto al subirlo, con la
+         * que declara config('archive.tiers.*.storage_class').
+         */
+
+        's3-glacier' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('ARCHIVE_COLD_STORAGE_REGION', env('AWS_DEFAULT_REGION')),
+            'bucket' => env('ARCHIVE_COLD_STORAGE_BUCKET', env('AWS_BUCKET')),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'report' => false,
+        ],
+
+        's3-deep-archive' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('ARCHIVE_DEEP_STORAGE_REGION', env('AWS_DEFAULT_REGION')),
+            'bucket' => env('ARCHIVE_DEEP_STORAGE_BUCKET', env('AWS_BUCKET')),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

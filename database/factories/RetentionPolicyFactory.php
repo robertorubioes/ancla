@@ -31,10 +31,16 @@ class RetentionPolicyFactory extends Factory
     {
         return [
             'uuid' => $this->faker->uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'name' => $this->faker->words(3, true).' Policy',
             'description' => $this->faker->optional(0.7)->sentence(),
-            'document_type' => $this->faker->optional(0.3)->randomElement(['contract', 'invoice', 'legal']),
+            // Sin tipo: la politica se aplica a cualquier documento. Sortearlo
+            // aqui hacia que una politica creada en un test resultara
+            // inaplicable una de cada tres veces. Quien necesite una politica
+            // restringida, que use el estado forDocumentType().
+            'document_type' => null,
             'retention_years' => $this->faker->randomElement([5, 7, 10, 15]),
             'retention_days' => 0,
             'archive_after_days' => 365,

@@ -12,9 +12,11 @@ use App\Models\Signer;
 use App\Models\SigningProcess;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\Evidence\AuditTrailService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SigningNotificationTest extends TestCase
@@ -43,7 +45,7 @@ class SigningNotificationTest extends TestCase
         app()->instance('tenant', $this->tenant);
     }
 
-    /** @test */
+    #[Test]
     public function it_sends_email_notifications_in_parallel_mode(): void
     {
         Queue::fake();
@@ -85,7 +87,7 @@ class SigningNotificationTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_sends_email_with_correct_subject(): void
     {
         Mail::fake();
@@ -109,7 +111,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString('Firma requerida:', $subject);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_signing_url_with_unique_token_in_email(): void
     {
         Mail::fake();
@@ -132,7 +134,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString('/sign/unique-token-123', $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_custom_message_in_email(): void
     {
         Mail::fake();
@@ -155,7 +157,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString('This is a custom message for the signer.', $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_deadline_in_email_when_present(): void
     {
         Mail::fake();
@@ -181,7 +183,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString($deadline->format('d/m/Y'), $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_promoter_name_in_email(): void
     {
         Mail::fake();
@@ -203,7 +205,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString($this->user->name, $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_signer_status_after_successful_send(): void
     {
         Queue::fake();
@@ -227,7 +229,7 @@ class SigningNotificationTest extends TestCase
 
         // Manually execute the job
         $job = new SendSigningRequestJob($process->id, $signer->id);
-        $job->handle(app(\App\Services\Evidence\AuditTrailService::class));
+        $job->handle(app(AuditTrailService::class));
 
         $signer->refresh();
 
@@ -235,7 +237,7 @@ class SigningNotificationTest extends TestCase
         $this->assertNotNull($signer->sent_at);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_audit_trail_when_notification_sent(): void
     {
         Queue::fake();
@@ -254,7 +256,7 @@ class SigningNotificationTest extends TestCase
 
         // Execute the job
         $job = new SendSigningRequestJob($process->id, $signer->id);
-        $job->handle(app(\App\Services\Evidence\AuditTrailService::class));
+        $job->handle(app(AuditTrailService::class));
 
         $this->assertDatabaseHas('audit_trail_entries', [
             'auditable_type' => SigningProcess::class,
@@ -269,7 +271,7 @@ class SigningNotificationTest extends TestCase
         $this->assertEquals('email', $entry->payload['notification_method']);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_invalid_email_address_gracefully(): void
     {
         Queue::fake();
@@ -289,7 +291,7 @@ class SigningNotificationTest extends TestCase
 
         // Execute the job - should not throw exception
         $job = new SendSigningRequestJob($process->id, $signer->id);
-        $job->handle(app(\App\Services\Evidence\AuditTrailService::class));
+        $job->handle(app(AuditTrailService::class));
 
         Mail::assertNothingSent();
 
@@ -299,7 +301,7 @@ class SigningNotificationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_queues_notifications_with_proper_retry_settings(): void
     {
         Queue::fake();
@@ -321,7 +323,7 @@ class SigningNotificationTest extends TestCase
         $this->assertEquals(60, $job->backoff);
     }
 
-    /** @test */
+    #[Test]
     public function email_template_is_responsive(): void
     {
         Mail::fake();
@@ -348,7 +350,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString('@media', $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function email_includes_security_warnings(): void
     {
         Mail::fake();
@@ -371,7 +373,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString('único y personal', $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function it_sends_only_to_first_signer_in_sequential_mode(): void
     {
         Queue::fake();
@@ -405,8 +407,8 @@ class SigningNotificationTest extends TestCase
         });
     }
 
-    /** @test */
-    public function it_includes_ancla_branding_in_email(): void
+    #[Test]
+    public function it_includes_firmalum_branding_in_email(): void
     {
         Mail::fake();
 
@@ -428,7 +430,7 @@ class SigningNotificationTest extends TestCase
         $this->assertStringContainsString('Firma Digital', $rendered);
     }
 
-    /** @test */
+    #[Test]
     public function email_has_proper_html_structure(): void
     {
         Mail::fake();

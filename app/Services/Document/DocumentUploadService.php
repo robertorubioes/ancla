@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Document;
 
 use App\Models\Document;
+use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Evidence\AuditTrailService;
 use App\Services\Evidence\HashingService;
@@ -58,8 +59,11 @@ class DocumentUploadService
         // 2. Calculate hash before any processing
         $contentHash = $this->hashingService->hashUploadedFile($file);
 
-        // 3. Get tenant context
+        // 3. Get tenant context - fallback to user's tenant
         $tenant = $this->tenantContext->get();
+        if (! $tenant && $user->tenant_id) {
+            $tenant = Tenant::find($user->tenant_id);
+        }
         if (! $tenant) {
             throw new DocumentUploadException('No tenant context available');
         }
@@ -83,7 +87,10 @@ class DocumentUploadService
             $file->getClientOriginalName()
         );
 
-        return DB::transaction(function () use ($file, $user, $tenant, $contentHash, $originalFilename, $validation) {
+        // Capture tenant ID as int to avoid object serialization issues
+        $tenantId = (int) $tenant->id;
+
+        return DB::transaction(function () use ($file, $user, $tenant, $tenantId, $contentHash, $originalFilename, $validation) {
             // 6. Generate UUID for document
             $uuid = (string) Str::uuid();
 
@@ -141,7 +148,7 @@ class DocumentUploadService
                 }
 
                 // 12. Get TSA timestamp
-                $tsaToken = $this->tsaService->requestTimestamp($contentHash);
+                $tsaToken = $this->tsaService->requestTimestamp($contentHash, $tenantId);
                 $document->update(['upload_tsa_token_id' => $tsaToken->id]);
 
                 // 13. Mark as ready
@@ -352,8 +359,12 @@ class DocumentUploadService
      */
     public function getDecryptedContent(Document $document): string
     {
-        $fullPath = $document->storage_path . '/' . $document->stored_filename;
-        $content = Storage::disk($document->storage_disk)->get($fullPath);
+        // storage_path YA incluye el nombre del fichero: es lo que devuelve
+        // encryptAndStore() y lo que usa Document::fileExists(). Concatenarle
+        // stored_filename producia una ruta que no existe, de modo que ni la
+        // previsualizacion, ni la descarga, ni la verificacion de integridad
+        // podian leer un documento subido de verdad.
+        $content = Storage::disk($document->storage_disk)->get($document->storage_path);
 
         if ($content === null) {
             throw new DocumentUploadException('Document file not found in storage');
@@ -432,9 +443,8 @@ class DocumentUploadService
     public function forceDelete(Document $document): bool
     {
         // Delete the stored file
-        if ($document->storage_path && $document->stored_filename) {
-            $fullPath = $document->storage_path . '/' . $document->stored_filename;
-            Storage::disk($document->storage_disk)->delete($fullPath);
+        if ($document->storage_path) {
+            Storage::disk($document->storage_disk)->delete($document->storage_path);
         }
 
         // Delete thumbnail if exists

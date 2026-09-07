@@ -6,6 +6,7 @@ namespace App\Services\Document;
 
 use App\Models\SignedDocument;
 use App\Models\SigningProcess;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -123,7 +124,7 @@ class FinalDocumentService
     /**
      * Merge multiple signed PDF documents into one.
      *
-     * @param  \Illuminate\Support\Collection<SignedDocument>  $signedDocuments
+     * @param  Collection<SignedDocument>  $signedDocuments
      */
     private function mergeSignedDocuments($signedDocuments): string
     {
@@ -291,13 +292,15 @@ class FinalDocumentService
             throw FinalDocumentException::alreadyGenerated($process->id);
         }
 
-        if (! $process->allSignersCompleted()) {
-            throw FinalDocumentException::notAllSignersSigned($process->id);
-        }
-
-        // Check if process has signers
+        // Primero el caso concreto: sin firmantes, allSignersCompleted() ya
+        // devuelve false, asi que con el orden inverso este aviso no llegaba a
+        // darse nunca y el error decia que faltaban firmas que no existian.
         if ($process->signers()->count() === 0) {
             throw FinalDocumentException::noSigners($process->id);
+        }
+
+        if (! $process->allSignersCompleted()) {
+            throw FinalDocumentException::notAllSignersSigned($process->id);
         }
     }
 

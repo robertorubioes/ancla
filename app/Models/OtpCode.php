@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,13 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $signer_id
  * @property string $code_hash
- * @property \Carbon\Carbon $expires_at
+ * @property Carbon $expires_at
  * @property int $attempts
  * @property bool $verified
- * @property \Carbon\Carbon|null $verified_at
- * @property \Carbon\Carbon|null $sent_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $verified_at
+ * @property Carbon|null $sent_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Signer $signer
  */
 class OtpCode extends Model

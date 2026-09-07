@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\Document\FinalDocumentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FinalDocumentGenerationTest extends TestCase
@@ -38,7 +39,7 @@ class FinalDocumentGenerationTest extends TestCase
         Storage::fake('local');
     }
 
-    /** @test */
+    #[Test]
     public function it_automatically_generates_final_document_when_process_completed(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -56,18 +57,21 @@ class FinalDocumentGenerationTest extends TestCase
                 'status' => SigningProcess::STATUS_IN_PROGRESS,
             ]);
 
-        $signer = Signer::factory()->for($process)->for($this->tenant)->create([
+        $signer = Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
             'signed_at' => now(),
-            'otp_verified' => true,
             'signature_data' => 'base64signature',
         ]);
 
         $evidencePackage = EvidencePackage::factory()
             ->for($this->tenant)
-            ->for($process)
-            ->create(['sealed_at' => now()]);
+            ->create([
+                'packagable_type' => SigningProcess::class,
+                'packagable_id' => $process->id,
+                'status' => EvidencePackage::STATUS_READY,
+                'generated_at' => now(),
+            ]);
 
         $signer->update(['evidence_package_id' => $evidencePackage->id]);
 
@@ -75,7 +79,7 @@ class FinalDocumentGenerationTest extends TestCase
         $signedPath = 'signed/'.$this->tenant->id.'/2025/01/'.$process->id.'_'.$signer->id.'.pdf';
         Storage::put($signedPath, $this->getMockPdfContent());
 
-        $signedDoc = SignedDocument::create([
+        $signedDoc = SignedDocument::factory()->create([
             'uuid' => \Str::uuid(),
             'tenant_id' => $this->tenant->id,
             'signing_process_id' => $process->id,
@@ -117,7 +121,7 @@ class FinalDocumentGenerationTest extends TestCase
         Storage::assertExists($process->final_document_path);
     }
 
-    /** @test */
+    #[Test]
     public function it_merges_multiple_signed_documents(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -137,25 +141,28 @@ class FinalDocumentGenerationTest extends TestCase
 
         // Create 3 signers with signed documents
         for ($i = 1; $i <= 3; $i++) {
-            $signer = Signer::factory()->for($process)->for($this->tenant)->create([
+            $signer = Signer::factory()->for($process)->create([
                 'status' => 'signed',
                 'order' => $i,
                 'signed_at' => now(),
-                'otp_verified' => true,
                 'signature_data' => 'signature'.$i,
             ]);
 
             $evidencePackage = EvidencePackage::factory()
                 ->for($this->tenant)
-                ->for($process)
-                ->create(['sealed_at' => now()]);
+                ->create([
+                    'packagable_type' => SigningProcess::class,
+                    'packagable_id' => $process->id,
+                    'status' => EvidencePackage::STATUS_READY,
+                    'generated_at' => now(),
+                ]);
 
             $signer->update(['evidence_package_id' => $evidencePackage->id]);
 
             $signedPath = 'signed/'.$this->tenant->id.'/2025/01/'.$process->id.'_'.$signer->id.'.pdf';
             Storage::put($signedPath, $this->getMockPdfContent());
 
-            SignedDocument::create([
+            SignedDocument::factory()->create([
                 'uuid' => \Str::uuid(),
                 'tenant_id' => $this->tenant->id,
                 'signing_process_id' => $process->id,
@@ -193,7 +200,7 @@ class FinalDocumentGenerationTest extends TestCase
         $this->assertEquals($result->contentHash, $process->final_document_hash);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_certification_page(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -212,25 +219,28 @@ class FinalDocumentGenerationTest extends TestCase
                 'custom_message' => 'Please sign this important document',
             ]);
 
-        $signer = Signer::factory()->for($process)->for($this->tenant)->create([
+        $signer = Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
             'signed_at' => now(),
-            'otp_verified' => true,
             'signature_data' => 'signature',
         ]);
 
         $evidencePackage = EvidencePackage::factory()
             ->for($this->tenant)
-            ->for($process)
-            ->create(['sealed_at' => now()]);
+            ->create([
+                'packagable_type' => SigningProcess::class,
+                'packagable_id' => $process->id,
+                'status' => EvidencePackage::STATUS_READY,
+                'generated_at' => now(),
+            ]);
 
         $signer->update(['evidence_package_id' => $evidencePackage->id]);
 
         $signedPath = 'signed/'.$this->tenant->id.'/2025/01/'.$process->id.'_'.$signer->id.'.pdf';
         Storage::put($signedPath, $this->getMockPdfContent());
 
-        SignedDocument::create([
+        SignedDocument::factory()->create([
             'uuid' => \Str::uuid(),
             'tenant_id' => $this->tenant->id,
             'signing_process_id' => $process->id,
@@ -264,7 +274,7 @@ class FinalDocumentGenerationTest extends TestCase
         $this->assertTrue(Storage::exists($result->storagePath));
     }
 
-    /** @test */
+    #[Test]
     public function it_respects_tenant_isolation(): void
     {
         $tenant2 = Tenant::factory()->create();
@@ -284,15 +294,19 @@ class FinalDocumentGenerationTest extends TestCase
                 'completed_at' => now(),
             ]);
 
-        $signer = Signer::factory()->for($process)->for($this->tenant)->create([
+        $signer = Signer::factory()->for($process)->create([
             'status' => 'signed',
             'signed_at' => now(),
         ]);
 
         $evidencePackage = EvidencePackage::factory()
             ->for($this->tenant)
-            ->for($process)
-            ->create(['sealed_at' => now()]);
+            ->create([
+                'packagable_type' => SigningProcess::class,
+                'packagable_id' => $process->id,
+                'status' => EvidencePackage::STATUS_READY,
+                'generated_at' => now(),
+            ]);
 
         $signer->update(['evidence_package_id' => $evidencePackage->id]);
 
@@ -300,7 +314,7 @@ class FinalDocumentGenerationTest extends TestCase
         $signedPath = 'signed/'.$this->tenant->id.'/2025/01/'.$process->id.'_'.$signer->id.'.pdf';
         Storage::put($signedPath, $this->getMockPdfContent());
 
-        SignedDocument::create([
+        SignedDocument::factory()->create([
             'uuid' => \Str::uuid(),
             'tenant_id' => $this->tenant->id,
             'signing_process_id' => $process->id,
@@ -327,12 +341,14 @@ class FinalDocumentGenerationTest extends TestCase
 
         $result = $this->service->generateFinalDocument($process);
 
-        // Final document path should include tenant ID
-        $this->assertStringContainsString((string) $this->tenant->id, $result->storagePath);
-        $this->assertStringNotContainsString((string) $tenant2->id, $result->storagePath);
+        // El documento cuelga de la carpeta de su tenant y no de la del otro.
+        // Se compara el segmento entero, no la cifra suelta: la ruta lleva el
+        // ano y un uuid, y buscar "2" dentro de "2026" no prueba nada.
+        $this->assertStringStartsWith("final/{$this->tenant->id}/", $result->storagePath);
+        $this->assertStringStartsNotWith("final/{$tenant2->id}/", $result->storagePath);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_correct_hash(): void
     {
         $document = Document::factory()->for($this->tenant)->create([
@@ -350,22 +366,26 @@ class FinalDocumentGenerationTest extends TestCase
                 'completed_at' => now(),
             ]);
 
-        $signer = Signer::factory()->for($process)->for($this->tenant)->create([
+        $signer = Signer::factory()->for($process)->create([
             'status' => 'signed',
             'signed_at' => now(),
         ]);
 
         $evidencePackage = EvidencePackage::factory()
             ->for($this->tenant)
-            ->for($process)
-            ->create(['sealed_at' => now()]);
+            ->create([
+                'packagable_type' => SigningProcess::class,
+                'packagable_id' => $process->id,
+                'status' => EvidencePackage::STATUS_READY,
+                'generated_at' => now(),
+            ]);
 
         $signer->update(['evidence_package_id' => $evidencePackage->id]);
 
         $signedPath = 'signed/'.$this->tenant->id.'/2025/01/'.$process->id.'_'.$signer->id.'.pdf';
         Storage::put($signedPath, $this->getMockPdfContent());
 
-        SignedDocument::create([
+        SignedDocument::factory()->create([
             'uuid' => \Str::uuid(),
             'tenant_id' => $this->tenant->id,
             'signing_process_id' => $process->id,
@@ -405,8 +425,31 @@ class FinalDocumentGenerationTest extends TestCase
     /**
      * Get mock PDF content (minimal valid PDF structure).
      */
+    /**
+     * Un PDF real de una pagina.
+     *
+     * Antes era una cadena escrita a mano con una tabla xref inventada:
+     * superaba el hash de integridad, pero FPDI se negaba a abrirla ("The xref
+     * position points to an incorrect object type"), asi que el test no
+     * probaba la fusion de verdad. Se genera con FPDF, que ya es dependencia.
+     *
+     * Se memoriza porque FPDF sella la hora de creacion en el propio PDF: dos
+     * llamadas en segundos distintos darian contenidos -y hashes- distintos, y
+     * la comprobacion de integridad fallaria.
+     */
     private function getMockPdfContent(): string
     {
-        return "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 1/Kids[3 0 R]>>endobj 3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f\n0000000009 00000 n\n0000000056 00000 n\n0000000115 00000 n\ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n200\n%%EOF";
+        static $pdf = null;
+
+        if ($pdf === null) {
+            $fpdf = new \FPDF;
+            $fpdf->AddPage();
+            $fpdf->SetFont('Helvetica', '', 12);
+            $fpdf->Cell(0, 10, 'Documento de prueba');
+
+            $pdf = (string) $fpdf->Output('S');
+        }
+
+        return $pdf;
     }
 }

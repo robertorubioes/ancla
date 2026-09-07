@@ -9,6 +9,7 @@ use App\Models\SigningProcess;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -40,7 +41,7 @@ class SigningRequestMail extends Mailable
 
         return new Envelope(
             from: new Address(
-                address: config('mail.from.address', 'noreply@ancla.app'),
+                address: config('mail.from.address', 'noreply@firmalum.com'),
                 name: config('mail.from.name', 'Firmalum')
             ),
             subject: "Firma requerida: {$documentName}",
@@ -106,7 +107,7 @@ class SigningRequestMail extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

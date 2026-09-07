@@ -6,6 +6,7 @@ use App\Models\AuditTrailEntry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -26,6 +27,16 @@ class AuditTrailService
     private const GENESIS_HASH = '0000000000000000000000000000000000000000000000000000000000000000';
 
     /**
+     * Formato de fecha con el que se firma una entrada.
+     *
+     * Segundos y no microsegundos a proposito: la fila se guarda con
+     * precision de segundo, asi que firmar los microsegundos daba un hash
+     * imposible de reproducir al releer y la cadena no se podia verificar
+     * nunca. Para ordenar ya estan la secuencia y el encadenado de hashes.
+     */
+    public const HASH_DATE_FORMAT = 'Y-m-d H:i:s';
+
+    /**
      * Create a new AuditTrailService instance.
      */
     public function __construct(
@@ -44,8 +55,14 @@ class AuditTrailService
     public function record(Model $auditable, string $event, array $payload = []): AuditTrailEntry
     {
         return DB::transaction(function () use ($auditable, $event, $payload) {
-            $tenant = app('tenant');
+            // Get tenant_id: first try container, then from auditable model
+            $tenant = app()->bound('tenant') ? app('tenant') : null;
             $tenantId = $tenant?->id;
+
+            // Fallback: get tenant_id from the auditable model or its relations
+            if ($tenantId === null) {
+                $tenantId = $this->resolveTenantIdFromModel($auditable);
+            }
 
             // Get the last entry to chain to (lock for update to prevent race conditions)
             $lastEntry = $this->getLastEntry($auditable);
@@ -54,7 +71,11 @@ class AuditTrailService
             $sequence = $lastEntry ? $lastEntry->sequence + 1 : 1;
 
             // Get previous hash (genesis hash if first entry)
-            $previousHash = $lastEntry?->hash ?? self::GENESIS_HASH;
+            $previousHash = $lastEntry->hash ?? self::GENESIS_HASH;
+
+            // Un unico instante para firmar y para guardar: con dos llamadas a
+            // now() la fecha firmada no era la almacenada.
+            $now = now();
 
             // Prepare entry data
             $entryData = [
@@ -69,7 +90,7 @@ class AuditTrailService
                 'ip_address' => request()?->ip(),
                 'user_agent' => request()?->userAgent(),
                 'sequence' => $sequence,
-                'created_at' => now()->format('Y-m-d H:i:s.u'),
+                'created_at' => $now->format(self::HASH_DATE_FORMAT),
             ];
 
             // Calculate hash for this entry
@@ -91,17 +112,49 @@ class AuditTrailService
                 'hash' => $hash,
                 'previous_hash' => $previousHash,
                 'sequence' => $sequence,
-                'created_at' => now(),
+                'created_at' => $now,
             ]);
 
             // Request TSA timestamp for critical events
             if ($this->requiresTsa($event)) {
-                $tsaToken = $this->tsaService->requestTimestamp($hash);
+                $tsaToken = $this->tsaService->requestTimestamp($hash, $tenantId);
                 $entry->update(['tsa_token_id' => $tsaToken->id]);
             }
 
             return $entry->fresh();
         });
+    }
+
+    /**
+     * Registra un evento SOLO en el log de aplicacion.
+     *
+     * ATENCION: este metodo NO escribe en la cadena de audit trail. No es
+     * prueba: laravel.log no esta encadenado por hash ni sellado por la TSA,
+     * y no entra en el dossier probatorio.
+     *
+     * Para cualquier evento que deba sostenerse ante una auditoria, usa
+     * record(), que si persiste la entrada encadenada.
+     *
+     * @param  string  $eventType  Event type identifier
+     * @param  array<string, mixed>  $metadata  Additional context
+     * @param  int|null  $userId  Acting user
+     * @param  int|null  $tenantId  Tenant the event belongs to
+     */
+    public function logEvent(
+        string $eventType,
+        array $metadata = [],
+        ?int $userId = null,
+        ?int $tenantId = null
+    ): void {
+        Log::info("Audit: {$eventType}", [
+            'event_type' => $eventType,
+            'metadata' => $metadata,
+            'user_id' => $userId ?? auth()->id(),
+            'tenant_id' => $tenantId ?? (app()->bound('tenant') ? app('tenant')?->id : null),
+            'ip' => request()?->ip(),
+            'user_agent' => request()?->userAgent(),
+            'timestamp' => now()->toIso8601String(),
+        ]);
     }
 
     /**
@@ -137,7 +190,7 @@ class AuditTrailService
             }
 
             // Verify previous_hash matches
-            $expectedPreviousHash = $previousEntry?->hash ?? self::GENESIS_HASH;
+            $expectedPreviousHash = $previousEntry->hash ?? self::GENESIS_HASH;
             if ($entry->previous_hash !== $expectedPreviousHash) {
                 $errors[] = "Entry {$entry->id}: Previous hash mismatch (chain broken)";
             }
@@ -155,7 +208,7 @@ class AuditTrailService
                 'ip_address' => $entry->ip_address,
                 'user_agent' => $entry->user_agent,
                 'sequence' => $entry->sequence,
-                'created_at' => $entry->created_at->format('Y-m-d H:i:s.u'),
+                'created_at' => $entry->created_at->format(self::HASH_DATE_FORMAT),
             ], $entry->previous_hash);
 
             if (! hash_equals($entry->hash, $calculatedHash)) {
@@ -289,5 +342,50 @@ class AuditTrailService
     public function getGenesisHash(): string
     {
         return self::GENESIS_HASH;
+    }
+
+    /**
+     * Get the hash at the head of a model's audit chain.
+     *
+     * Es el hash que sella el estado del rastro en este instante: sirve para
+     * anclar un paquete de evidencias a la cadena tal y como esta ahora.
+     *
+     * @param  Model  $auditable  The audited model
+     * @return string The last entry's hash, or the genesis hash if the chain is empty
+     */
+    public function getLatestHash(Model $auditable): string
+    {
+        return $this->getLastEntry($auditable)->hash ?? self::GENESIS_HASH;
+    }
+
+    /**
+     * Resolve tenant_id from the auditable model.
+     *
+     * Tries to get tenant_id directly from the model, or from related models
+     * (e.g., SigningProcess from Signer, or Document from SigningProcess).
+     *
+     * @param  Model  $auditable  The model being audited
+     * @return int|null The tenant_id or null
+     */
+    private function resolveTenantIdFromModel(Model $auditable): ?int
+    {
+        // Direct tenant_id attribute
+        if (isset($auditable->tenant_id)) {
+            return $auditable->tenant_id;
+        }
+
+        // Try common relationships that have tenant_id
+        $relationships = ['signingProcess', 'document', 'tenant'];
+
+        foreach ($relationships as $relation) {
+            if (method_exists($auditable, $relation)) {
+                $related = $auditable->$relation;
+                if ($related && isset($related->tenant_id)) {
+                    return $related->tenant_id;
+                }
+            }
+        }
+
+        return null;
     }
 }

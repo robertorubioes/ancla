@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\DeviceFingerprint;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -41,7 +42,7 @@ class DeviceFingerprintService
         ?string $signerEmail = null,
         ?int $signerId = null
     ): DeviceFingerprint {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
         $userAgent = $request->userAgent() ?? '';
 
         // Validate and sanitize client data
@@ -98,8 +99,9 @@ class DeviceFingerprintService
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.device_fingerprint_captured',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'fingerprint_id' => $fingerprint->id,
                 'fingerprint_hash' => $fingerprintHash,
                 'device_type' => $fingerprint->device_type,
@@ -186,7 +188,7 @@ class DeviceFingerprintService
     /**
      * Get fingerprints for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return DeviceFingerprint::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)
@@ -207,7 +209,7 @@ class DeviceFingerprintService
     /**
      * Get fingerprint history for signer.
      */
-    public function getSignerHistory(string $signerEmail, int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    public function getSignerHistory(string $signerEmail, int $limit = 10): Collection
     {
         return DeviceFingerprint::bySigner($signerEmail)
             ->orderBy('captured_at', 'desc')

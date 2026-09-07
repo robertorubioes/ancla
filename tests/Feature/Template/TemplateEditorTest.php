@@ -1,0 +1,407 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Template;
+
+use App\Enums\TemplateFieldType;
+use App\Enums\UserRole;
+use App\Http\Middleware\IdentifyTenant;
+use App\Livewire\Template\TemplateEditor;
+use App\Models\Document;
+use App\Models\DocumentTemplate;
+use App\Models\DocumentTemplateField;
+use App\Models\DocumentTemplateVersion;
+use App\Models\Tenant;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class TemplateEditorTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private Tenant $tenant;
+
+    private User $admin;
+
+    private DocumentTemplate $template;
+
+    private DocumentTemplateVersion $version;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tenant = Tenant::factory()->create();
+
+        $this->admin = User::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'role' => UserRole::ADMIN,
+        ]);
+
+        // Un PDF de verdad: el editor mide sus paginas para colocar las cajas.
+        Storage::fake('local');
+
+        $pdf = new \FPDF;
+        $pdf->AddPage();
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Cell(0, 10, 'BASE', 0, 1);
+
+        $stored = Str::uuid().'.pdf';
+        Storage::disk('local')->put("documents/test/{$stored}", $pdf->Output('S'));
+
+        $document = Document::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'storage_disk' => 'local',
+            'storage_path' => "documents/test/{$stored}",
+            'stored_filename' => $stored,
+            'is_encrypted' => false,
+        ]);
+
+        $this->template = DocumentTemplate::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'created_by' => $this->admin->id,
+        ]);
+
+        $this->version = DocumentTemplateVersion::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_id' => $this->template->id,
+            'document_id' => $document->id,
+            'created_by' => $this->admin->id,
+            'published_at' => null,
+        ]);
+    }
+
+    private function editor(): Testable
+    {
+        return Livewire::actingAs($this->admin)
+            ->test(TemplateEditor::class, ['template' => $this->template]);
+    }
+
+    public function test_carga_los_campos_ya_guardados(): void
+    {
+        DocumentTemplateField::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_version_id' => $this->version->id,
+            'key' => 'nombre',
+            'label' => 'Nombre completo',
+        ]);
+
+        $component = $this->editor();
+        $component->assertOk();
+        $component->assertSet('fields.0.key', 'nombre');
+        $component->assertSet('fields.0.label', 'Nombre completo');
+
+        $this->assertCount(1, (array) $component->get('fields'));
+    }
+
+    public function test_anade_un_campo_en_la_posicion_indicada(): void
+    {
+        $this->editor()
+            ->call('addField', 2, 45.5, 120.25)
+            ->assertSet('fields.0.page', 2)
+            ->assertSet('fields.0.x', 45.5)
+            ->assertSet('fields.0.y', 120.25)
+            ->assertSet('selectedField', 0);
+    }
+
+    public function test_los_campos_nuevos_se_llaman_distinto(): void
+    {
+        // "Campo 1", "Campo 2"... para poder reconocerlos en la lista.
+        $component = $this->editor()
+            ->call('addField')
+            ->call('addField')
+            ->call('addField');
+
+        $fields = (array) $component->get('fields');
+
+        $this->assertSame(['Campo 1', 'Campo 2', 'Campo 3'], array_column($fields, 'label'));
+        $this->assertSame(['campo_1', 'campo_2', 'campo_3'], array_column($fields, 'key'));
+    }
+
+    public function test_la_clave_se_deriva_del_nombre(): void
+    {
+        // La clave la decide el sistema: es lo que viaja en el JSON de la API
+        // y no algo que quien disena la plantilla tenga que inventar.
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', 'Fecha de inicio')
+            ->assertSet('fields.0.key', 'fecha_de_inicio');
+    }
+
+    public function test_la_clave_derivada_pierde_tildes_y_signos(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', 'Nº de póliza (España)')
+            ->assertSet('fields.0.key', 'no_de_poliza_espana');
+    }
+
+    public function test_una_clave_que_no_empieza_por_letra_se_corrige(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', '2024')
+            ->assertSet('fields.0.key', 'campo_2024');
+    }
+
+    public function test_dos_nombres_iguales_producen_claves_distintas(): void
+    {
+        // Las claves son unicas dentro del documento.
+        $component = $this->editor()
+            ->call('addField')
+            ->call('addField')
+            ->set('fields.0.label', 'Importe')
+            ->set('fields.1.label', 'Importe');
+
+        $keys = array_column((array) $component->get('fields'), 'key');
+
+        $this->assertSame(['importe', 'importe_2'], $keys);
+    }
+
+    public function test_mueve_un_campo(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->call('moveField', 0, 80.0, 200.0)
+            ->assertSet('fields.0.x', 80.0)
+            ->assertSet('fields.0.y', 200.0);
+    }
+
+    public function test_las_coordenadas_negativas_se_recortan_a_cero(): void
+    {
+        // El navegador puede mandar cualquier cosa; el servidor no se fia.
+        $this->editor()
+            ->call('addField')
+            ->call('moveField', 0, -50.0, -10.0)
+            ->assertSet('fields.0.x', 0.0)
+            ->assertSet('fields.0.y', 0.0);
+    }
+
+    public function test_una_caja_no_puede_hacerse_invisible(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->call('moveField', 0, 10.0, 10.0, 0.5, 0.1)
+            ->assertSet('fields.0.width', 5.0)
+            ->assertSet('fields.0.height', 4.0);
+    }
+
+    public function test_mover_un_campo_inexistente_no_rompe_nada(): void
+    {
+        $component = $this->editor()->call('moveField', 99, 10.0, 10.0);
+        $component->assertOk();
+
+        $this->assertSame([], (array) $component->get('fields'));
+    }
+
+    public function test_elimina_un_campo_y_reindexa(): void
+    {
+        $component = $this->editor()
+            ->call('addField')
+            ->call('addField');
+
+        $segundaClave = $component->get('fields.1.key');
+
+        $component->call('removeField', 0)
+            ->assertSet('fields.0.key', $segundaClave)
+            ->assertSet('selectedField', null);
+
+        $this->assertCount(1, (array) $component->get('fields'));
+    }
+
+    public function test_guarda_los_campos_en_la_base_de_datos(): void
+    {
+        $this->editor()
+            ->call('addField', 1, 30.0, 60.0)
+            ->set('fields.0.label', 'Documento de identidad')
+            ->set('fields.0.type', TemplateFieldType::TEXT->value)
+            ->call('addSignerRole')
+            ->set('signerRoles.0.role_key', 'arrendatario')
+            ->set('signerRoles.0.label', 'Arrendatario')
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertSet('success', 'Plantilla guardada.')
+            ->assertDispatched('template-saved');
+
+        $this->assertDatabaseHas('document_template_fields', [
+            'document_template_version_id' => $this->version->id,
+            'key' => 'documento_de_identidad',
+            'label' => 'Documento de identidad',
+            'page' => 1,
+        ]);
+
+        $this->assertDatabaseHas('document_template_signers', [
+            'document_template_version_id' => $this->version->id,
+            'role_key' => 'arrendatario',
+        ]);
+    }
+
+    public function test_guardar_reemplaza_el_esquema_anterior(): void
+    {
+        DocumentTemplateField::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_version_id' => $this->version->id,
+            'key' => 'viejo',
+        ]);
+
+        $this->editor()
+            ->call('removeField', 0)
+            ->call('addField')
+            ->set('fields.0.label', 'Nuevo')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseMissing('document_template_fields', ['key' => 'viejo']);
+        $this->assertDatabaseHas('document_template_fields', ['key' => 'nuevo']);
+    }
+
+    public function test_rechaza_dos_campos_con_la_misma_clave(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->call('addField')
+            ->set('fields.0.key', 'repetida')
+            ->set('fields.1.key', 'repetida')
+            ->call('save')
+            ->assertHasErrors('fields');
+        // Nota: aqui se fuerzan las claves a mano para ejercitar la guarda del
+        // servidor. Por la interfaz no puede pasar, porque se derivan unicas.
+
+        $this->assertDatabaseCount('document_template_fields', 0);
+    }
+
+    public function test_rechaza_una_clave_con_formato_invalido(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.key', 'Con Espacios Y Mayusculas')
+            ->call('save')
+            ->assertHasErrors('fields.0.key');
+
+        $this->assertDatabaseCount('document_template_fields', 0);
+    }
+
+    public function test_un_desplegable_sin_opciones_no_se_guarda(): void
+    {
+        $this->editor()
+            ->call('addField')
+            ->set('fields.0.label', 'Plan')
+            ->set('fields.0.type', TemplateFieldType::SELECT->value)
+            ->set('fields.0.options', [])
+            ->call('save')
+            ->assertHasErrors('fields.0.options');
+
+        $this->assertDatabaseCount('document_template_fields', 0);
+    }
+
+    public function test_rechaza_dos_roles_de_firmante_con_la_misma_clave(): void
+    {
+        $this->editor()
+            ->call('addSignerRole')
+            ->call('addSignerRole')
+            ->set('signerRoles.0.role_key', 'parte')
+            ->set('signerRoles.1.role_key', 'parte')
+            ->call('save')
+            ->assertHasErrors('signerRoles');
+    }
+
+    public function test_mide_las_paginas_del_pdf_en_milimetros(): void
+    {
+        // El servidor las mide para que la vista coloque las cajas en
+        // porcentaje: asi no dependen de la escala del navegador.
+        $component = $this->editor();
+        $pages = $component->instance()->pages();
+
+        $this->assertCount(1, $pages);
+        $this->assertSame(1, $pages[0]['number']);
+        $this->assertEqualsWithDelta(210.0, $pages[0]['width'], 0.5);
+        $this->assertEqualsWithDelta(297.0, $pages[0]['height'], 0.5);
+    }
+
+    public function test_dibuja_un_contenedor_y_un_canvas_por_pagina(): void
+    {
+        $html = $this->editor()->html();
+
+        $this->assertStringContainsString('tpl-canvas-1', $html);
+        $this->assertStringContainsString('class="tpl-page', $html);
+        $this->assertStringContainsString('data-mm-width=', $html);
+    }
+
+    public function test_el_canvas_queda_fuera_del_alcance_de_livewire(): void
+    {
+        // Lo pintado en un canvas no vive en el HTML: sin wire:ignore, cada
+        // vez que Livewire rehace el DOM las paginas se quedan en blanco.
+        $html = $this->editor()->html();
+
+        $this->assertMatchesRegularExpression(
+            '/wire:ignore[^>]*>\s*<canvas/s',
+            $html,
+            'El canvas debe ir dentro de un contenedor con wire:ignore.'
+        );
+    }
+
+    public function test_cada_pagina_y_cada_caja_llevan_su_clave(): void
+    {
+        // Sin wire:key, Livewire recrea los elementos al reordenar y se lleva
+        // por delante los canvas ya pintados.
+        DocumentTemplateField::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_version_id' => $this->version->id,
+            'page' => 1,
+        ]);
+
+        $html = $this->editor()->html();
+
+        $this->assertStringContainsString('wire:key="tpl-page-1"', $html);
+        $this->assertStringContainsString('wire:key="tpl-field-0"', $html);
+    }
+
+    public function test_las_cajas_se_colocan_en_porcentaje(): void
+    {
+        DocumentTemplateField::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'document_template_version_id' => $this->version->id,
+            'key' => 'medido',
+            'page' => 1,
+            'x' => 21.0,
+            'y' => 29.7,
+            'width' => 84.0,
+            'height' => 8.0,
+        ]);
+
+        $html = $this->editor()->html();
+
+        // 21 mm sobre una A4 de 210 mm son el 10 %.
+        $this->assertMatchesRegularExpression('/left:\s*10(\.0+)?%/', $html);
+        $this->assertStringContainsString('data-field-index', $html);
+    }
+
+    public function test_no_se_edita_una_version_ya_publicada(): void
+    {
+        // Publicada = inmutable: hay procesos de firma que apuntan a ella.
+        $this->version->update(['published_at' => now()]);
+
+        Livewire::actingAs($this->admin)
+            ->test(TemplateEditor::class, ['template' => $this->template])
+            ->assertStatus(409);
+    }
+
+    public function test_el_editor_exige_ser_administrador_del_tenant(): void
+    {
+        $operador = User::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'role' => UserRole::OPERATOR,
+        ]);
+
+        $this->actingAs($operador)
+            ->withoutMiddleware(IdentifyTenant::class)
+            ->get(route('templates.editor', ['template' => $this->template->uuid]))
+            ->assertForbidden();
+    }
+}

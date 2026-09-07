@@ -292,7 +292,7 @@ Producto 100% completo, multi-tenant operativo, con seguridad enterprise, listo 
 
 **AC2: Clave de encriptación por tenant** ✅
 - [ ] Derivación de clave por tenant con HKDF (HMAC-based Key Derivation Function)
-- [ ] Formula: `tenant_key = HKDF(master_key, tenant_id, 'ancla-tenant-encryption')`
+- [ ] Formula: `tenant_key = HKDF(master_key, tenant_id, 'firmalum-tenant-encryption')`
 - [ ] Cada tenant tiene clave única derivada
 - [ ] Master key nunca se usa directamente
 - [ ] Rotación de master key futura (preparada)
@@ -349,7 +349,7 @@ Producto 100% completo, multi-tenant operativo, con seguridad enterprise, listo 
 **AC8: Configuración de driver storage** ✅
 - [ ] Actualizar `config/filesystems.php`
 - [ ] Driver local (dev): `storage/app/documents/`
-- [ ] Driver S3 (prod): `s3://ancla-documents-{env}/`
+- [ ] Driver S3 (prod): `s3://firmalum-documents-{env}/`
 - [ ] Encriptación funciona con ambos drivers
 - [ ] Tests con ambos drivers
 

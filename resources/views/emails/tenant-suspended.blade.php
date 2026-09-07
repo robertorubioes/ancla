@@ -132,7 +132,7 @@
             <h3>📧 Need Help?</h3>
             <p>If you believe this suspension was made in error, or if you'd like to resolve this issue, please contact our support team immediately.</p>
             <p style="margin: 15px 0 0 0;">
-                <strong>Support Email:</strong> support@ancla.app<br>
+                <strong>Support Email:</strong> soporte@firmalum.com<br>
                 <strong>Response Time:</strong> Within 24 hours
             </p>
         </div>

@@ -8,6 +8,7 @@ use App\Models\Document;
 use App\Services\Document\DocumentUploadException;
 use App\Services\Document\DocumentUploadService;
 use App\Services\Document\DuplicateDocumentException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -167,7 +168,7 @@ class DocumentUpload extends Component
     /**
      * Get recent documents for the current user.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, Document>
+     * @return Collection<int, Document>
      */
     #[Computed]
     public function recentDocuments()

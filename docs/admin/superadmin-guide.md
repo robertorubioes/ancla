@@ -38,13 +38,25 @@ The **Superadmin Panel** allows privileged users to manage multiple organization
 
 ### Default Superadmin Credentials
 
-```
-URL: http://localhost:8000/admin/tenants
-Email: superadmin@firmalum.com
-Password: password
+El superadmin lo crea `SuperadminSeeder`, que lee las credenciales del
+entorno. No hay credenciales por defecto en el codigo.
+
+```bash
+# .env
+SUPERADMIN_EMAIL=tu@correo.com
+SUPERADMIN_NAME="Tu Nombre"
+SUPERADMIN_PASSWORD=          # obligatorio en produccion/staging
+
+php artisan db:seed --class=SuperadminSeeder
 ```
 
-⚠️ **IMPORTANT**: Change the default password immediately after first login in production!
+En local, si `SUPERADMIN_PASSWORD` esta vacio, el seeder genera una
+contrasena aleatoria y la muestra una unica vez por consola.
+
+⚠️ En produccion y staging el seeder **aborta** si `SUPERADMIN_PASSWORD` no
+esta definido, para no crear nunca una cuenta con una clave conocida.
+
+URL del panel: `/admin/tenants`
 
 ### Access Requirements
 

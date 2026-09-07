@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\SigningProcess;
 
 use App\Models\SigningProcess;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -102,6 +103,33 @@ class ProcessesDashboard extends Component
     {
         $this->showDetailsModal = false;
         $this->selectedProcessId = null;
+    }
+
+    /**
+     * Send a draft process (trigger notifications).
+     */
+    public function sendProcess(int $processId): void
+    {
+        $process = SigningProcess::query()
+            ->where('id', $processId)
+            ->where('tenant_id', auth()->user()->tenant_id)
+            ->where('created_by', auth()->id())
+            ->where('status', SigningProcess::STATUS_DRAFT)
+            ->firstOrFail();
+
+        try {
+            // Send notifications to signers
+            $process->sendNotifications();
+
+            session()->flash('message', __('Process sent successfully! Signers have been notified.'));
+        } catch (\Exception $e) {
+            session()->flash('error', __('Failed to send process. Please try again.'));
+
+            Log::error('Failed to send process', [
+                'process_id' => $processId,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

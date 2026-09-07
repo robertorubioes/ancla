@@ -10,8 +10,10 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\TwoFactorChallenge;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -41,7 +43,6 @@ class AuthenticationTest extends TestCase
     // LOGIN TESTS
     // =========================================================================
 
-    /** @test */
     public function test_login_page_loads(): void
     {
         $response = $this->get('/login');
@@ -50,7 +51,6 @@ class AuthenticationTest extends TestCase
         $response->assertSeeLivewire(LoginForm::class);
     }
 
-    /** @test */
     public function test_user_can_login_with_valid_credentials(): void
     {
         $user = User::factory()->create([
@@ -72,7 +72,6 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    /** @test */
     public function test_user_cannot_login_with_invalid_credentials(): void
     {
         $user = User::factory()->create([
@@ -93,7 +92,6 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    /** @test */
     public function test_user_cannot_login_with_empty_credentials(): void
     {
         Livewire::test(LoginForm::class)
@@ -105,7 +103,6 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    /** @test */
     public function test_user_cannot_login_with_invalid_email_format(): void
     {
         Livewire::test(LoginForm::class)
@@ -119,7 +116,6 @@ class AuthenticationTest extends TestCase
     // MULTI-TENANT LOGIN TESTS
     // =========================================================================
 
-    /** @test */
     public function test_user_cannot_login_to_different_tenant(): void
     {
         $otherTenant = Tenant::factory()->create(['status' => 'active']);
@@ -143,7 +139,6 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    /** @test */
     public function test_super_admin_can_login_without_tenant(): void
     {
         $superAdmin = User::factory()->superAdmin()->create([
@@ -161,7 +156,6 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    /** @test */
     public function test_user_session_contains_tenant_id(): void
     {
         $user = User::factory()->create([
@@ -184,7 +178,6 @@ class AuthenticationTest extends TestCase
     // PASSWORD RESET TESTS
     // =========================================================================
 
-    /** @test */
     public function test_forgot_password_page_loads(): void
     {
         $response = $this->get('/forgot-password');
@@ -193,7 +186,6 @@ class AuthenticationTest extends TestCase
         $response->assertSeeLivewire(ForgotPassword::class);
     }
 
-    /** @test */
     public function test_password_reset_respects_tenant(): void
     {
         $user = User::factory()->create([
@@ -209,7 +201,6 @@ class AuthenticationTest extends TestCase
             ->assertHasNoErrors();
     }
 
-    /** @test */
     public function test_password_reset_fails_for_user_in_different_tenant(): void
     {
         $otherTenant = Tenant::factory()->create(['status' => 'active']);
@@ -222,15 +213,20 @@ class AuthenticationTest extends TestCase
         // Bind different tenant
         $this->app->instance('tenant', $this->tenant);
 
+        Notification::fake();
+
         Livewire::test(ForgotPassword::class)
             ->set('email', 'user@othertenant.com')
-            ->call('sendResetLink');
+            ->call('sendResetLink')
+            ->assertSet('emailSent', true)
+            ->assertHasNoErrors();
 
-        // Should not find user in this tenant context
-        // No error shown to user (security), but reset link not sent
+        // El correo no sale: el usuario es de otro tenant. Y aun asi la
+        // pantalla responde lo mismo que si existiera, para no dejar averiguar
+        // que direcciones estan dadas de alta.
+        Notification::assertNotSentTo($user, ResetPasswordNotification::class);
     }
 
-    /** @test */
     public function test_reset_password_page_loads_with_token(): void
     {
         $response = $this->get('/reset-password/test-token?email=test@example.com');
@@ -243,7 +239,6 @@ class AuthenticationTest extends TestCase
     // 2FA TESTS
     // =========================================================================
 
-    /** @test */
     public function test_2fa_challenge_works(): void
     {
         $user = User::factory()->withTwoFactorEnabled()->create([
@@ -262,7 +257,6 @@ class AuthenticationTest extends TestCase
             ->assertViewIs('livewire.auth.two-factor-challenge');
     }
 
-    /** @test */
     public function test_2fa_challenge_page_loads(): void
     {
         $user = User::factory()->withTwoFactorEnabled()->create([
@@ -281,7 +275,6 @@ class AuthenticationTest extends TestCase
     // ROLE & PERMISSION TESTS
     // =========================================================================
 
-    /** @test */
     public function test_user_has_correct_role(): void
     {
         $admin = User::factory()->admin()->create([
@@ -301,7 +294,6 @@ class AuthenticationTest extends TestCase
         $this->assertTrue($viewer->isViewer());
     }
 
-    /** @test */
     public function test_super_admin_has_all_permissions(): void
     {
         $superAdmin = User::factory()->superAdmin()->create();
@@ -314,7 +306,6 @@ class AuthenticationTest extends TestCase
         }
     }
 
-    /** @test */
     public function test_admin_has_user_management_permissions(): void
     {
         $admin = User::factory()->admin()->create([
@@ -327,7 +318,6 @@ class AuthenticationTest extends TestCase
         $this->assertTrue($admin->hasPermission(Permission::DELETE_USERS));
     }
 
-    /** @test */
     public function test_viewer_has_limited_permissions(): void
     {
         $viewer = User::factory()->viewer()->create([
@@ -347,7 +337,6 @@ class AuthenticationTest extends TestCase
     // MIDDLEWARE TESTS
     // =========================================================================
 
-    /** @test */
     public function test_permission_middleware_blocks_unauthorized(): void
     {
         $viewer = User::factory()->viewer()->create([
@@ -361,7 +350,6 @@ class AuthenticationTest extends TestCase
         $this->assertFalse($viewer->hasPermission(Permission::MANAGE_TENANTS));
     }
 
-    /** @test */
     public function test_validate_session_tenant_middleware(): void
     {
         $user = User::factory()->create([
@@ -383,7 +371,6 @@ class AuthenticationTest extends TestCase
     // RATE LIMITING TESTS
     // =========================================================================
 
-    /** @test */
     public function test_login_rate_limiting(): void
     {
         $this->app->instance('tenant', $this->tenant);
@@ -408,7 +395,6 @@ class AuthenticationTest extends TestCase
     // LOGOUT TESTS
     // =========================================================================
 
-    /** @test */
     public function test_authenticated_user_can_logout(): void
     {
         $user = User::factory()->create([

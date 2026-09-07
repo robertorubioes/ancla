@@ -2480,7 +2480,7 @@ class UploadDocument extends Component
 return [
     'cold_storage' => [
         'driver' => env('ARCHIVE_STORAGE_DRIVER', 's3'),
-        'bucket' => env('ARCHIVE_STORAGE_BUCKET', 'ancla-archive'),
+        'bucket' => env('ARCHIVE_STORAGE_BUCKET', 'firmalum-archive'),
         'prefix' => 'archive',
         'encryption' => 'AES256',
         'storage_class' => env('ARCHIVE_STORAGE_CLASS', 'GLACIER_IR'),

@@ -6,7 +6,6 @@ namespace App\Services\Document;
 
 use App\Models\SigningProcess;
 use Illuminate\Support\Facades\Log;
-use setasign\Fpdi\Fpdi;
 
 /**
  * Build a certification page for the final signed document.
@@ -26,7 +25,7 @@ class CertificationPageBuilder
             'signers_count' => $process->signers->count(),
         ]);
 
-        $pdf = new Fpdi;
+        $pdf = new CertificationPdf;
         $pdf->AddPage();
 
         // Header with Firmalum branding
@@ -59,7 +58,7 @@ class CertificationPageBuilder
     /**
      * Add header with branding.
      */
-    private function addHeader(Fpdi $pdf): void
+    private function addHeader(CertificationPdf $pdf): void
     {
         // Firmalum Logo placeholder (would be actual logo in production)
         $pdf->SetFont('Arial', 'B', 20);
@@ -87,7 +86,7 @@ class CertificationPageBuilder
     /**
      * Add process information section.
      */
-    private function addProcessInformation(Fpdi $pdf, SigningProcess $process): void
+    private function addProcessInformation(CertificationPdf $pdf, SigningProcess $process): void
     {
         $this->addSectionTitle($pdf, 'INFORMACION DEL PROCESO');
 
@@ -117,7 +116,7 @@ class CertificationPageBuilder
     /**
      * Add signers timeline section.
      */
-    private function addSignersTimeline(Fpdi $pdf, SigningProcess $process): void
+    private function addSignersTimeline(CertificationPdf $pdf, SigningProcess $process): void
     {
         $this->addSectionTitle($pdf, 'CRONOLOGIA DE FIRMAS');
 
@@ -190,7 +189,7 @@ class CertificationPageBuilder
     /**
      * Add evidence summary section.
      */
-    private function addEvidenceSummary(Fpdi $pdf, SigningProcess $process): void
+    private function addEvidenceSummary(CertificationPdf $pdf, SigningProcess $process): void
     {
         $this->addSectionTitle($pdf, 'RESUMEN DE EVIDENCIAS');
 
@@ -243,7 +242,7 @@ class CertificationPageBuilder
     /**
      * Add verification instructions section.
      */
-    private function addVerificationInstructions(Fpdi $pdf, SigningProcess $process): void
+    private function addVerificationInstructions(CertificationPdf $pdf, SigningProcess $process): void
     {
         $this->addSectionTitle($pdf, 'VERIFICACION PUBLICA');
 
@@ -271,7 +270,7 @@ class CertificationPageBuilder
     /**
      * Add footer with metadata.
      */
-    private function addFooter(Fpdi $pdf, SigningProcess $process): void
+    private function addFooter(CertificationPdf $pdf, SigningProcess $process): void
     {
         $pdf->SetY(-30);
 
@@ -297,7 +296,7 @@ class CertificationPageBuilder
     /**
      * Helper to add section titles.
      */
-    private function addSectionTitle(Fpdi $pdf, string $title): void
+    private function addSectionTitle(CertificationPdf $pdf, string $title): void
     {
         $pdf->SetFont('Arial', 'B', 11);
         $pdf->SetTextColor(31, 41, 55); // Gray-800

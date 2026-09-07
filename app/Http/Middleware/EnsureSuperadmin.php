@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +12,7 @@ class EnsureSuperadmin
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -20,8 +21,10 @@ class EnsureSuperadmin
             abort(401, 'Unauthenticated');
         }
 
+        $user = auth()->user();
+
         // Check if user has superadmin role
-        if (auth()->user()->role !== 'super_admin') {
+        if ($user->role !== UserRole::SUPER_ADMIN) {
             abort(403, 'Access denied. Superadmin role required.');
         }
 

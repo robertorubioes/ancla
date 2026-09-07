@@ -26,7 +26,9 @@ class SignedDocumentFactory extends Factory
 
         return [
             'uuid' => Str::uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'signing_process_id' => SigningProcess::factory(),
             'signer_id' => Signer::factory(),
             'original_document_id' => Document::factory(),

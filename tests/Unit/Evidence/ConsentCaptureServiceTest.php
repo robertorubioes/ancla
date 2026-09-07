@@ -39,8 +39,8 @@ class ConsentCaptureServiceTest extends TestCase
         // Mock TSA service
         $this->tsaService = Mockery::mock(TsaService::class);
         $tsaToken = TsaToken::factory()->create();
-        $this->tsaService->shouldReceive('getTimestamp')->andReturn($tsaToken);
-        $this->tsaService->shouldReceive('verifyToken')->andReturn(true);
+        $this->tsaService->shouldReceive('requestTimestamp')->andReturn($tsaToken);
+        $this->tsaService->shouldReceive('verifyTimestamp')->andReturn(true);
 
         // Mock audit trail service
         $this->auditTrailService = Mockery::mock(AuditTrailService::class);
@@ -202,9 +202,7 @@ class ConsentCaptureServiceTest extends TestCase
     {
         $signable = EvidencePackage::factory()->create();
 
-        // Create a simple base64 image
-        $imageData = base64_encode('fake image data');
-        $dataUrl = "data:image/png;base64,{$imageData}";
+        $dataUrl = 'data:image/png;base64,'.base64_encode($this->pngDePrueba());
 
         $record = $this->service->recordConsent(
             $signable,
@@ -407,9 +405,23 @@ class ConsentCaptureServiceTest extends TestCase
         $this->assertContains('privacy', $types);
     }
 
-    protected function tearDown(): void
+    /**
+     * Un PNG valido de 20x20.
+     *
+     * El servicio no se fia del tipo que declara la data-url: comprueba los
+     * bytes con finfo y exige unas dimensiones minimas, asi que una cadena
+     * cualquiera no vale como captura.
+     */
+    private function pngDePrueba(): string
     {
-        Mockery::close();
-        parent::tearDown();
+        $imagen = imagecreatetruecolor(20, 20);
+
+        ob_start();
+        imagepng($imagen);
+        $bytes = (string) ob_get_clean();
+
+        imagedestroy($imagen);
+
+        return $bytes;
     }
 }

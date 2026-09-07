@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\ConsentRecord;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -28,7 +29,7 @@ class ConsentCaptureService
         ?int $signerId = null,
         string $language = 'es'
     ): ConsentRecord {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
 
         // Get consent text and version
         $legalText = $this->getLegalText($consentType, $language);
@@ -93,15 +94,16 @@ class ConsentCaptureService
 
         // Get TSA timestamp if required
         if (config('evidence.consent.tsa_required') && $action === 'accepted') {
-            $tsaToken = $this->tsaService->getTimestamp($verificationHash, $consent);
+            $tsaToken = $this->tsaService->requestTimestamp($verificationHash, $consent->tenant_id);
             $consent->update(['tsa_token_id' => $tsaToken->id]);
         }
 
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.consent_captured',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'consent_id' => $consent->id,
                 'consent_type' => $consentType,
                 'consent_version' => $consentVersion,
@@ -342,7 +344,7 @@ class ConsentCaptureService
     /**
      * Get consents for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return ConsentRecord::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)
@@ -353,7 +355,7 @@ class ConsentCaptureService
     /**
      * Get consents for a signer.
      */
-    public function getForSigner(string $signerEmail): \Illuminate\Database\Eloquent\Collection
+    public function getForSigner(string $signerEmail): Collection
     {
         return ConsentRecord::bySigner($signerEmail)
             ->orderBy('action_timestamp', 'desc')

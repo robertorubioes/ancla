@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,10 +36,10 @@ use Illuminate\Support\Facades\URL;
  * @property string|null $encryption_key_id
  * @property string $sha256_hash
  * @property string $hash_algorithm
- * @property \Carbon\Carbon|null $hash_verified_at
+ * @property Carbon|null $hash_verified_at
  * @property int|null $upload_tsa_token_id
  * @property string|null $thumbnail_path
- * @property \Carbon\Carbon|null $thumbnail_generated_at
+ * @property Carbon|null $thumbnail_generated_at
  * @property array|null $pdf_metadata
  * @property string|null $pdf_version
  * @property bool $is_pdf_a
@@ -46,13 +48,13 @@ use Illuminate\Support\Facades\URL;
  * @property bool $has_javascript
  * @property string $status
  * @property string|null $error_message
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read Tenant $tenant
  * @property-read User $user
  * @property-read TsaToken|null $uploadTsaToken
- * @property-read \Illuminate\Database\Eloquent\Collection<EvidencePackage> $evidencePackages
+ * @property-read Collection<EvidencePackage> $evidencePackages
  */
 class Document extends Model
 {
@@ -78,6 +80,8 @@ class Document extends Model
         'storage_path',
         'stored_filename',
         'is_encrypted',
+        'encrypted_at',
+        'encryption_key_version',
         'encryption_key_id',
         'sha256_hash',
         'hash_algorithm',

@@ -93,7 +93,7 @@ class SignatureService
             $this->validateSignatureData($type, $data, $metadata);
 
             // 5. Capture signature evidences
-            $evidencePackage = $this->captureSignatureEvidences($signer, $consentGiven);
+            $evidencePackage = $this->captureSignatureEvidences($signer, $consentGiven, $metadata);
 
             // 6. Save signature data
             $signer->update([
@@ -114,17 +114,17 @@ class SignatureService
             }
 
             // 8. Register in audit trail
-            $this->auditTrailService->log(
-                action: 'signer.signed',
-                auditable: $signer,
-                data: [
+            $this->auditTrailService->record(
+                $signer,
+                'signer.signed',
+                [
                     'signer_id' => $signer->id,
                     'signer_email' => $signer->email,
                     'signature_type' => $type,
                     'process_id' => $process?->id,
                     'evidence_package_id' => $evidencePackage->id,
-                ],
-                description: "Signer {$signer->name} signed the document using {$type} signature"
+                    'description' => "Signer {$signer->name} signed the document using {$type} signature",
+                ]
             );
 
             DB::commit();
@@ -143,7 +143,7 @@ class SignatureService
                 'error' => $e->getMessage(),
             ]);
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Signature processing error', [
                 'signer_id' => $signer->id,
@@ -320,68 +320,102 @@ class SignatureService
     /**
      * Capture all signature evidences.
      */
-    private function captureSignatureEvidences(Signer $signer, bool $consentGiven): EvidencePackage
-    {
+    /**
+     * @param  array<string, mixed>  $metadata  Contexto capturado en la pagina de firma
+     */
+    private function captureSignatureEvidences(
+        Signer $signer,
+        bool $consentGiven,
+        ?array $metadata = null
+    ): EvidencePackage {
         $process = $signer->signingProcess;
         $document = $process->document;
+        $request = request();
 
-        // Create evidence package
+        /** @var array<string, mixed> $clientData */
+        $clientData = $metadata['client_data'] ?? [];
+        /** @var array<string, mixed>|null $gpsData */
+        $gpsData = $metadata['gps'] ?? null;
+
+        // Create evidence package.
+        //
+        // EvidencePackage es polimorfico: packagable_type y packagable_id son
+        // NOT NULL. Antes se pasaban 'document_id' y 'type', que no son
+        // columnas ni estan en $fillable, asi que se descartaban en silencio
+        // y el INSERT violaba la restriccion.
         $evidencePackage = EvidencePackage::create([
             'tenant_id' => $process->tenant_id,
-            'document_id' => $document->id,
-            'type' => 'signature',
-            'status' => 'active',
+            'packagable_type' => $signer::class,
+            'packagable_id' => $signer->id,
+            'document_hash' => $document->sha256_hash,
+            'audit_trail_hash' => $this->auditTrailService->getLatestHash($signer),
+            'status' => EvidencePackage::STATUS_GENERATING,
         ]);
 
-        // Capture device fingerprint
-        $deviceFingerprint = $this->deviceFingerprintService->captureFromRequest();
-        $deviceFingerprint->evidence_package_id = $evidencePackage->id;
-        $deviceFingerprint->save();
+        // Capture device fingerprint.
+        //
+        // Los servicios de evidencia se anclan al firmante mediante su
+        // relacion polimorfica ($signable); no existe una columna
+        // evidence_package_id en sus tablas.
+        $this->deviceFingerprintService->capture(
+            request: $request,
+            signable: $signer,
+            clientData: $clientData,
+            signerEmail: $signer->email,
+            signerId: $signer->id
+        );
 
         // Capture IP resolution
-        $ipResolution = $this->ipResolutionService->resolveFromRequest();
-        $ipResolution->evidence_package_id = $evidencePackage->id;
-        $ipResolution->save();
+        $this->ipResolutionService->capture(
+            request: $request,
+            signable: $signer,
+            signerEmail: $signer->email,
+            signerId: $signer->id
+        );
 
-        // Capture geolocation (if available)
+        // Capture geolocation (optional: never blocks the signature)
         try {
-            $geolocation = $this->geolocationService->captureFromRequest();
-            if ($geolocation) {
-                $geolocation->evidence_package_id = $evidencePackage->id;
-                $geolocation->save();
-            }
-        } catch (\Exception $e) {
-            // Geolocation is optional, log but continue
+            $this->geolocationService->capture(
+                request: $request,
+                signable: $signer,
+                gpsData: $gpsData,
+                permissionStatus: $gpsData !== null ? 'granted' : 'unavailable',
+                signerEmail: $signer->email,
+                signerId: $signer->id
+            );
+        } catch (\Throwable $e) {
             Log::info('Geolocation capture failed (optional)', ['error' => $e->getMessage()]);
         }
 
         // Capture consent record
-        $consent = $this->consentCaptureService->captureConsent(
-            type: 'electronic_signature',
-            consentGiven: $consentGiven,
-            metadata: [
-                'signer_id' => $signer->id,
-                'signer_email' => $signer->email,
+        $this->consentCaptureService->recordConsent(
+            signable: $signer,
+            signerEmail: $signer->email,
+            consentType: 'signature',
+            action: $consentGiven ? 'accepted' : 'rejected',
+            uiContext: [
                 'document_id' => $document->id,
                 'process_id' => $process->id,
-            ]
+            ],
+            signerId: $signer->id
         );
-        $consent->evidence_package_id = $evidencePackage->id;
-        $consent->save();
 
-        // Generate TSA token for timestamp
-        $tsaToken = $this->tsaService->timestamp(
-            data: json_encode([
-                'signer_id' => $signer->id,
-                'document_id' => $document->id,
-                'signed_at' => now()->toIso8601String(),
-            ])
-        );
-        $tsaToken->evidence_package_id = $evidencePackage->id;
-        $tsaToken->save();
+        // Seal the package with a TSA timestamp
+        $sealHash = hash('sha256', (string) json_encode([
+            'signer_id' => $signer->id,
+            'document_id' => $document->id,
+            'document_hash' => $document->sha256_hash,
+            'signed_at' => now()->toIso8601String(),
+        ]));
 
-        // Update evidence package status
-        $evidencePackage->update(['status' => 'sealed']);
+        $tsaToken = $this->tsaService->requestTimestamp($sealHash, $process->tenant_id);
+
+        $evidencePackage->update([
+            'tsa_token_id' => $tsaToken->id,
+            'audit_trail_hash' => $this->auditTrailService->getLatestHash($signer),
+            'status' => EvidencePackage::STATUS_READY,
+            'generated_at' => now(),
+        ]);
 
         return $evidencePackage;
     }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,13 +21,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $verification_code
  * @property string $short_code
  * @property string|null $qr_code_path
- * @property \Carbon\Carbon|null $expires_at
+ * @property Carbon|null $expires_at
  * @property int $access_count
- * @property \Carbon\Carbon|null $last_accessed_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $last_accessed_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Document $document
- * @property-read \Illuminate\Database\Eloquent\Collection<VerificationLog> $verificationLogs
+ * @property-read Collection<VerificationLog> $verificationLogs
  */
 class VerificationCode extends Model
 {
