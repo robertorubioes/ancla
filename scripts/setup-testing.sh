@@ -141,6 +141,13 @@ chown -R www-data:www-data "$TEST_DIR/storage" "$TEST_DIR/bootstrap/cache"
 #------------------------------------------------------------------------------
 VHOST="/etc/nginx/sites-available/firmalum-test"
 
+# El vhost se regenera siempre, asi que hay que recordar si tenia HTTPS: lo
+# anade certbot con sus propias directivas, y reescribir la plantilla se las
+# lleva por delante. Sin esto, una simple actualizacion dejaba el entorno sin
+# certificado y sin redireccion.
+TENIA_SSL=0
+[[ -f "$VHOST" ]] && grep -q 'ssl_certificate' "$VHOST" && TENIA_SSL=1
+
 log "Vhost ${TEST_HOST}"
 cat > "$VHOST" <<NGINX
 # Firmalum - entorno de TESTING
@@ -202,10 +209,16 @@ chmod 644 "$CRON"
 #------------------------------------------------------------------------------
 # 7. Certificado
 #------------------------------------------------------------------------------
-if [[ $WANT_SSL -eq 1 ]]; then
+# Se pide el certificado si lo han pedido explicitamente, y tambien si el
+# vhost ya lo tenia: acabamos de sobrescribirlo y hay que devolverselo.
+# certbot no reemite nada mientras el certificado siga siendo valido; se
+# limita a volver a instalarlo en el vhost.
+if [[ $WANT_SSL -eq 1 || $TENIA_SSL -eq 1 ]]; then
     if ! getent hosts "$TEST_HOST" >/dev/null; then
         fail "${TEST_HOST} no resuelve todavia. Crea el registro DNS y vuelve a intentarlo."
     fi
+
+    [[ $TENIA_SSL -eq 1 && $WANT_SSL -eq 0 ]] && log "El vhost tenia HTTPS: se reinstala"
 
     log "Certificado para ${TEST_HOST}"
     certbot --nginx -d "$TEST_HOST" --non-interactive --agree-tos \
