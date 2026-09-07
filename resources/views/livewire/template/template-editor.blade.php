@@ -150,7 +150,7 @@
                             <input
                                 type="text"
                                 wire:model.live.debounce.400ms="fields.{{ $sel }}.label"
-                                class="w-full rounded-md border border-gray-300 text-sm"
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500"
                             >
                             @error("fields.{$sel}.label")
                                 <p class="text-[11px] text-red-600 mt-1">{{ $message }}</p>
@@ -167,7 +167,7 @@
                             <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Tipo') }}</label>
                             <select
                                 wire:model.live="fields.{{ $sel }}.type"
-                                class="w-full rounded-md border border-gray-300 text-sm"
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500"
                             >
                                 @foreach ($this->fieldTypes as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
@@ -184,11 +184,11 @@
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Cuerpo') }}</label>
                                 <input type="number" min="6" max="40" wire:model.blur="fields.{{ $sel }}.font_size"
-                                    class="w-full rounded-md border border-gray-300 text-sm">
+                                    class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Alineacion') }}</label>
-                                <select wire:model="fields.{{ $sel }}.align" class="w-full rounded-md border border-gray-300 text-sm">
+                                <select wire:model="fields.{{ $sel }}.align" class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                                     <option value="left">{{ __('Izquierda') }}</option>
                                     <option value="center">{{ __('Centro') }}</option>
                                     <option value="right">{{ __('Derecha') }}</option>
@@ -237,7 +237,7 @@
                             type="text"
                             wire:model.blur="signerRoles.{{ $i }}.label"
                             placeholder="{{ __('Arrendatario') }}"
-                            class="w-full rounded-md border border-gray-300 text-sm"
+                            class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500"
                         >
                         <input
                             type="text"

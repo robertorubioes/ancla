@@ -36,12 +36,12 @@
                     @switch ($field->type->value)
                         @case ('textarea')
                             <textarea rows="3" wire:model.live.debounce.500ms="values.{{ $field->key }}"
-                                class="w-full rounded-md border border-gray-300 text-sm"></textarea>
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500"></textarea>
                             @break
 
                         @case ('select')
                             <select wire:model.live.debounce.500ms="values.{{ $field->key }}"
-                                class="w-full rounded-md border border-gray-300 text-sm">
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                                 <option value="">{{ __('-- Elige --') }}</option>
                                 @foreach ($field->optionMap() as $value => $label)
                                     <option value="{{ $value }}">{{ $label }}</option>
@@ -59,17 +59,17 @@
 
                         @case ('number')
                             <input type="number" step="any" wire:model.live.debounce.500ms="values.{{ $field->key }}"
-                                class="w-full rounded-md border border-gray-300 text-sm">
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                             @break
 
                         @case ('date')
                             <input type="date" wire:model.live.debounce.500ms="values.{{ $field->key }}"
-                                class="w-full rounded-md border border-gray-300 text-sm">
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                             @break
 
                         @default
                             <input type="text" wire:model.live.debounce.500ms="values.{{ $field->key }}"
-                                class="w-full rounded-md border border-gray-300 text-sm">
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                     @endswitch
 
                     @if ($field->help_text && $field->type->value !== 'checkbox')
@@ -119,7 +119,7 @@
                         <div>
                             <input type="text" placeholder="{{ __('Nombre completo') }}"
                                 wire:model.live.debounce.500ms="signers.{{ $i }}.name"
-                                class="w-full rounded-md border border-gray-300 text-sm">
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                             @error("signers.{$i}.name")
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -127,7 +127,7 @@
                         <div>
                             <input type="email" placeholder="{{ __('Correo') }}"
                                 wire:model.live.debounce.500ms="signers.{{ $i }}.email"
-                                class="w-full rounded-md border border-gray-300 text-sm">
+                                class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                             @error("signers.{$i}.email")
                                 <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -144,7 +144,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Orden de firma') }}</label>
-                    <select wire:model="signatureOrder" class="w-full rounded-md border border-gray-300 text-sm">
+                    <select wire:model="signatureOrder" class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                         <option value="parallel">{{ __('Todos a la vez') }}</option>
                         <option value="sequential">{{ __('Uno detras de otro') }}</option>
                     </select>
@@ -152,7 +152,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Fecha limite') }}</label>
                     <input type="date" wire:model.blur="deadlineAt"
-                        class="w-full rounded-md border border-gray-300 text-sm">
+                        class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500">
                     @error('deadlineAt')
                         <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -162,7 +162,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Mensaje para los firmantes') }}</label>
                 <textarea rows="2" wire:model.blur="customMessage"
-                    class="w-full rounded-md border border-gray-300 text-sm"></textarea>
+                    class="w-full rounded-md border border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500"></textarea>
             </div>
 
             <label class="flex items-center gap-2 text-sm text-gray-700">
