@@ -290,6 +290,11 @@ class RetentionPolicy extends Model
             ->active()
             ->forTenant($tenantId)
             ->forDocumentType($documentType)
+            // Lo mas especifico gana, y solo despues manda la prioridad. Sin
+            // esto, una politica global con prioridad baja eclipsaba la del
+            // tenant: nadie podia sobrescribir la retencion por defecto.
+            ->orderByRaw('tenant_id IS NULL')
+            ->orderByRaw('document_type IS NULL')
             ->byPriority()
             ->first();
     }

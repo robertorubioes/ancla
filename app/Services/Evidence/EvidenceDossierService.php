@@ -9,6 +9,7 @@ use App\Models\EvidenceDossier;
 use App\Models\GeolocationRecord;
 use App\Models\IpResolutionRecord;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -30,7 +31,7 @@ class EvidenceDossierService
         string $dossierType = 'full_evidence',
         ?int $generatedBy = null
     ): EvidenceDossier {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
 
         // Generate verification code
         $verificationCode = $this->generateVerificationCode();
@@ -119,14 +120,15 @@ class EvidenceDossierService
         ]);
 
         // Get TSA timestamp for the dossier
-        $tsaToken = $this->tsaService->getTimestamp($fileHash, $dossier);
+        $tsaToken = $this->tsaService->requestTimestamp($fileHash, $dossier->tenant_id);
         $dossier->update(['tsa_token_id' => $tsaToken->id]);
 
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.dossier_generated',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'dossier_id' => $dossier->id,
                 'dossier_type' => $dossierType,
                 'verification_code' => $verificationCode,
@@ -376,7 +378,7 @@ class EvidenceDossierService
     /**
      * Get dossiers for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return EvidenceDossier::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,16 +25,16 @@ use Illuminate\Support\Str;
  * @property int $order
  * @property string $status
  * @property string $token
- * @property \Carbon\Carbon|null $sent_at
- * @property \Carbon\Carbon|null $viewed_at
- * @property \Carbon\Carbon|null $signed_at
- * @property \Carbon\Carbon|null $rejected_at
+ * @property Carbon|null $sent_at
+ * @property Carbon|null $viewed_at
+ * @property Carbon|null $signed_at
+ * @property Carbon|null $rejected_at
  * @property string|null $rejection_reason
  * @property array|null $metadata
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
- * @property-read SigningProcess $signingProcess
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read SigningProcess|null $signingProcess
  */
 class Signer extends Model
 {
@@ -103,6 +104,9 @@ class Signer extends Model
 
     public const STATUS_REJECTED = 'rejected';
 
+    /** El proceso se cancelo antes de que este firmante llegara a firmar. */
+    public const STATUS_CANCELLED = 'cancelled';
+
     /**
      * Boot method to set default values.
      */
@@ -138,6 +142,8 @@ class Signer extends Model
 
     /**
      * Get the evidence package for the signature.
+     *
+     * @return BelongsTo<EvidencePackage, $this>
      */
     public function evidencePackage(): BelongsTo
     {
@@ -261,19 +267,26 @@ class Signer extends Model
      */
     public function canSignNow(): bool
     {
+        $process = $this->signingProcess;
+
+        // Sin proceso no hay nada que firmar: la fila esta huerfana.
+        if ($process === null) {
+            return false;
+        }
+
         // If parallel, can always sign if not already signed
-        if ($this->signingProcess->isParallel()) {
+        if ($process->isParallel()) {
             return in_array($this->status, [self::STATUS_SENT, self::STATUS_VIEWED]);
         }
 
         // If sequential, check if previous signers have signed
-        if ($this->signingProcess->isSequential()) {
+        if ($process->isSequential()) {
             if (! in_array($this->status, [self::STATUS_SENT, self::STATUS_VIEWED])) {
                 return false;
             }
 
             // Check if all previous signers have signed
-            $previousSigners = $this->signingProcess->signers()
+            $previousSigners = $process->signers()
                 ->where('order', '<', $this->order)
                 ->get();
 
@@ -350,7 +363,7 @@ class Signer extends Model
      */
     public function isExpired(): bool
     {
-        $deadline = $this->signingProcess->deadline_at;
+        $deadline = $this->signingProcess?->deadline_at;
 
         return $deadline !== null && $deadline->isPast();
     }

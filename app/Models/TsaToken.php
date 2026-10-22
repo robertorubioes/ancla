@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,10 +24,10 @@ use Illuminate\Support\Str;
  * @property string $token
  * @property string $provider
  * @property string $status
- * @property \Carbon\Carbon|null $issued_at
- * @property \Carbon\Carbon|null $verified_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $issued_at
+ * @property Carbon|null $verified_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class TsaToken extends Model
 {
@@ -154,8 +156,8 @@ class TsaToken extends Model
     /**
      * Scope to filter by provider.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<TsaToken>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<TsaToken>
+     * @param  Builder<TsaToken>  $query
+     * @return Builder<TsaToken>
      */
     public function scopeFromProvider($query, string $provider)
     {
@@ -165,8 +167,8 @@ class TsaToken extends Model
     /**
      * Scope to filter valid tokens.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<TsaToken>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<TsaToken>
+     * @param  Builder<TsaToken>  $query
+     * @return Builder<TsaToken>
      */
     public function scopeValid($query)
     {
@@ -176,8 +178,8 @@ class TsaToken extends Model
     /**
      * Scope to filter pending tokens.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<TsaToken>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<TsaToken>
+     * @param  Builder<TsaToken>  $query
+     * @return Builder<TsaToken>
      */
     public function scopePending($query)
     {
@@ -187,8 +189,8 @@ class TsaToken extends Model
     /**
      * Scope to filter by hash.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<TsaToken>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<TsaToken>
+     * @param  Builder<TsaToken>  $query
+     * @return Builder<TsaToken>
      */
     public function scopeForHash($query, string $hash)
     {

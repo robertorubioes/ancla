@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -67,8 +68,8 @@ return new class extends Migration
         });
 
         // Seed default global retention policy
-        \DB::table('retention_policies')->insert([
-            'uuid' => \Illuminate\Support\Str::uuid()->toString(),
+        DB::table('retention_policies')->insert([
+            'uuid' => Str::uuid()->toString(),
             'tenant_id' => null,
             'name' => 'Default eIDAS Retention Policy',
             'description' => 'Default retention policy complying with eIDAS minimum 5-year requirement',

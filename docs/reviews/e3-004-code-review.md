@@ -354,7 +354,7 @@ Agregar sección:
 21. ✅ **Certificados Generados**:
     - RSA 4096 bits ✅
     - Validez 10 años (2025-2035) ✅
-    - Subject: CN=ancla.local, O=Firmalum Development ✅
+    - Subject: CN=firmalum.local, O=Firmalum Development ✅
     - Permisos correctos (644 .crt, 600 .key) ✅
 
 ### Calidad de Código

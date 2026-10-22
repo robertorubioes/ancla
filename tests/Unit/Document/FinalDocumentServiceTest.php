@@ -14,6 +14,7 @@ use App\Services\Document\FinalDocumentException;
 use App\Services\Document\FinalDocumentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FinalDocumentServiceTest extends TestCase
@@ -42,7 +43,7 @@ class FinalDocumentServiceTest extends TestCase
         Storage::fake('local');
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_if_process_not_completed(): void
     {
         $process = SigningProcess::factory()
@@ -55,7 +56,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->generateFinalDocument($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_if_final_document_already_exists(): void
     {
         $process = SigningProcess::factory()
@@ -71,7 +72,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->generateFinalDocument($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_if_not_all_signers_signed(): void
     {
         $document = Document::factory()->for($this->tenant)->create();
@@ -85,12 +86,12 @@ class FinalDocumentServiceTest extends TestCase
             ]);
 
         // Create signers but not all signed
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
         ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'pending',
             'order' => 2,
         ]);
@@ -101,7 +102,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->generateFinalDocument($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_if_no_signers_exist(): void
     {
         $document = Document::factory()->for($this->tenant)->create();
@@ -120,7 +121,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->generateFinalDocument($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_if_no_signed_documents_found(): void
     {
         $document = Document::factory()->for($this->tenant)->create();
@@ -134,7 +135,7 @@ class FinalDocumentServiceTest extends TestCase
             ]);
 
         // Create signers but no signed documents
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
             'signed_at' => now(),
@@ -146,7 +147,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->generateFinalDocument($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_final_document_exists(): void
     {
         $process = SigningProcess::factory()
@@ -158,7 +159,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_false_when_final_document_file_missing(): void
     {
         $process = SigningProcess::factory()
@@ -173,7 +174,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_checks_hash_integrity_of_final_document(): void
     {
         $content = 'test pdf content';
@@ -193,7 +194,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_false_when_hash_mismatch(): void
     {
         $content = 'test pdf content';
@@ -213,7 +214,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_final_document_content(): void
     {
         $content = 'test pdf content';
@@ -233,7 +234,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->assertEquals($content, $retrieved);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_null_when_no_final_document_path(): void
     {
         $process = SigningProcess::factory()
@@ -245,7 +246,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->assertNull($content);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_on_integrity_failure_when_getting_content(): void
     {
         $path = 'final/test.pdf';
@@ -265,7 +266,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->getFinalDocumentContent($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_process_completion_status(): void
     {
         $process = SigningProcess::factory()
@@ -280,7 +281,7 @@ class FinalDocumentServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_all_signers_completed(): void
     {
         $document = Document::factory()->for($this->tenant)->create();
@@ -293,7 +294,7 @@ class FinalDocumentServiceTest extends TestCase
                 'completed_at' => now(),
             ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'viewed',
             'order' => 1,
         ]);
@@ -306,7 +307,7 @@ class FinalDocumentServiceTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_checks_for_existing_final_document_before_regeneration(): void
     {
         $path = 'final/existing.pdf';
@@ -323,7 +324,7 @@ class FinalDocumentServiceTest extends TestCase
                 'final_document_path' => $path,
             ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'order' => 1,
             'signed_at' => now(),
@@ -337,7 +338,7 @@ class FinalDocumentServiceTest extends TestCase
         $this->service->regenerateFinalDocument($process);
     }
 
-    /** @test */
+    #[Test]
     public function regenerate_deletes_old_final_document(): void
     {
         $oldPath = 'final/old.pdf';
@@ -353,7 +354,7 @@ class FinalDocumentServiceTest extends TestCase
                 'final_document_path' => $oldPath,
             ]);
 
-        Signer::factory()->for($process)->for($this->tenant)->create([
+        Signer::factory()->for($process)->create([
             'status' => 'signed',
             'signed_at' => now(),
         ]);

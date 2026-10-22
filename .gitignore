@@ -22,3 +22,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+DEPLOYMENT-CREDENTIALS.txt
+
+# Certificados de firma (nunca en el repositorio)
+/storage/certificates/*
+!/storage/certificates/.gitignore
+
+# Backups locales
+/storage/backups

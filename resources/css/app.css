@@ -1,5 +1,16 @@
 @import 'tailwindcss';
 
+/*
+ * El marcado de la aplicacion usa las clases de Breeze en los campos de
+ * formulario: `rounded-lg border-gray-300 shadow-sm focus:border-...`, sin
+ * utilidad `border` ni relleno. Eso funciona porque este plugin da a cada
+ * input, select y textarea un borde y un padding de base. Sin el, los campos
+ * salen sin borde ni alto -Preflight quita el estilo del navegador- y parecen
+ * texto suelto. Se perdio al migrar a Tailwind 4, donde los plugins se cargan
+ * desde el CSS y no desde tailwind.config.js.
+ */
+@plugin '@tailwindcss/forms';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

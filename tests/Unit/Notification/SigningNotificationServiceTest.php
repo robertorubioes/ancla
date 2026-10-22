@@ -16,6 +16,7 @@ use App\Services\Notification\SigningNotificationResult;
 use App\Services\Notification\SigningNotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SigningNotificationServiceTest extends TestCase
@@ -50,7 +51,7 @@ class SigningNotificationServiceTest extends TestCase
         app()->instance('tenant', $this->tenant);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_send_notifications_for_parallel_signing_process(): void
     {
         $process = SigningProcess::factory()->create([
@@ -90,7 +91,7 @@ class SigningNotificationServiceTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_sends_notification_only_to_first_signer_in_sequential_process(): void
     {
         $process = SigningProcess::factory()->create([
@@ -127,7 +128,7 @@ class SigningNotificationServiceTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_process_status_to_sent(): void
     {
         $process = SigningProcess::factory()->create([
@@ -150,7 +151,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->assertEquals(SigningProcess::STATUS_SENT, $result->signingProcess->status);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_process_is_not_draft(): void
     {
         $process = SigningProcess::factory()->create([
@@ -166,7 +167,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->service->sendNotifications($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_throws_exception_when_no_signers_exist(): void
     {
         $process = SigningProcess::factory()->create([
@@ -182,7 +183,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->service->sendNotifications($process);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_audit_trail_entry_for_signing_process_sent(): void
     {
         $process = SigningProcess::factory()->create([
@@ -211,7 +212,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->assertEquals(2, $entry->payload['notified_signers']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_resend_notification_to_specific_signer(): void
     {
         $process = SigningProcess::factory()->create([
@@ -241,7 +242,7 @@ class SigningNotificationServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_resend_notification_to_signer_who_already_signed(): void
     {
         $process = SigningProcess::factory()->create([
@@ -263,7 +264,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->service->resendNotification($signer);
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_resend_notification_for_completed_process(): void
     {
         $process = SigningProcess::factory()->create([
@@ -284,7 +285,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->service->resendNotification($signer);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_notify_next_signer_in_sequential_process(): void
     {
         $process = SigningProcess::factory()->create([
@@ -316,7 +317,7 @@ class SigningNotificationServiceTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_false_when_notifying_next_signer_in_parallel_process(): void
     {
         $process = SigningProcess::factory()->create([
@@ -332,7 +333,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_false_when_no_next_signer_exists(): void
     {
         $process = SigningProcess::factory()->create([
@@ -354,7 +355,7 @@ class SigningNotificationServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_respects_tenant_isolation(): void
     {
         $otherTenant = Tenant::factory()->create();
@@ -389,7 +390,7 @@ class SigningNotificationServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_deadline_in_audit_trail_if_present(): void
     {
         $deadline = now()->addWeek();

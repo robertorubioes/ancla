@@ -4,6 +4,8 @@ namespace App\Traits;
 
 use App\Models\Scopes\TenantScope;
 use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait BelongsToTenant
@@ -17,9 +19,9 @@ trait BelongsToTenant
         // Añadir scope global para filtrar por tenant
         static::addGlobalScope(new TenantScope);
 
-        // Auto-asignar tenant_id al crear
+        // Auto-asignar tenant_id al crear (solo si no viene ya asignado)
         static::creating(function ($model): void {
-            if (app()->bound('tenant') && app('tenant')) {
+            if (! $model->tenant_id && app()->bound('tenant') && app('tenant')) {
                 $model->tenant_id = app('tenant')->id;
             }
         });
@@ -27,6 +29,8 @@ trait BelongsToTenant
 
     /**
      * Relación con el tenant.
+     *
+     * @return BelongsTo<Tenant, $this>
      */
     public function tenant(): BelongsTo
     {
@@ -35,16 +39,22 @@ trait BelongsToTenant
 
     /**
      * Scope para query sin filtro de tenant (uso admin).
+     *
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
      */
-    public function scopeWithoutTenantScope($query)
+    public function scopeWithoutTenantScope(Builder $query): Builder
     {
         return $query->withoutGlobalScope(TenantScope::class);
     }
 
     /**
      * Scope para filtrar por un tenant específico.
+     *
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
      */
-    public function scopeForTenant($query, Tenant|int $tenant)
+    public function scopeForTenant(Builder $query, Tenant|int $tenant): Builder
     {
         $tenantId = $tenant instanceof Tenant ? $tenant->id : $tenant;
 

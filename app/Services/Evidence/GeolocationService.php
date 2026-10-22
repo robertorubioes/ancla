@@ -3,6 +3,7 @@
 namespace App\Services\Evidence;
 
 use App\Models\GeolocationRecord;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -29,7 +30,7 @@ class GeolocationService
         ?string $signerEmail = null,
         ?int $signerId = null
     ): GeolocationRecord {
-        $tenant = app('tenant');
+        $tenant = app()->bound('tenant') ? app('tenant') : null;
         $ipAddress = $this->getRealIp($request);
 
         // Validate GPS data if provided
@@ -81,8 +82,9 @@ class GeolocationService
         // Log to audit trail
         $this->auditTrailService->logEvent(
             'evidence.geolocation_captured',
-            $signable,
             [
+                'signable_type' => get_class($signable),
+                'signable_id' => $signable->getKey(),
                 'geolocation_id' => $record->id,
                 'capture_method' => $captureMethod,
                 'permission_status' => $permissionStatus,
@@ -328,7 +330,7 @@ class GeolocationService
     /**
      * Get geolocations for a signable.
      */
-    public function getForSignable(Model $signable): \Illuminate\Database\Eloquent\Collection
+    public function getForSignable(Model $signable): Collection
     {
         return GeolocationRecord::where('signable_type', get_class($signable))
             ->where('signable_id', $signable->id)

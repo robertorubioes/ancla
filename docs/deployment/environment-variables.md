@@ -461,7 +461,7 @@ LOG_LEVEL=debug
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=ancla
+DB_DATABASE=firmalum
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -516,13 +516,13 @@ MAIL_PORT=2525
 MAIL_USERNAME=null
 MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="noreply@ancla.local"
+MAIL_FROM_ADDRESS="noreply@firmalum.local"
 MAIL_FROM_NAME="${APP_NAME}"
 
 #------------------------------------------------------------------------------
 # MULTI-TENANT
 #------------------------------------------------------------------------------
-APP_BASE_DOMAIN=ancla.local
+APP_BASE_DOMAIN=firmalum.local
 TENANT_EXCLUDED_DOMAINS=admin,api,www
 
 #------------------------------------------------------------------------------

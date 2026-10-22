@@ -21,6 +21,35 @@
             </div>
         @endif
 
+        <!-- Superadmin Profile Card -->
+        @if(auth()->user()->role->value === 'super_admin')
+            <div class="mb-8 bg-white rounded-lg shadow-md border border-purple-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">{{ auth()->user()->name }}</h3>
+                            <p class="text-sm text-gray-600">{{ auth()->user()->email }}</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mt-1">
+                                Superadmin
+                            </span>
+                        </div>
+                    </div>
+                    <button
+                        wire:click="editUser({{ auth()->id() }})"
+                        class="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <!-- Actions Bar -->
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex-1 max-w-lg">
@@ -302,9 +331,11 @@
     @if($showInviteModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeInviteModal"></div>
+                <!-- Background overlay -->
+                <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" wire:click="closeInviteModal"></div>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <!-- Modal content - z-index superior al overlay -->
+                <div class="relative z-10 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <form wire:submit.prevent="inviteUser">
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Invite New User</h3>
@@ -384,9 +415,11 @@
     @if($showEditModal && $editingUser)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeEditModal"></div>
+                <!-- Background overlay -->
+                <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" wire:click="closeEditModal"></div>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <!-- Modal content - z-index superior al overlay -->
+                <div class="relative z-10 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <form wire:submit.prevent="updateUser">
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
@@ -416,15 +449,26 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                                    <select
-                                        wire:model="editRole"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
-                                        required
-                                    >
-                                        @foreach($availableRoles as $role)
-                                            <option value="{{ $role->value }}">{{ $role->label() }}</option>
-                                        @endforeach
-                                    </select>
+                                    @if($editingUser && $editingUser->role->value === 'super_admin')
+                                        <input
+                                            type="text"
+                                            value="Superadmin"
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
+                                            disabled
+                                        />
+                                        <input type="hidden" wire:model="editRole" />
+                                        <p class="text-xs text-gray-500 mt-1">El rol de superadmin no se puede modificar</p>
+                                    @else
+                                        <select
+                                            wire:model="editRole"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                                            required
+                                        >
+                                            @foreach($availableRoles as $role)
+                                                <option value="{{ $role->value }}">{{ $role->label() }}</option>
+                                            @endforeach
+                                        </select>
+                                    @endif
                                     @error('editRole') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
                                 </div>
                             </div>
@@ -455,9 +499,11 @@
     @if($showDeleteModal && $deletingUser)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeDeleteModal"></div>
+                <!-- Background overlay -->
+                <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" wire:click="closeDeleteModal"></div>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <!-- Modal content - z-index superior al overlay -->
+                <div class="relative z-10 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">

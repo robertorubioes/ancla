@@ -4,26 +4,37 @@ use App\Http\Controllers\Api\PublicVerificationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentDownloadController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\TemplateDocumentController;
+use App\Http\Middleware\EnsureSuperadmin;
+use App\Http\Middleware\EnsureTenantAdmin;
 use App\Livewire\Admin\TenantManagement;
 use App\Livewire\Settings\UserManagement;
 use App\Livewire\Signing\SigningPage;
 use App\Livewire\SigningProcess\CreateSigningProcess;
 use App\Livewire\SigningProcess\ProcessesDashboard;
+use App\Livewire\Template\TemplateEditor;
+use App\Livewire\Template\TemplateFill;
+use App\Livewire\Template\TemplateIndex;
 use App\Livewire\Verification\VerificationPage;
 use Illuminate\Support\Facades\Route;
 
+// Root route - redirect based on authentication status
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('signing-processes.index');
+    }
+
+    return redirect()->route('login');
 });
 
 // Home route after authentication
 Route::middleware(['auth', 'identify.tenant'])->group(function () {
     Route::get('/home', function () {
-        return view('welcome')->with('user', auth()->user());
+        return redirect()->route('signing-processes.index');
     })->name('home');
 
     Route::get('/dashboard', function () {
-        return view('welcome')->with('user', auth()->user());
+        return redirect()->route('signing-processes.index');
     })->name('dashboard');
 });
 
@@ -64,6 +75,10 @@ Route::middleware(['rate.limit.public:signing'])->group(function () {
     // Signing page with unique token
     Route::get('/sign/{token}', SigningPage::class)
         ->name('sign.show');
+
+    // Document preview for signers (requires OTP verification)
+    Route::get('/documents/{document}/preview', [DocumentController::class, 'preview'])
+        ->name('documents.preview');
 });
 
 /*
@@ -192,6 +207,10 @@ Route::middleware(['auth', 'identify.tenant'])->group(function () {
     Route::get('/signing-processes/create/{documentId}', CreateSigningProcess::class)
         ->name('signing-processes.create.document');
 
+    // Edit draft signing process
+    Route::get('/signing-processes/{signingProcess}/edit', CreateSigningProcess::class)
+        ->name('signing-processes.edit');
+
     // Download signed document (promoter)
     Route::get('/signing-processes/{signingProcess}/download-document', [DocumentDownloadController::class, 'downloadDocument'])
         ->name('signing-processes.download-document');
@@ -226,7 +245,7 @@ Route::middleware(['auth'])->group(function () {
 |
 */
 
-Route::middleware(['auth', App\Http\Middleware\EnsureSuperadmin::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', EnsureSuperadmin::class])->prefix('admin')->group(function () {
     // Tenant management
     Route::get('/tenants', TenantManagement::class)
         ->name('admin.tenants');
@@ -242,8 +261,44 @@ Route::middleware(['auth', App\Http\Middleware\EnsureSuperadmin::class])->prefix
 |
 */
 
-Route::middleware(['auth', 'identify.tenant', App\Http\Middleware\EnsureTenantAdmin::class])->prefix('settings')->group(function () {
+Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])->prefix('settings')->group(function () {
     // User management
     Route::get('/users', UserManagement::class)
         ->name('settings.users');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Document Template Routes
+|--------------------------------------------------------------------------
+|
+| Editor visual de plantillas. Solo administradores del tenant: definir donde
+| se estampa cada dato de un contrato no es tarea de cualquier usuario.
+|
+| @see docs/architecture/adr-011-plantillas-y-api-de-cumplimentacion.md
+|
+*/
+
+Route::middleware(['auth', 'identify.tenant', EnsureTenantAdmin::class])
+    ->prefix('templates')
+    ->group(function () {
+        // Listado y ciclo de vida
+        Route::get('/', TemplateIndex::class)
+            ->name('templates.index');
+
+        // Editor de campos y firmantes
+        Route::get('/{template}/editor', TemplateEditor::class)
+            ->name('templates.editor');
+
+        // Rellenar y generar el proceso
+        Route::get('/{template}/usar', TemplateFill::class)
+            ->name('templates.fill');
+
+        // PDF base, para que el editor lo pinte
+        Route::get('/versions/{version}/pdf', [TemplateDocumentController::class, 'show'])
+            ->name('templates.pdf');
+
+        // Vista previa de lo que se esta rellenando. Vive en cache, no en disco.
+        Route::get('/preview/{key}', [TemplateDocumentController::class, 'preview'])
+            ->name('templates.preview');
+    });

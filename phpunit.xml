@@ -20,6 +20,9 @@
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <!-- Clave fija de pruebas. El cifrado en reposo deriva de ella
+             una clave por tenant; sin ella no se puede ejercitar. -->
+        <env name="APP_ENCRYPTION_KEY" value="fGgBlX36WhqDuYPHNU6lRIRMjKKKRovJ6nQTZY3Pxc8="/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>

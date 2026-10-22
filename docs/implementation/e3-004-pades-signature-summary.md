@@ -102,7 +102,7 @@
     - Self-signed certificate for development
     - RSA 4096 bits
     - Validity: 10 years (2025-12-30 to 2035-12-27)
-    - Subject: C=ES, ST=Madrid, L=Madrid, O=Firmalum Development, CN=ancla.local
+    - Subject: C=ES, ST=Madrid, L=Madrid, O=Firmalum Development, CN=firmalum.local
     - Key Usage: digitalSignature
     - Extended Key Usage: emailProtection
     - Permissions: 644 (cert), 600 (key)

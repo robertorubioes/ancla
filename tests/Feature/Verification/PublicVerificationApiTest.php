@@ -14,6 +14,7 @@ use App\Services\Evidence\HashingService;
 use App\Services\Evidence\TsaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PublicVerificationApiTest extends TestCase
@@ -39,18 +40,6 @@ class PublicVerificationApiTest extends TestCase
         $this->mockVerificationServices();
     }
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-
-        // Ensure any open transactions are rolled back
-        while (\DB::transactionLevel() > 0) {
-            \DB::rollBack();
-        }
-
-        parent::tearDown();
-    }
-
     private function mockVerificationServices(): void
     {
         $hashingService = Mockery::mock(HashingService::class);
@@ -70,7 +59,7 @@ class PublicVerificationApiTest extends TestCase
         $this->app->instance(TsaService::class, $tsaService);
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_document_by_code(): void
     {
         $document = Document::factory()->create([
@@ -104,7 +93,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertHeader('X-Confidence-Level');
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_for_non_existent_code(): void
     {
         $response = $this->getJson('/api/v1/public/verify/NONEXISTENT1');
@@ -115,7 +104,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertHeader('X-Verification-Status', 'invalid');
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_410_for_expired_code(): void
     {
         $document = Document::factory()->create([
@@ -137,7 +126,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertStatus(410);
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_document_by_hash(): void
     {
         $hash = str_repeat('a', 64);
@@ -165,7 +154,7 @@ class PublicVerificationApiTest extends TestCase
             ->assertJson(['valid' => true]);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_hash_format(): void
     {
         $response = $this->postJson('/api/v1/public/verify/hash', [
@@ -176,7 +165,7 @@ class PublicVerificationApiTest extends TestCase
             ->assertJsonValidationErrors(['hash']);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_for_unknown_hash(): void
     {
         $hash = str_repeat('f', 64);
@@ -188,7 +177,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_verification_details(): void
     {
         $document = Document::factory()->create([
@@ -215,7 +204,7 @@ class PublicVerificationApiTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_for_details_with_invalid_code(): void
     {
         $response = $this->getJson('/api/v1/public/verify/INVALIDCODE1/details');
@@ -224,7 +213,7 @@ class PublicVerificationApiTest extends TestCase
             ->assertJson(['error' => 'Verification code not found']);
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_verification_urls(): void
     {
         $document = Document::factory()->create([
@@ -247,7 +236,7 @@ class PublicVerificationApiTest extends TestCase
             ->assertJsonStructure(['url', 'short_url', 'qr_code_url']);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_rate_limit_headers(): void
     {
         $document = Document::factory()->create([
@@ -270,7 +259,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertHeader('X-RateLimit-Remaining');
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_codes_with_dashes(): void
     {
         $document = Document::factory()->create([
@@ -294,7 +283,7 @@ class PublicVerificationApiTest extends TestCase
             ->assertJson(['valid' => true]);
     }
 
-    /** @test */
+    #[Test]
     public function it_handles_lowercase_codes(): void
     {
         $document = Document::factory()->create([
@@ -318,7 +307,7 @@ class PublicVerificationApiTest extends TestCase
             ->assertJson(['valid' => true]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_qr_code_image(): void
     {
         $document = Document::factory()->create([
@@ -347,7 +336,7 @@ class PublicVerificationApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_via_web_page(): void
     {
         $response = $this->get('/verify');
@@ -355,7 +344,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_via_web_page_with_code(): void
     {
         $document = Document::factory()->create([
@@ -377,7 +366,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function it_verifies_via_short_url(): void
     {
         $document = Document::factory()->create([
@@ -399,7 +388,7 @@ class PublicVerificationApiTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function it_includes_correct_confidence_headers(): void
     {
         $document = Document::factory()->create([
@@ -428,7 +417,7 @@ class PublicVerificationApiTest extends TestCase
         $this->assertLessThanOrEqual(100, $confidenceScore);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_verified_at_timestamp(): void
     {
         $document = Document::factory()->create([

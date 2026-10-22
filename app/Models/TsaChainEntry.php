@@ -108,6 +108,8 @@ class TsaChainEntry extends Model
 
     /**
      * Get the TSA token for this entry.
+     *
+     * @return BelongsTo<TsaToken, $this>
      */
     public function tsaToken(): BelongsTo
     {

@@ -22,10 +22,15 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    /*
+     * SES admite credenciales propias porque el disco s3 puede apuntar a otro
+     * proveedor (DigitalOcean Spaces, por ejemplo) con claves distintas. Si no
+     * se definen las AWS_SES_*, se usan las compartidas.
+     */
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+        'key' => env('AWS_SES_KEY', env('AWS_ACCESS_KEY_ID')),
+        'secret' => env('AWS_SES_SECRET', env('AWS_SECRET_ACCESS_KEY')),
+        'region' => env('AWS_SES_REGION', env('AWS_DEFAULT_REGION', 'us-east-1')),
     ],
 
     'slack' => [

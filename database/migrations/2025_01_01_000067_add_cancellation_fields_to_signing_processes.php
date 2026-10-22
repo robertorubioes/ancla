@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('signing_processes', function (Blueprint $table) {
-            $table->integer('cancelled_by')->nullable()->after('completed_at');
+            $table->unsignedBigInteger('cancelled_by')->nullable()->after('completed_at');
             $table->text('cancellation_reason')->nullable()->after('cancelled_by');
             $table->timestamp('cancelled_at')->nullable()->after('cancellation_reason');
 

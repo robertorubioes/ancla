@@ -268,7 +268,7 @@ class DocumentEncryptionService
      */
     private function deriveTenantKey(): string
     {
-        $masterKey = base64_decode(config('app.encryption_key'));
+        $masterKey = base64_decode(config('encryption.master_key'));
         $tenantId = $this->tenantContext->getCurrentTenantId();
         $info = "tenant:{$tenantId}:documents";
         
@@ -660,6 +660,36 @@ La estrategia de encriptación elegida proporciona:
 2. Security Expert review (encryption parameters) ✅
 3. Performance benchmark real (target <15% overhead) ✅
 4. Documentación key rotation procedure ✅
+
+
+## Formato de almacenamiento en columnas
+
+`DocumentEncryptionService::encrypt()` devuelve **binario crudo**: nonce,
+texto cifrado y tag concatenados. Eso vale para un fichero en disco, pero no
+para una columna de texto.
+
+Cuando el cifrado se aplica a un atributo de modelo (trait `Encryptable`), el
+valor se guarda como:
+
+```
+enc:v1:<base64 del binario>
+```
+
+Dos razones:
+
+1. **MySQL rechaza el binario en columnas utf8mb4** con «Incorrect string
+   value». SQLite lo acepta sin protestar, asi que el fallo solo aparecia en
+   produccion y en el CI, nunca en los tests locales.
+2. **El prefijo hace explicito lo que ya esta cifrado.** Antes se averiguaba
+   intentando descifrar el valor y viendo si fallaba, lo que ademas de caro
+   confundia un dato corrupto con uno en claro.
+
+El prefijo lleva version: si algun dia cambia el algoritmo, un `enc:v2:`
+permite convivir con lo ya escrito en lugar de tener que migrarlo de golpe.
+
+Los ficheros en disco siguen guardandose en binario, sin prefijo ni base64:
+alli no hay codificacion de columna que respetar y el base64 costaria un
+tercio mas de espacio.
 
 ---
 

@@ -410,9 +410,8 @@ APP_BASE_DOMAIN=firmalum.com
 
 ### Crear Superadmin
 ```bash
-php artisan db:seed SuperadminSeeder
-# Email: superadmin@firmalum.com
-# Password: password
+# Credenciales via .env: SUPERADMIN_EMAIL / SUPERADMIN_NAME / SUPERADMIN_PASSWORD
+php artisan db:seed --class=SuperadminSeeder
 ```
 
 ---

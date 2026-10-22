@@ -368,7 +368,7 @@ return [
         'include_tenant_logo' => true,
 
         // Include Firmalum logo
-        'include_ancla_logo' => true,
+        'include_firmalum_logo' => true,
 
         // Default dossier type
         'default_type' => 'full_evidence',

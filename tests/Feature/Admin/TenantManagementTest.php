@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TenantManagementTest extends TestCase
@@ -28,6 +29,7 @@ class TenantManagementTest extends TestCase
         // Create superadmin tenant
         $this->superadminTenant = Tenant::create([
             'name' => 'Firmalum Admin',
+            // Slug historico del tenant interno (ver SuperadminSeeder).
             'slug' => 'ancla-admin',
             'subdomain' => 'admin',
             'plan' => 'enterprise',
@@ -38,14 +40,14 @@ class TenantManagementTest extends TestCase
         $this->superadmin = User::create([
             'tenant_id' => $this->superadminTenant->id,
             'name' => 'Super Admin',
-            'email' => 'superadmin@ancla.app',
+            'email' => 'superadmin@firmalum.com',
             'password' => Hash::make('password'),
             'role' => 'super_admin',
             'email_verified_at' => now(),
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function superadmin_can_access_tenant_management_page()
     {
         $response = $this->actingAs($this->superadmin)
@@ -55,7 +57,7 @@ class TenantManagementTest extends TestCase
         $response->assertSeeLivewire(TenantManagement::class);
     }
 
-    /** @test */
+    #[Test]
     public function non_superadmin_cannot_access_tenant_management_page()
     {
         $regularTenant = Tenant::factory()->create();
@@ -70,7 +72,7 @@ class TenantManagementTest extends TestCase
         $response->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function unauthenticated_user_cannot_access_tenant_management_page()
     {
         $response = $this->get(route('admin.tenants'));
@@ -78,7 +80,7 @@ class TenantManagementTest extends TestCase
         $response->assertStatus(302); // Redirects to login
     }
 
-    /** @test */
+    #[Test]
     public function can_display_tenant_statistics()
     {
         Tenant::factory()->count(3)->create(['status' => 'active']);
@@ -94,7 +96,7 @@ class TenantManagementTest extends TestCase
             ->assertSee('Suspended');
     }
 
-    /** @test */
+    #[Test]
     public function can_search_tenants_by_name()
     {
         $tenant1 = Tenant::factory()->create(['name' => 'Acme Corporation']);
@@ -107,7 +109,7 @@ class TenantManagementTest extends TestCase
             ->assertDontSee('Tech Solutions');
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_tenants_by_status()
     {
         $activeTenant = Tenant::factory()->create(['status' => 'active', 'name' => 'Active Corp']);
@@ -120,7 +122,7 @@ class TenantManagementTest extends TestCase
             ->assertDontSee('Trial Corp');
     }
 
-    /** @test */
+    #[Test]
     public function can_filter_tenants_by_plan()
     {
         $starterTenant = Tenant::factory()->create(['plan' => 'starter', 'name' => 'Starter Corp']);
@@ -133,7 +135,7 @@ class TenantManagementTest extends TestCase
             ->assertDontSee('Professional Corp');
     }
 
-    /** @test */
+    #[Test]
     public function can_create_new_tenant_with_admin_user()
     {
         Mail::fake();
@@ -181,7 +183,7 @@ class TenantManagementTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function auto_generates_slug_from_name()
     {
         Livewire::actingAs($this->superadmin)
@@ -192,7 +194,7 @@ class TenantManagementTest extends TestCase
             ->assertSet('subdomain', 'test-company-inc');
     }
 
-    /** @test */
+    #[Test]
     public function auto_applies_plan_limits_when_plan_selected()
     {
         Livewire::actingAs($this->superadmin)
@@ -203,7 +205,7 @@ class TenantManagementTest extends TestCase
             ->assertSet('maxDocumentsPerMonth', 50);
     }
 
-    /** @test */
+    #[Test]
     public function validates_required_fields_on_create()
     {
         Livewire::actingAs($this->superadmin)
@@ -213,7 +215,7 @@ class TenantManagementTest extends TestCase
             ->assertHasErrors(['name', 'slug', 'subdomain', 'adminName', 'adminEmail']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_unique_slug()
     {
         $existingTenant = Tenant::factory()->create(['slug' => 'existing']);
@@ -231,7 +233,7 @@ class TenantManagementTest extends TestCase
             ->assertHasErrors(['slug']);
     }
 
-    /** @test */
+    #[Test]
     public function validates_unique_subdomain()
     {
         $existingTenant = Tenant::factory()->create(['subdomain' => 'existing']);
@@ -249,7 +251,7 @@ class TenantManagementTest extends TestCase
             ->assertHasErrors(['subdomain']);
     }
 
-    /** @test */
+    #[Test]
     public function can_edit_existing_tenant()
     {
         $tenant = Tenant::factory()->create([
@@ -282,7 +284,7 @@ class TenantManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_suspend_tenant_with_reason()
     {
         Mail::fake();
@@ -315,7 +317,7 @@ class TenantManagementTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function validates_suspension_reason_min_length()
     {
         $tenant = Tenant::factory()->create(['status' => 'active']);
@@ -328,7 +330,7 @@ class TenantManagementTest extends TestCase
             ->assertHasErrors(['suspensionReason']);
     }
 
-    /** @test */
+    #[Test]
     public function can_unsuspend_tenant()
     {
         $tenant = Tenant::factory()->create([
@@ -349,7 +351,7 @@ class TenantManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function tenant_can_check_if_can_add_user()
     {
         $tenant = Tenant::factory()->create(['max_users' => 2]);
@@ -362,7 +364,7 @@ class TenantManagementTest extends TestCase
         $this->assertFalse($tenant->canAddUser());
     }
 
-    /** @test */
+    #[Test]
     public function tenant_with_null_max_users_can_add_unlimited()
     {
         $tenant = Tenant::factory()->create(['max_users' => null]);
@@ -372,7 +374,7 @@ class TenantManagementTest extends TestCase
         $this->assertTrue($tenant->canAddUser());
     }
 
-    /** @test */
+    #[Test]
     public function tenant_can_check_document_quota()
     {
         $tenant = Tenant::factory()->create(['max_documents_per_month' => 10]);
@@ -386,7 +388,7 @@ class TenantManagementTest extends TestCase
         $this->assertEquals(10, $tenant->getDocumentQuota());
     }
 
-    /** @test */
+    #[Test]
     public function tenant_suspension_changes_status_correctly()
     {
         $tenant = Tenant::factory()->create(['status' => 'active']);
@@ -400,7 +402,7 @@ class TenantManagementTest extends TestCase
         $this->assertEquals('Test suspension', $tenant->suspended_reason);
     }
 
-    /** @test */
+    #[Test]
     public function tenant_unsuspension_clears_suspension_fields()
     {
         $tenant = Tenant::factory()->create([
@@ -417,7 +419,7 @@ class TenantManagementTest extends TestCase
         $this->assertNull($tenant->suspended_reason);
     }
 
-    /** @test */
+    #[Test]
     public function get_plan_limits_returns_correct_values()
     {
         $freeLimits = Tenant::getPlanLimits('free');
@@ -433,7 +435,7 @@ class TenantManagementTest extends TestCase
         $this->assertNull($enterpriseLimits['max_documents_per_month']);
     }
 
-    /** @test */
+    #[Test]
     public function tenant_can_apply_plan_limits()
     {
         $tenant = Tenant::factory()->create(['plan' => 'starter']);
@@ -444,7 +446,7 @@ class TenantManagementTest extends TestCase
         $this->assertEquals(50, $tenant->max_documents_per_month);
     }
 
-    /** @test */
+    #[Test]
     public function closing_modal_resets_form()
     {
         Livewire::actingAs($this->superadmin)

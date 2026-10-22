@@ -10,6 +10,7 @@ use App\Models\TsaChainEntry;
 use App\Services\Evidence\ChainVerificationResult;
 use App\Services\Evidence\HashingService;
 use App\Services\Evidence\TsaService;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -38,7 +39,7 @@ class TsaResealService
             $preservedHash = $document->content_hash;
 
             // Request initial TSA timestamp
-            $initialToken = $this->tsaService->requestTimestamp($preservedHash);
+            $initialToken = $this->tsaService->requestTimestamp($preservedHash, $document->tenant_id);
 
             // Calculate expiry date (if available from TSA token)
             $expiresAt = $initialToken->expires_at ?? now()->addYears(2);
@@ -112,7 +113,7 @@ class TsaResealService
                 $dataToSeal = $this->calculateCumulativeHash($chain);
 
                 // Request new TSA timestamp
-                $newToken = $this->tsaService->requestTimestamp($dataToSeal);
+                $newToken = $this->tsaService->requestTimestamp($dataToSeal, $chain->tenant_id);
 
                 // Calculate expiry
                 $expiresAt = $newToken->expires_at ?? now()->addYears(2);
@@ -235,12 +236,12 @@ class TsaResealService
         ]);
 
         return new ChainVerificationResult(
-            isValid: $isValid,
+            valid: $isValid,
             entriesVerified: $entries->count(),
             errors: $errors,
             warnings: $warnings,
-            firstEntry: $entries->first()?->toArray(),
-            lastEntry: $entries->last()?->toArray()
+            firstSequence: $entries->first()?->sequence_number,
+            lastSequence: $entries->last()?->sequence_number
         );
     }
 
@@ -273,7 +274,7 @@ class TsaResealService
     /**
      * Get the next required re-seal date.
      */
-    public function getNextResealDate(TsaChain $chain): \Carbon\Carbon
+    public function getNextResealDate(TsaChain $chain): Carbon
     {
         $latestEntry = $chain->entries()->orderByDesc('sequence_number')->first();
 
@@ -355,7 +356,7 @@ class TsaResealService
         foreach ($chains as $chain) {
             try {
                 $verification = $this->verifyChain($chain);
-                if ($verification->isValid) {
+                if ($verification->isValid()) {
                     $results['valid']++;
                 } else {
                     $results['invalid']++;
@@ -373,7 +374,7 @@ class TsaResealService
     /**
      * Calculate the next re-seal date based on certificate expiry.
      */
-    private function calculateNextResealDate(\Carbon\Carbon $expiresAt): \Carbon\Carbon
+    private function calculateNextResealDate(Carbon $expiresAt): Carbon
     {
         $beforeExpiryDays = config('archive.reseal.reseal_before_expiry_days', 90);
         $maxIntervalDays = config('archive.reseal.default_interval_days', 365);

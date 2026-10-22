@@ -36,7 +36,9 @@ class TsaChainFactory extends Factory
 
         return [
             'uuid' => $this->faker->uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'document_id' => Document::factory(),
             'chain_type' => $this->faker->randomElement([
                 TsaChain::TYPE_DOCUMENT,

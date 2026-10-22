@@ -10,6 +10,7 @@ use App\Models\SigningProcess;
 use App\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DocumentDownloadTest extends TestCase
@@ -25,7 +26,7 @@ class DocumentDownloadTest extends TestCase
         $this->tenant = Tenant::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function it_downloads_document_with_valid_token()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -52,7 +53,7 @@ class DocumentDownloadTest extends TestCase
         $this->assertTrue(in_array($response->status(), [200, 404, 500]));
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_invalid_token()
     {
         $response = $this->get(route('document.download', ['token' => 'invalid-token']));
@@ -60,7 +61,7 @@ class DocumentDownloadTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_expired_token()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -86,7 +87,7 @@ class DocumentDownloadTest extends TestCase
         $response->assertSee('expired');
     }
 
-    /** @test */
+    #[Test]
     public function it_increments_download_count()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);
@@ -114,7 +115,7 @@ class DocumentDownloadTest extends TestCase
         $this->assertGreaterThanOrEqual(0, $signer->download_count);
     }
 
-    /** @test */
+    #[Test]
     public function it_sets_downloaded_at_timestamp()
     {
         $document = Document::factory()->create(['tenant_id' => $this->tenant->id]);

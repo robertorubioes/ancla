@@ -302,7 +302,7 @@ return [
 openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
   -keyout storage/certificates/ancla-dev.key \
   -out storage/certificates/ancla-dev.crt \
-  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Dev/CN=ancla.local" \
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=Firmalum Dev/CN=firmalum.local" \
   -addext "keyUsage=digitalSignature" \
   -addext "extendedKeyUsage=emailProtection"
 
@@ -348,10 +348,10 @@ Key Usage: Digital Signature, Non-Repudiation
 **Almacenamiento seguro**:
 ```php
 // .env
-SIGNATURE_CERT_PATH=/run/secrets/ancla-prod.crt
-SIGNATURE_KEY_PATH=/run/secrets/ancla-prod.key
+SIGNATURE_CERT_PATH=/run/secrets/firmalum-prod.crt
+SIGNATURE_KEY_PATH=/run/secrets/firmalum-prod.key
 SIGNATURE_KEY_PASSWORD=<strong-password>
-SIGNATURE_PKCS12_PATH=/run/secrets/ancla-prod.p12
+SIGNATURE_PKCS12_PATH=/run/secrets/firmalum-prod.p12
 ```
 
 ---
@@ -404,7 +404,7 @@ PDF Structure:
 /M (D:20250129123045+01'00')
 /Reason (Firmado electrónicamente)
 /Location (Firmalum Platform)
-/ContactInfo (soporte@ancla.es)
+/ContactInfo (soporte@firmalum.com)
 ```
 
 ---
@@ -443,7 +443,7 @@ PDF Structure:
         'background_color' => '#f8f9fa',
         'font_family' => 'Helvetica',
         'font_size' => 9,
-        'logo_path' => 'signatures/logo-ancla.png',
+        'logo_path' => 'signatures/logo-firmalum.png',
     ],
 ],
 ```
@@ -462,7 +462,7 @@ PDF Structure:
 │                      ⏱ TSA: FirmaProfesional      │
 │                                                    │
 │  [QR CODE]           Verificar: ABCD-EFGH-IJKL    │
-│                      https://ancla.es/v/xxx        │
+│                      https://firmalum.com/v/xxx        │
 └────────────────────────────────────────────────────┘
 ```
 
@@ -540,7 +540,7 @@ PDF /Sig Dictionary Extensions:
 /Firmalum_Process_ID     (uuid-of-signing-process)
 /Firmalum_Signer_ID      (uuid-of-signer)
 /Firmalum_Verify_Code    (ABC1-DEF2-GH34)
-/Firmalum_Verify_URL     (https://ancla.es/verify/ABC1-DEF2-GH34)
+/Firmalum_Verify_URL     (https://firmalum.com/verify/ABC1-DEF2-GH34)
 /Firmalum_Verify_QR      (base64-encoded-qr-image)
 /Firmalum_IP_Hash        (sha256-hashed-ip)
 /Firmalum_Location       (Madrid, Spain)
@@ -1808,7 +1808,7 @@ return [
             'background_color' => env('SIGNATURE_BG_COLOR', '#f8f9fa'),
             'font_family' => env('SIGNATURE_FONT', 'Helvetica'),
             'font_size' => (int) env('SIGNATURE_FONT_SIZE', 9),
-            'logo_path' => 'signatures/logo-ancla.png',
+            'logo_path' => 'signatures/logo-firmalum.png',
         ],
     ],
 
@@ -1863,13 +1863,13 @@ storage/certificates/ancla-dev.crt
 storage/certificates/ancla-dev.key (permisos 600)
 
 # Staging/Production: Docker Secrets
-docker secret create ancla-prod-cert ancla-prod.crt
-docker secret create ancla-prod-key ancla-prod.key
+docker secret create firmalum-prod-cert firmalum-prod.crt
+docker secret create firmalum-prod-key firmalum-prod.key
 
 # O usar HashiCorp Vault
-vault kv put secret/ancla/signature \
-  cert=@ancla-prod.crt \
-  key=@ancla-prod.key \
+vault kv put secret/firmalum/signature \
+  cert=@firmalum-prod.crt \
+  key=@firmalum-prod.key \
   password="<strong-password>"
 ```
 

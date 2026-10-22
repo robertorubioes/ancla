@@ -889,7 +889,7 @@ La implementación de E0-001 tiene una base arquitectónica **excelente** y demu
 **Review Date**: 2025-12-30  
 **Next Review**: After developer fixes (estimated 2025-12-30 EOD)
 
-**Questions**: Contact Tech Lead via Slack #ancla-sprint6
+**Questions**: Contact Tech Lead via Slack #firmalum-sprint6
 
 ---
 

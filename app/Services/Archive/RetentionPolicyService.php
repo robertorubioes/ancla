@@ -9,6 +9,7 @@ use App\Models\Document;
 use App\Models\RetentionPolicy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Service for managing document retention policies.
@@ -76,8 +77,12 @@ class RetentionPolicyService
      */
     public function isExpiringSoon(ArchivedDocument $archived, int $daysAhead = 90): bool
     {
+        // El orden importa: en Carbon 3 diffInDays devuelve el valor con
+        // signo, y calcularlo al reves daba siempre un numero negativo, con lo
+        // que cualquier documento -caducara en un mes o en veinte anos- se
+        // daba por proximo a caducar.
         return ! $this->isExpired($archived)
-            && $archived->retention_expires_at->diffInDays(now()) <= $daysAhead;
+            && now()->diffInDays($archived->retention_expires_at) <= $daysAhead;
     }
 
     /**
@@ -212,7 +217,7 @@ class RetentionPolicyService
         }
 
         return RetentionPolicy::create([
-            'uuid' => \Illuminate\Support\Str::uuid()->toString(),
+            'uuid' => Str::uuid()->toString(),
             'tenant_id' => $data['tenant_id'] ?? null,
             'name' => $data['name'],
             'description' => $data['description'] ?? null,

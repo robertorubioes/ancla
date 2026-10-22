@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Traits\BelongsToTenant;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,9 +28,9 @@ use Illuminate\Support\Str;
  * @property string $audit_trail_hash
  * @property int|null $tsa_token_id
  * @property string $status
- * @property \Carbon\Carbon|null $generated_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $generated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class EvidencePackage extends Model
 {
@@ -201,8 +203,8 @@ class EvidencePackage extends Model
     /**
      * Scope to filter ready packages.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<EvidencePackage>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<EvidencePackage>
+     * @param  Builder<EvidencePackage>  $query
+     * @return Builder<EvidencePackage>
      */
     public function scopeReady($query)
     {
@@ -212,8 +214,8 @@ class EvidencePackage extends Model
     /**
      * Scope to filter pending packages.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<EvidencePackage>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<EvidencePackage>
+     * @param  Builder<EvidencePackage>  $query
+     * @return Builder<EvidencePackage>
      */
     public function scopePending($query)
     {
@@ -223,8 +225,8 @@ class EvidencePackage extends Model
     /**
      * Scope to get packages for a specific model.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<EvidencePackage>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<EvidencePackage>
+     * @param  Builder<EvidencePackage>  $query
+     * @return Builder<EvidencePackage>
      */
     public function scopeForModel($query, Model $model)
     {

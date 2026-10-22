@@ -15,6 +15,7 @@ readonly class ChainVerificationResult
      * @param  bool  $valid  Whether the chain is valid
      * @param  int  $entriesVerified  Number of entries verified
      * @param  array<string>  $errors  List of errors found
+     * @param  array<string>  $warnings  List of non-blocking warnings
      * @param  int|null  $firstSequence  First sequence number in the chain
      * @param  int|null  $lastSequence  Last sequence number in the chain
      */
@@ -22,12 +23,17 @@ readonly class ChainVerificationResult
         public bool $valid,
         public int $entriesVerified,
         public array $errors = [],
+        public array $warnings = [],
         public ?int $firstSequence = null,
         public ?int $lastSequence = null
     ) {}
 
     /**
      * Check if the verification passed.
+     *
+     * Ojo: es un metodo, no un atributo. Los DTO hermanos
+     * (VerificationResult, IntegrityCheckResult, SignatureValidationResult)
+     * exponen un atributo publico $isValid; este no.
      *
      * @return bool True if valid
      */
@@ -44,6 +50,16 @@ readonly class ChainVerificationResult
     public function hasErrors(): bool
     {
         return ! empty($this->errors);
+    }
+
+    /**
+     * Check if there are any warnings.
+     *
+     * @return bool True if there are warnings
+     */
+    public function hasWarnings(): bool
+    {
+        return ! empty($this->warnings);
     }
 
     /**
@@ -67,6 +83,7 @@ readonly class ChainVerificationResult
             'valid' => $this->valid,
             'entries_verified' => $this->entriesVerified,
             'errors' => $this->errors,
+            'warnings' => $this->warnings,
             'first_sequence' => $this->firstSequence,
             'last_sequence' => $this->lastSequence,
         ];

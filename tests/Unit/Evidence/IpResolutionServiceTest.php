@@ -10,6 +10,7 @@ use App\Services\Evidence\HashingService;
 use App\Services\Evidence\IpResolutionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -175,7 +176,7 @@ class IpResolutionServiceTest extends TestCase
     public function it_identifies_clean_connections(): void
     {
         // Clear cache to ensure fresh responses
-        \Illuminate\Support\Facades\Cache::flush();
+        Cache::flush();
 
         // Disable VPN/proxy detection to test clean connection behavior
         config(['evidence.ip_info.detect_vpn' => false]);
@@ -292,11 +293,5 @@ class IpResolutionServiceTest extends TestCase
         $record->asn = '15169';
 
         $this->assertEquals('Google LLC - AS15169', $record->network_info);
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 }

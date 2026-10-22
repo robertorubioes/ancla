@@ -36,7 +36,9 @@ class ArchivedDocumentFactory extends Factory
 
         return [
             'uuid' => $this->faker->uuid(),
-            'tenant_id' => Tenant::factory(),
+            'tenant_id' => fn (): mixed => app()->bound('tenant') && app('tenant')
+                ? app('tenant')->id
+                : Tenant::factory(),
             'document_id' => Document::factory(),
             'archive_tier' => $this->faker->randomElement([
                 ArchivedDocument::TIER_HOT,
